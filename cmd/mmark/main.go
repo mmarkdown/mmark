@@ -7,8 +7,8 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/markdown/html"
 	"github.com/mmarkdown/mmark"
 )
 
@@ -41,12 +41,14 @@ func main() {
 		ast.Print(os.Stdout, doc)
 		fmt.Print("\n")
 
+		p = parser.New()
+		p.Opts = parser.ParserOptions{ParserHook: mmark.TitleHook}
 		opts := html.RendererOptions{
 			Flags:          html.CommonFlags,
 			RenderNodeHook: mmark.RenderHookHTML,
 		}
 		renderer := html.NewRenderer(opts)
 		html := markdown.ToHTML(d, p, renderer)
-		fmt.Println(html)
+		fmt.Println(string(html))
 	}
 }

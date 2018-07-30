@@ -7,7 +7,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
 )
 
 // Title represents the TOML encoded title block.
@@ -37,14 +36,14 @@ type content struct {
 }
 
 // TitleHook will parse a title and add it to the ast tree.
-func TitleHook(p *parser.Parser, data []byte) int {
-	// parse text between %%% and %%% and return it as a blockQuote.
+func TitleHook(data []byte) (ast.Node, []byte, int) {
+	// parse text between %%% and %%% and return it as a Title node.
 	i := 0
 	if len(data) < 3 {
-		return 0
+		return nil, nil, 0
 	}
 	if data[i] != '%' && data[i+1] != '%' && data[i+2] != '%' {
-		return 0
+		return nil, nil, 0
 	}
 
 	i += 3
@@ -68,13 +67,11 @@ func TitleHook(p *parser.Parser, data []byte) int {
 	}
 
 	if _, err := toml.Decode(string(data[4:i]), &block); err != nil {
-		log.Printf("error parsing title block: %s", err.Error())
+		log.Printf("Failure to parsing title block: %s", err.Error())
 	}
 	node.content = block
 
-	p.AddBlock(node)
-	p.Finalize(node)
-	return i + 3
+	return node, nil, i + 3
 }
 
 type author struct {
@@ -128,13 +125,17 @@ type pi struct {
 }
 
 func RenderHookHTML(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-	if t, ok := node.(*Title); ok {
-		if t.content == nil {
-			println("WHAT")
-		} else {
-			println(t.content.Title)
-		}
+	t, ok := node.(*Title)
+	if !ok {
+		return ast.GoToNext, false
 	}
 
-	return ast.GoToNext, false
+	if t.content == nil {
+		println("WHAT")
+	} else {
+		println(t.content.Area)
+		println(t.content.Title)
+	}
+
+	return ast.GoToNext, true
 }
