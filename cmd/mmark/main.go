@@ -33,7 +33,7 @@ func main() {
 			continue
 		}
 
-		p := parser.New()
+		p := parser.NewWithExtensions(parser.CommonExtensions | parser.OrderedListStart | parser.Attributes)
 		p.Opts = parser.ParserOptions{ParserHook: mmark.TitleHook}
 
 		doc := markdown.Parse(d, p)
