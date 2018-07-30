@@ -1,6 +1,7 @@
 package mmark
 
 import (
+	"io"
 	"log"
 	"time"
 
@@ -12,10 +13,10 @@ import (
 // Title represents the TOML encoded title block.
 type Title struct {
 	ast.Leaf
-	title
+	*content
 }
 
-type title struct {
+type content struct {
 	Title  string
 	Abbrev string
 
@@ -56,7 +57,7 @@ func TitleHook(p *parser.Parser, data []byte) int {
 	}
 	node := &Title{}
 
-	block := title{
+	block := &content{
 		PI: pi{
 			Header: "__mmark_toml_pi_not_set",
 			Footer: "__mmark_toml_pi_not_set",
@@ -69,9 +70,10 @@ func TitleHook(p *parser.Parser, data []byte) int {
 	if _, err := toml.Decode(string(data[4:i]), &block); err != nil {
 		log.Printf("error parsing title block: %s", err.Error())
 	}
-	node.title = block
+	node.content = block
 
 	p.AddBlock(node)
+	p.Finalize(node)
 	return i + 3
 }
 
@@ -123,4 +125,16 @@ type pi struct {
 	Comments   string // Typeset cref's in the text.
 	Header     string // Top-Left header, usually Internet-Draft.
 	Footer     string // Bottom-Center footer, usually Expires ...
+}
+
+func RenderHookHTML(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+	if t, ok := node.(*Title); ok {
+		if t.content == nil {
+			println("WHAT")
+		} else {
+			println(t.content.Title)
+		}
+	}
+
+	return ast.GoToNext, false
 }

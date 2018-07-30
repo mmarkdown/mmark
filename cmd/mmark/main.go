@@ -8,6 +8,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/mmarkdown/markdown/html"
 	"github.com/mmarkdown/mmark"
 )
 
@@ -39,5 +40,13 @@ func main() {
 		fmt.Printf("Ast of file '%s':\n", fileName)
 		ast.Print(os.Stdout, doc)
 		fmt.Print("\n")
+
+		opts := html.RendererOptions{
+			Flags:          html.CommonFlags,
+			RenderNodeHook: mmark.RenderHookHTML,
+		}
+		renderer := html.NewRenderer(opts)
+		html := markdown.ToHTML(d, p, renderer)
+		fmt.Println(html)
 	}
 }
