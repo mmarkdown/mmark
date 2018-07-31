@@ -9,7 +9,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/mmark"
+	"github.com/mmarkdown/mmark/mparser"
 )
 
 // This prints AST of parsed markdown document.
@@ -34,7 +34,7 @@ func main() {
 		}
 
 		p := parser.NewWithExtensions(parser.CommonExtensions | parser.OrderedListStart | parser.Attributes)
-		p.Opts = parser.ParserOptions{ParserHook: mmark.TitleHook}
+		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 
 		doc := markdown.Parse(d, p)
 		fmt.Printf("Ast of file '%s':\n", fileName)
@@ -42,10 +42,10 @@ func main() {
 		fmt.Print("\n")
 
 		p = parser.New()
-		p.Opts = parser.ParserOptions{ParserHook: mmark.TitleHook}
+		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 		opts := html.RendererOptions{
 			Flags:          html.CommonFlags,
-			RenderNodeHook: mmark.RenderHookHTML,
+			RenderNodeHook: mhtml.RenderHookHTML,
 		}
 		renderer := html.NewRenderer(opts)
 		html := markdown.ToHTML(d, p, renderer)

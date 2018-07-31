@@ -1,21 +1,35 @@
-package mmark
+package mast
 
 import (
-	"io"
-	"log"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/gomarkdown/markdown/ast"
 )
 
 // Title represents the TOML encoded title block.
 type Title struct {
 	ast.Leaf
-	*content
+	*TitleData
 }
 
-type content struct {
+// NewTitle returns a pointer to TitleData with some defaults set.
+func NewTitle() *Title {
+	t := &Title{
+		TitleData: &TitleData{
+			PI: pi{
+				Header: "__mmark_toml_pi_not_set",
+				Footer: "__mmark_toml_pi_not_set",
+			},
+			Area: "Internet",
+			Ipr:  "trust200902",
+			Date: time.Now(),
+		},
+	}
+	return t
+}
+
+// TitleData holds all the elements of the title.
+type TitleData struct {
 	Title  string
 	Abbrev string
 
@@ -33,45 +47,6 @@ type content struct {
 	Workgroup string
 	Keyword   []string
 	Author    []author
-}
-
-// TitleHook will parse a title and add it to the ast tree.
-func TitleHook(data []byte) (ast.Node, []byte, int) {
-	// parse text between %%% and %%% and return it as a Title node.
-	i := 0
-	if len(data) < 3 {
-		return nil, nil, 0
-	}
-	if data[i] != '%' && data[i+1] != '%' && data[i+2] != '%' {
-		return nil, nil, 0
-	}
-
-	i += 3
-	// search for end.
-	for i < len(data) {
-		if data[i] == '%' && data[i+1] == '%' && data[i+2] == '%' {
-			break
-		}
-		i++
-	}
-	node := &Title{}
-
-	block := &content{
-		PI: pi{
-			Header: "__mmark_toml_pi_not_set",
-			Footer: "__mmark_toml_pi_not_set",
-		},
-		Area: "Internet",
-		Ipr:  "trust200902",
-		Date: time.Now(),
-	}
-
-	if _, err := toml.Decode(string(data[4:i]), &block); err != nil {
-		log.Printf("Failure to parsing title block: %s", err.Error())
-	}
-	node.content = block
-
-	return node, nil, i + 3
 }
 
 type author struct {
@@ -122,20 +97,4 @@ type pi struct {
 	Comments   string // Typeset cref's in the text.
 	Header     string // Top-Left header, usually Internet-Draft.
 	Footer     string // Bottom-Center footer, usually Expires ...
-}
-
-func RenderHookHTML(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-	t, ok := node.(*Title)
-	if !ok {
-		return ast.GoToNext, false
-	}
-
-	if t.content == nil {
-		println("WHAT")
-	} else {
-		println(t.content.Area)
-		println(t.content.Title)
-	}
-
-	return ast.GoToNext, true
 }
