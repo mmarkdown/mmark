@@ -13,11 +13,10 @@ import (
 	"github.com/mmarkdown/mmark/mparser"
 )
 
-// This prints AST of parsed markdown document.
-// Usage: printast <markdown-file>
+// Usage: mmark <markdown-file>
 
 func usageAndExit() {
-	fmt.Printf("Usage: printast <markdown-file>\n")
+	fmt.Printf("Usage: mmark <markdown-file>\n")
 	os.Exit(1)
 }
 
