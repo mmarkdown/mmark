@@ -9,6 +9,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
 )
 
@@ -45,7 +46,7 @@ func main() {
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 		opts := html.RendererOptions{
 			Flags:          html.CommonFlags,
-			RenderNodeHook: mhtml.RenderHookHTML,
+			RenderNodeHook: mhtml.RenderHook,
 		}
 		renderer := html.NewRenderer(opts)
 		html := markdown.ToHTML(d, p, renderer)
