@@ -27,6 +27,10 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	)...)
 	r.outTag(w, "<rfc", attrs)
 	r.cr(w)
+	// toc = yes
+	// symref = yes
+	// compact = yes
+	// topblock = yes
 
 	// front tag - todo
 
