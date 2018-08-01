@@ -5,6 +5,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/mmarkdown/mmark/mast"
 )
@@ -35,8 +36,17 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.outs(w, "</title>")
 	r.cr(w)
 
+	r.titleDate(w, d.Date)
+	r.cr(w)
+
 	for _, author := range d.Author {
+		r.cr(w)
 		r.titleAuthor(w, author)
+		r.cr(w)
+	}
+
+	for _, k := range d.Keyword {
+		r.outTagContent(w, "<keyword", nil, k)
 	}
 
 	return
@@ -85,17 +95,32 @@ func (r *Renderer) titleAuthor(w io.Writer, a mast.Author) {
 		r.outTagContent(w, "<region", nil, region)
 	}
 
-	r.cr(w)
 	r.outs(w, "</postal>")
 
 	r.outTagContent(w, "<phone", nil, a.Address.Phone)
 	r.outTagContent(w, "<email", nil, a.Address.Email)
-	r.outTagContent(w, "<uri", nil, a.Address.Uri)
+	r.outTagContent(w, "<uri", nil, a.Address.URI)
 
 	r.outs(w, "</address>")
 	r.cr(w)
 	r.outs(w, "</author>")
 	r.cr(w)
+}
+
+// titleDate outputs the date from the TOML title block.
+func (r *Renderer) titleDate(w io.Writer, d time.Time) {
+	var attr = []string{}
+
+	if x := d.Year(); x > 0 {
+		attr = append(attr, fmt.Sprintf(`year="%d"`, x))
+	}
+	if x := d.Month(); x > 0 {
+		attr = append(attr, fmt.Sprintf(`month="%d"`, x))
+	}
+	if x := d.Day(); x > 0 {
+		attr = append(attr, fmt.Sprintf(`month="%d"`, x))
+	}
+	r.outTag(w, "<date", attr)
 }
 
 func intSliceToString(is []int) string {

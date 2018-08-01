@@ -16,10 +16,6 @@ type Title struct {
 func NewTitle() *Title {
 	t := &Title{
 		TitleData: &TitleData{
-			PI: pi{
-				Header: "__mmark_toml_pi_not_set",
-				Footer: "__mmark_toml_pi_not_set",
-			},
 			Area: "Internet",
 			Ipr:  "trust200902",
 			Date: time.Now(),
@@ -40,7 +36,6 @@ type TitleData struct {
 	Number         int // RFC number
 	Obsoletes      []int
 	Updates        []int
-	PI             pi // Processing Instructions
 	SubmissionType string
 
 	Date      time.Time
@@ -50,6 +45,7 @@ type TitleData struct {
 	Author    []Author
 }
 
+// Author denotes an RFC author.
 type Author struct {
 	Initials           string
 	Surname            string
@@ -57,17 +53,19 @@ type Author struct {
 	Organization       string
 	OrganizationAbbrev string `toml:"abbrev"`
 	Role               string
-	Ascii              string
+	ASCII              string
 	Address            Address
 }
 
+// Address denotes the address of an RFC author.
 type Address struct {
 	Phone  string
 	Email  string
-	Uri    string
+	URI    string
 	Postal AddressPostal
 }
 
+// AddressPostal denotes the postal address of an RFC author.
 type AddressPostal struct {
 	Street     string
 	City       string
@@ -82,20 +80,4 @@ type AddressPostal struct {
 	Codes     []string
 	Countries []string
 	Regions   []string
-}
-
-// PIs the processing instructions.
-var PIs = []string{"toc", "symrefs", "sortrefs", "compact", "subcompact", "private", "topblock", "header", "footer", "comments"}
-
-type pi struct {
-	Toc        string
-	Symrefs    string
-	Sortrefs   string
-	Compact    string
-	Subcompact string
-	Private    string
-	Topblock   string
-	Comments   string // Typeset cref's in the text.
-	Header     string // Top-Left header, usually Internet-Draft.
-	Footer     string // Bottom-Center footer, usually Expires ...
 }
