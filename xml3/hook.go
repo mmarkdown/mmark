@@ -1,4 +1,4 @@
-package mhtml
+package xml3
 
 import (
 	"io"

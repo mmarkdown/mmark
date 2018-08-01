@@ -34,6 +34,7 @@ type TitleData struct {
 	Abbrev string
 
 	DocName        string
+	Consensus      bool
 	Ipr            string
 	Category       string
 	Number         int // RFC number
@@ -46,10 +47,10 @@ type TitleData struct {
 	Area      string
 	Workgroup string
 	Keyword   []string
-	Author    []author
+	Author    []Author
 }
 
-type author struct {
+type Author struct {
 	Initials           string
 	Surname            string
 	Fullname           string
@@ -57,17 +58,17 @@ type author struct {
 	OrganizationAbbrev string `toml:"abbrev"`
 	Role               string
 	Ascii              string
-	Address            address
+	Address            Address
 }
 
-type address struct {
+type Address struct {
 	Phone  string
 	Email  string
 	Uri    string
-	Postal addressPostal
+	Postal AddressPostal
 }
 
-type addressPostal struct {
+type AddressPostal struct {
 	Street     string
 	City       string
 	Code       string
