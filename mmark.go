@@ -33,7 +33,10 @@ func main() {
 			continue
 		}
 
-		p := parser.NewWithExtensions(parser.CommonExtensions | parser.OrderedListStart | parser.Attributes)
+		ext := parser.CommonExtensions | parser.OrderedListStart | parser.Attributes |
+			parser.MmarkSpecialHeading | parser.MmarkAsides | parser.MmarkMatters | parser.MmarkIncludes
+
+		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 
 		doc := markdown.Parse(d, p)
@@ -41,7 +44,7 @@ func main() {
 		ast.Print(os.Stdout, doc)
 		fmt.Print("\n")
 
-		p = parser.New()
+		p = parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 		opts := html.RendererOptions{
 			Flags:          html.CommonFlags,
