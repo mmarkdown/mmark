@@ -34,7 +34,7 @@ func main() {
 		}
 
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
-			parser.OrderedListStart | parser.Attributes | parser.MmarkSpecialHeading | parser.MmarkAsides | parser.MmarkMatters
+			parser.OrderedListStart | parser.Attributes | parser.Mmark
 
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
