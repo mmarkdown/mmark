@@ -41,12 +41,10 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.cr(w)
 
 	r.titleDate(w, d.Date)
-	r.cr(w)
 
 	for _, author := range d.Author {
 		r.cr(w)
 		r.titleAuthor(w, author)
-		r.cr(w)
 	}
 
 	for _, k := range d.Keyword {
@@ -56,6 +54,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		r.outTagContent(w, "<keyword", nil, k)
 	}
 
+	r.cr(w)
 	return
 }
 

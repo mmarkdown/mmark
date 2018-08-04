@@ -35,7 +35,7 @@ type Renderer struct {
 	opts RendererOptions
 
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
-	section        ast.Node            // current open section type
+	section        *ast.Heading        // current open section
 }
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -68,7 +68,23 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.cr(w)
 }
 
+func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
+	// *iff* we have a text node as a child *and* that text is 2119, we output bcp14 tags, otherwise just string.
+	text := ast.GetFirstChild(node)
+	if t, ok := text.(*ast.Text); ok {
+		if is2119(t.Literal) {
+			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
+			return
+		}
+	}
+
+	r.outOneOf(w, entering, "<strong>", "</strong>")
+}
+
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
+	r.sectionClose(w)
+	r.section = nil
+
 	switch node.Matter {
 	case ast.DocumentMatterFront:
 		r.outs(w, "<front>")
@@ -93,7 +109,7 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	tag := "<section"
 	if heading.Special != nil {
 		tag = "<note"
-		if strings.EqualFold(string(heading.Special), "abstract") {
+		if isAbstract(heading.Special) {
 			tag = "<abstract"
 		}
 	}
@@ -107,11 +123,14 @@ func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
 }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
-	if entering {
-		r.headingEnter(w, node)
-	} else {
+	if !entering {
 		r.headingExit(w, node)
+		return
 	}
+
+	r.sectionClose(w)
+	r.section = node
+	r.headingEnter(w, node)
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
@@ -129,13 +148,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Emph:
 		r.outOneOf(w, entering, "<em>", "</em>")
 	case *ast.Strong:
-		if is2119(node.Literal) {
-			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
-		} else {
-			r.outOneOf(w, entering, "<strong>", "</strong>")
-		}
+		r.strong(w, node, entering)
 	case *ast.Del:
 		r.outOneOf(w, entering, "<del>", "</del>")
+	case *ast.Citation:
+		// TODO
 	case *ast.DocumentMatter:
 		if entering {
 			r.matter(w, node)
@@ -161,6 +178,9 @@ func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
 
 // RenderFooter writes HTML document footer.
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
+	r.sectionClose(w)
+	r.section = nil
+
 	switch r.documentMatter {
 	case ast.DocumentMatterFront:
 		r.outs(w, "</front>\n")

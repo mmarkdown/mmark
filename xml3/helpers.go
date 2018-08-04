@@ -46,6 +46,22 @@ func (r *Renderer) outTagContent(w io.Writer, name string, attrs []string, conte
 	io.WriteString(w, "</"+name[1:]+">\n")
 }
 
+func (r *Renderer) sectionClose(w io.Writer) {
+	if r.section == nil {
+		return
+	}
+
+	tag := "</section>"
+	if r.section.Special != nil {
+		tag = "</note>"
+		if isAbstract(r.section.Special) {
+			tag = "</abstract>"
+		}
+	}
+	r.outs(w, tag)
+	r.cr(w)
+}
+
 func attributes(keys, values []string) (s []string) {
 	for i, k := range keys {
 		if values[i] == "" { // skip entire k=v is value is empty
