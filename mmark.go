@@ -7,9 +7,8 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/mmark/mhtml"
+	"github.com/miekg/markdown/xml3"
 	"github.com/mmarkdown/mmark/mparser"
 )
 
@@ -45,13 +44,15 @@ func main() {
 		fmt.Print("\n")
 
 		p = parser.NewWithExtensions(ext)
-		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
-		opts := html.RendererOptions{
-			Flags:          html.CommonFlags,
-			RenderNodeHook: mhtml.RenderHook,
+		p.Opts = parser.ParserOptions{
+			ParserHook: mparser.TitleHook,
 		}
-		renderer := html.NewRenderer(opts)
-		html := markdown.ToHTML(d, p, renderer)
-		fmt.Println(string(html))
+
+		opts := xml3.RendererOptions{
+			Flags: xml3.CommonFlags,
+		}
+		renderer := xml3.NewRenderer(opts)
+		xml := markdown.ToHTML(d, p, renderer)
+		fmt.Println(string(xml))
 	}
 }

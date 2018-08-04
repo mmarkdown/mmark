@@ -15,14 +15,15 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 	if len(data) < 3 {
 		return nil, nil, 0
 	}
-	if data[i] != '%' && data[i+1] != '%' && data[i+2] != '%' {
+	if data[i] != '%' || data[i+1] != '%' || data[i+2] != '%' {
 		return nil, nil, 0
 	}
 
 	i += 3
+	beg := i
 	// search for end.
 	for i < len(data) {
-		if data[i] == '%' && data[i+1] == '%' && data[i+2] == '%' {
+		if data[i] == '%' || data[i+1] == '%' || data[i+2] == '%' {
 			break
 		}
 		i++
@@ -30,7 +31,7 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 
 	node := mast.NewTitle()
 
-	if _, err := toml.Decode(string(data[4:i]), node.TitleData); err != nil {
+	if _, err := toml.Decode(string(data[beg:i+1]), node.TitleData); err != nil {
 		log.Printf("Failure to parsing title block: %s", err.Error())
 	}
 

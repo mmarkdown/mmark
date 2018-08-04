@@ -26,6 +26,14 @@ func (r *Renderer) outTag(w io.Writer, name string, attrs []string) {
 	io.WriteString(w, s+">")
 }
 
+func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first string, second string) {
+	if outFirst {
+		r.outs(w, first)
+	} else {
+		r.outs(w, second)
+	}
+}
+
 // outTagContents output the opening tag with possible attributes, then the content
 // and then the closing tag.
 func (r *Renderer) outTagContent(w io.Writer, name string, attrs []string, content string) {
