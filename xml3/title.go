@@ -26,7 +26,6 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		[]string{intSliceToString(d.Updates), intSliceToString(d.Obsoletes)},
 	)...)
 	r.outTag(w, "<rfc", attrs)
-	r.cr(w)
 	// toc = yes
 	// symref = yes
 	// compact = yes
@@ -38,12 +37,10 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.outTag(w, "<title", attrs)
 	r.outs(w, d.Title)
 	r.outs(w, "</title>")
-	r.cr(w)
 
 	r.titleDate(w, d.Date)
 
 	for _, author := range d.Author {
-		r.cr(w)
 		r.titleAuthor(w, author)
 	}
 
@@ -54,7 +51,6 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		r.outTagContent(w, "<keyword", nil, k)
 	}
 
-	r.cr(w)
 	return
 }
 
@@ -67,14 +63,11 @@ func (r *Renderer) titleAuthor(w io.Writer, a mast.Author) {
 	)
 
 	r.outTag(w, "<author", attrs)
-	r.cr(w)
 
 	r.outTagContent(w, "<organization", attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}), a.Organization)
 
 	r.outs(w, "<address>")
-	r.cr(w)
 	r.outs(w, "<postal>")
-	r.cr(w)
 
 	r.outTagContent(w, "<street", nil, a.Address.Postal.Street)
 	for _, street := range a.Address.Postal.Streets {
@@ -108,7 +101,6 @@ func (r *Renderer) titleAuthor(w io.Writer, a mast.Author) {
 	r.outTagContent(w, "<uri", nil, a.Address.URI)
 
 	r.outs(w, "</address>")
-	r.cr(w)
 	r.outs(w, "</author>")
 	r.cr(w)
 }
