@@ -35,5 +35,5 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 		log.Printf("Failure to parsing title block: %s", err.Error())
 	}
 
-	return node, nil, i + 3
+	return node, nil, i + 5
 }

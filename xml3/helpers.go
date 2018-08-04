@@ -55,3 +55,7 @@ func attributes(keys, values []string) (s []string) {
 	}
 	return s
 }
+
+func isAbstract(word []byte) bool {
+	return strings.EqualFold(string(word), "abstract")
+}

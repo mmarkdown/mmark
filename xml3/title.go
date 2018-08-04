@@ -50,6 +50,9 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	}
 
 	for _, k := range d.Keyword {
+		if k == "" {
+			continue
+		}
 		r.outTagContent(w, "<keyword", nil, k)
 	}
 

@@ -34,7 +34,8 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
-	documentMatter ast.DocumentMatters // keep track of front/main/back matter.
+	documentMatter ast.DocumentMatters // keep track of front/main/back matter
+	section        ast.Node            // current open section type
 }
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -43,12 +44,23 @@ func NewRenderer(opts RendererOptions) *Renderer {
 }
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
-	_, parentIsLink := text.Parent.(*ast.Link)
-	if parentIsLink {
-		html.EscLink(w, text.Literal)
-	} else {
-		html.EscapeHTML(w, text.Literal)
+	if _, parentIsLink := text.Parent.(*ast.Link); parentIsLink {
+		//html.EscLink(w, text.Literal)
+		r.out(w, text.Literal)
+		return
 	}
+	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
+		if isAbstract(heading.Special) {
+			// No <name> when abstract, should output anything
+			return
+		}
+		r.outs(w, "<name>")
+		html.EscapeHTML(w, text.Literal)
+		r.outs(w, "</name>")
+		return
+	}
+
+	html.EscapeHTML(w, text.Literal)
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
@@ -56,16 +68,50 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.cr(w)
 }
 
-func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
+func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 	switch node.Matter {
 	case ast.DocumentMatterFront:
-		r.outOneOf(w, entering, "<front>", "</front>")
+		r.outs(w, "<front>")
+		r.cr(w)
 	case ast.DocumentMatterMain:
-		r.outOneOf(w, entering, "<main>", "</main>")
+		r.cr(w)
+		r.outs(w, "</front>")
+		r.cr(w)
+		r.outs(w, "<main>")
 	case ast.DocumentMatterBack:
-		r.outOneOf(w, entering, "<back>", "</back>")
+		r.cr(w)
+		r.outs(w, "</main>")
+		r.cr(w)
+		r.outs(w, "<back>")
+		r.cr(w)
 	}
 	r.documentMatter = node.Matter
+}
+
+func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
+	var attrs []string
+	tag := "<section"
+	if heading.Special != nil {
+		tag = "<note"
+		if strings.EqualFold(string(heading.Special), "abstract") {
+			tag = "<abstract"
+		}
+	}
+
+	r.cr(w)
+	r.outTag(w, tag, attrs)
+}
+
+func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
+	r.cr(w)
+}
+
+func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
+	if entering {
+		r.headingEnter(w, node)
+	} else {
+		r.headingExit(w, node)
+	}
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
@@ -83,11 +129,22 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Emph:
 		r.outOneOf(w, entering, "<em>", "</em>")
 	case *ast.Strong:
-		r.outOneOf(w, entering, "<strong>", "</strong>")
+		if is2119(node.Literal) {
+			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
+		} else {
+			r.outOneOf(w, entering, "<strong>", "</strong>")
+		}
 	case *ast.Del:
 		r.outOneOf(w, entering, "<del>", "</del>")
 	case *ast.DocumentMatter:
-		r.matter(w, node, entering)
+		if entering {
+			r.matter(w, node)
+		}
+	case *ast.Heading:
+		r.heading(w, node, entering)
+	case *ast.Paragraph:
+
+	case *ast.HTMLBlock:
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
@@ -104,11 +161,15 @@ func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
 
 // RenderFooter writes HTML document footer.
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
-	if r.documentMatter != ast.DocumentMatterNone {
-		r.outs(w, "</section>\n")
+	switch r.documentMatter {
+	case ast.DocumentMatterFront:
+		r.outs(w, "</front>\n")
+	case ast.DocumentMatterMain:
+		r.outs(w, "</main>\n")
+	case ast.DocumentMatterBack:
+		r.outs(w, "</back>\n")
 	}
-
-	io.WriteString(w, "\n</body>\n</html>\n")
+	io.WriteString(w, "\n</rfc>\n")
 }
 
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
