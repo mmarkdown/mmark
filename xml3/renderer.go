@@ -133,6 +133,17 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	r.headingEnter(w, node)
 }
 
+func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
+	if !entering {
+		return
+	}
+	for _, c := range node.Destination {
+		attr := []string{fmt.Sprintf(`target="%s"`, c)}
+		r.outTag(w, "<xref", attr)
+		r.outs(w, "</xref>")
+	}
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -152,7 +163,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Del:
 		r.outOneOf(w, entering, "<del>", "</del>")
 	case *ast.Citation:
-		// TODO
+		r.citation(w, node, entering)
 	case *ast.DocumentMatter:
 		if entering {
 			r.matter(w, node)
