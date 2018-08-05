@@ -41,12 +41,7 @@ func main() {
 			parser.OrderedListStart | parser.Attributes | parser.Mmark
 
 		p := parser.NewWithExtensions(ext)
-		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
-
-		p = parser.NewWithExtensions(ext)
-		p.Opts = parser.ParserOptions{
-			ParserHook: mparser.TitleHook,
-		}
+		p.Opts = parser.ParserOptions{ParserHook: mparser.Hook}
 
 		opts := xml3.RendererOptions{
 			Flags: xml3.CommonFlags,

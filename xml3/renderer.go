@@ -205,6 +205,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
 	case *ast.HTMLBlock:
+		// discard; we use these only for <references>.
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}

@@ -15,4 +15,5 @@ type Reference struct {
 
 	Anchor []byte
 	Type   ast.CitationTypes
+	RawXML []byte // If there is a <reference> in the doc
 }

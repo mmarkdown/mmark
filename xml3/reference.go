@@ -26,6 +26,12 @@ func (r *Renderer) references(w io.Writer, node *mast.References, entering bool)
 }
 
 func (r *Renderer) reference(w io.Writer, node *mast.Reference) {
+	if node.RawXML != nil {
+		r.out(w, node.RawXML)
+		r.cr(w)
+		return
+	}
+
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
