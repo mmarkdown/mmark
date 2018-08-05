@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"path"
 	"regexp"
 
 	"github.com/mmarkdown/mmark/mast"
@@ -37,8 +36,8 @@ func (r *Renderer) reference(w io.Writer, node *mast.Reference) {
 }
 
 func makeXiInclude(url, reference string) string {
-	// <xi:include href="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
-	return fmt.Sprintf("<xi:include href=\"%s\"/>", path.Join(url, reference))
+	// <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+	return fmt.Sprintf("<xi:include href=\"%s/%s\"/>", url, reference)
 }
 
 var toolsIetfOrg = "https://xml2rfc.tools.ietf.org/public/rfc/bibxml"
