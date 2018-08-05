@@ -273,6 +273,17 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 	}
 }
 
+func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
+	var attrs []string
+	//	attrs = appendLanguageAttr(attrs, codeBlock.Info) - > switch to source when a sourcecode, or something special?
+	attrs = append(attrs, blockAttrs(codeBlock)...)
+	r.cr(w)
+	r.outTag(w, "<artwork", attrs)
+	html.EscapeHTML(w, codeBlock.Literal)
+	r.outs(w, "</artwork>")
+	r.cr(w)
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -311,6 +322,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.list(w, node, entering)
 	case *ast.ListItem:
 		r.listItem(w, node, entering)
+	case *ast.CodeBlock:
+		r.codeBlock(w, node)
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
