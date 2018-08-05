@@ -19,8 +19,8 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	// rfc tag
 	attrs := attributes(
-		[]string{"ipr", "submissionType", "xml:lang", "xmlns", "consensus"},
-		[]string{d.Ipr, "IETF", "en", "http://www.w3.org/2001/XInclude", fmt.Sprintf("%t", d.Consensus)},
+		[]string{"version", "ipr", "submissionType", "xml:lang", "consensus"},
+		[]string{"3", d.Ipr, "IETF", "en", fmt.Sprintf("%t", d.Consensus)},
 	)
 	attrs = append(attrs, attributes(
 		[]string{"updates", "obsoletes"},
@@ -29,12 +29,9 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.outTag(w, "<rfc", attrs)
 	r.cr(w)
 
-	// toc = yes
-	// symref = yes
-	// compact = yes
-	// topblock = yes
-
 	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
+
+	r.titleSeriesInfo(w, d.SeriesInfo)
 
 	attrs = attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
@@ -123,6 +120,17 @@ func (r *Renderer) titleDate(w io.Writer, d time.Time) {
 	}
 	r.outTag(w, "<date", attr)
 	r.outs(w, "</date>")
+}
+
+// titleSeriesInfo outputs the seriesInfo from the TOML title block.
+func (r *Renderer) titleSeriesInfo(w io.Writer, s mast.SeriesInfo) {
+	attr := attributes(
+		[]string{"value", "stream", "status", "name"},
+		[]string{s.Value, s.Stream, s.Status, s.Name},
+	)
+
+	r.outTag(w, "<seriesInfo", attr)
+	r.outs(w, "</seriesInfo>\n")
 }
 
 func intSliceToString(is []int) string {

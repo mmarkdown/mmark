@@ -29,20 +29,26 @@ type TitleData struct {
 	Title  string
 	Abbrev string
 
-	DocName        string
+	SeriesInfo     SeriesInfo
 	Consensus      bool
-	Ipr            string
-	Category       string
-	Number         int // RFC number
+	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int
 	Updates        []int
-	SubmissionType string
+	SubmissionType string // IETF, IAB, IRTF or independent
 
 	Date      time.Time
 	Area      string
 	Workgroup string
 	Keyword   []string
 	Author    []Author
+}
+
+// SeriesInfo, see https://tools.ietf.org/html/rfc7991#section-2.47
+type SeriesInfo struct {
+	Name   string // name of the document, values are "RFC", "Internet-Draft", and "DOI"
+	Value  string // either draft name, or number
+	Status string // The status of this document, values: "standard", "informational", "experimental", "bcp", "fyi", and "full-standard"
+	Stream string // "IETF" (default),"IAB", "IRTF" or "independent"
 }
 
 // Author denotes an RFC author.
