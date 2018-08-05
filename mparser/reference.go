@@ -47,14 +47,14 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 				p.Inline(informative, []byte("Normative References"))
 			}
 			ast.AppendChild(informative, r)
+		case ast.CitationTypeSuppressed:
+			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
 				normative = &mast.References{}
 				p.Inline(normative, []byte("Normative References"))
 			}
 			ast.AppendChild(normative, r)
-		case ast.CitationTypeSuppressed:
-			// Don't add it.
 		}
 	}
 	return normative, informative

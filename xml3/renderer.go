@@ -146,7 +146,11 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 	if !entering {
 		return
 	}
-	for _, c := range node.Destination {
+	for i, c := range node.Destination {
+		if node.Type[i] == ast.CitationTypeSuppressed {
+			continue
+		}
+
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
 		r.outTag(w, "<xref", attr)
 		r.outs(w, "</xref>")
