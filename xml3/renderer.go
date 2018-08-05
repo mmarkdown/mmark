@@ -51,9 +51,15 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	}
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
 		if isAbstract(heading.Special) {
-			// No <name> when abstract, should output anything
+			// No <name> when abstract, should not output anything
 			return
 		}
+		r.outs(w, "<name>")
+		html.EscapeHTML(w, text.Literal)
+		r.outs(w, "</name>")
+		return
+	}
+	if _, parentIsReferences := text.Parent.(*mast.References); parentIsReferences {
 		r.outs(w, "<name>")
 		html.EscapeHTML(w, text.Literal)
 		r.outs(w, "</name>")

@@ -53,8 +53,13 @@ func main() {
 		}
 
 		doc := markdown.Parse(d, p)
-		refs := mparser.CitationToAST(doc)
-		ast.AppendChild(doc, refs)
+		norm, inform := mparser.CitationToReferences(p, doc)
+		if norm != nil {
+			ast.AppendChild(doc, norm)
+		}
+		if inform != nil {
+			ast.AppendChild(doc, inform)
+		}
 
 		if *flagAst {
 			ast.Print(os.Stdout, doc)

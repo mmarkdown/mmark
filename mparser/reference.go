@@ -4,10 +4,11 @@ import (
 	"bytes"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mast"
 )
 
-func CitationToAST(doc ast.Node) ast.Node {
+func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informative ast.Node) {
 	seen := map[string]*mast.Reference{}
 
 	// Gather all citations.
@@ -27,9 +28,25 @@ func CitationToAST(doc ast.Node) ast.Node {
 		return ast.GoToNext
 	})
 
-	refs := &mast.References{}
 	for _, r := range seen {
-		ast.AppendChild(refs, r)
+		switch r.Type {
+		case ast.CitationTypeNone:
+			fallthrough
+		case ast.CitationTypeInformative:
+			if informative == nil {
+				informative = &mast.References{}
+				p.Inline(informative, []byte("Normative References"))
+			}
+			ast.AppendChild(informative, r)
+		case ast.CitationTypeNormative:
+			if normative == nil {
+				normative = &mast.References{}
+				p.Inline(normative, []byte("Normative References"))
+			}
+			ast.AppendChild(normative, r)
+		case ast.CitationTypeSuppressed:
+			// Don't add it.
+		}
 	}
-	return refs
+	return normative, informative
 }

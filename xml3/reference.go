@@ -33,11 +33,12 @@ func (r *Renderer) reference(w io.Writer, node *mast.Reference) {
 		tag = makeXiInclude(toolsIetfOrg, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 	}
 	r.outs(w, tag)
+	r.cr(w)
 }
 
 func makeXiInclude(url, reference string) string {
 	// <xi:include href="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
-	return fmt.Sprintf("<xi:include href=\"%s\"/>\n", path.Join(url, reference))
+	return fmt.Sprintf("<xi:include href=\"%s\"/>", path.Join(url, reference))
 }
 
 var toolsIetfOrg = "https://xml2rfc.tools.ietf.org/public/rfc/bibxml"
