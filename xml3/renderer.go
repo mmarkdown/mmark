@@ -172,6 +172,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		// do nothing
 	case *mast.Title:
 		r.titleBlock(w, node)
+	case *mast.References:
+		r.references(w, node, entering)
+	case *mast.Reference:
+		r.reference(w, node)
 	case *ast.Text:
 		r.text(w, node)
 	case *ast.Softbreak:

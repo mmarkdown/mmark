@@ -43,13 +43,6 @@ func main() {
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 
-		if *flagAst {
-			doc := markdown.Parse(d, p)
-			ast.Print(os.Stdout, doc)
-			fmt.Print("\n")
-			return
-		}
-
 		p = parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{
 			ParserHook: mparser.TitleHook,
@@ -58,8 +51,19 @@ func main() {
 		opts := xml3.RendererOptions{
 			Flags: xml3.CommonFlags,
 		}
+
+		doc := markdown.Parse(d, p)
+		refs := mparser.CitationToAST(doc)
+		ast.AppendChild(doc, refs)
+
+		if *flagAst {
+			ast.Print(os.Stdout, doc)
+			fmt.Print("\n")
+			return
+		}
+
 		renderer := xml3.NewRenderer(opts)
-		xml := markdown.ToHTML(d, p, renderer)
+		xml := markdown.Render(doc, renderer)
 		fmt.Println(string(xml))
 	}
 }

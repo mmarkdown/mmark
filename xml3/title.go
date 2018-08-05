@@ -21,8 +21,8 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	// rfc tag
 	attrs := attributes(
-		[]string{"version", "ipr", "submissionType", "xml:lang", "consensus"},
-		[]string{"3", d.Ipr, "IETF", "en", fmt.Sprintf("%t", d.Consensus)},
+		[]string{"version", "ipr", "submissionType", "xml:lang", "consensus", "xmlns:xi"},
+		[]string{"3", d.Ipr, "IETF", "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
 	)
 	attrs = append(attrs, attributes(
 		[]string{"updates", "obsoletes"},
