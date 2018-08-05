@@ -17,8 +17,8 @@ type Flags int
 
 // HTML renderer configuration options.
 const (
-	FlagsNone Flags = iota
-	TOC             // Generate a table of contents
+	FlagsNone   Flags = iota
+	XMLFragment       // Don't generate a complete XML document
 
 	CommonFlags Flags = FlagsNone
 )
@@ -181,10 +181,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 
 // RenderHeader writes HTML document preamble and TOC if requested.
 func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
-	r.writeDocumentHeader(w)
-	if r.opts.Flags&TOC != 0 {
-		r.writeTOC(w, ast)
+	if r.opts.Flags&XMLFragment != 0 {
+		return
 	}
+
+	r.writeDocumentHeader(w)
 }
 
 // RenderFooter writes HTML document footer.
@@ -200,6 +201,11 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 	case ast.DocumentMatterBack:
 		r.outs(w, "</back>\n")
 	}
+
+	if r.opts.Flags&XMLFragment != 0 {
+		return
+	}
+
 	io.WriteString(w, "\n</rfc>\n")
 }
 
