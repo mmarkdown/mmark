@@ -1,7 +1,6 @@
 package xml3
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"sort"
@@ -172,6 +171,108 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 }
 
+func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
+	// TODO: attrs don't seem to be set. Check what is the problem and fix upstream as well.
+	var attrs []string
+
+	if nodeData.IsFootnotesList {
+		r.outs(w, "\n<div class=\"footnotes\">\n\n")
+		r.cr(w)
+	}
+	r.cr(w)
+
+	openTag := "<ul"
+	if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
+		if nodeData.Start > 0 {
+			attrs = append(attrs, fmt.Sprintf(`start="%d"`, nodeData.Start))
+		}
+		openTag = "<ol"
+	}
+	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
+		openTag = "<dl"
+	}
+	attrs = append(attrs, blockAttrs(nodeData)...)
+	r.outTag(w, openTag, attrs)
+	r.cr(w)
+}
+
+func (r *Renderer) listExit(w io.Writer, list *ast.List) {
+	closeTag := "</ul>"
+	if list.ListFlags&ast.ListTypeOrdered != 0 {
+		closeTag = "</ol>"
+	}
+	if list.ListFlags&ast.ListTypeDefinition != 0 {
+		closeTag = "</dl>"
+	}
+	r.outs(w, closeTag)
+
+	//cr(w)
+	//if node.parent.Type != Item {
+	//	cr(w)
+	//}
+	parent := list.Parent
+	switch parent.(type) {
+	case *ast.ListItem:
+		if ast.GetNextNode(list) != nil {
+			r.cr(w)
+		}
+	case *ast.Document, *ast.BlockQuote, *ast.Aside:
+		r.cr(w)
+	}
+
+	if list.IsFootnotesList {
+		r.outs(w, "\n</div>\n")
+	}
+}
+
+func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
+	if entering {
+		r.listEnter(w, list)
+	} else {
+		r.listExit(w, list)
+	}
+}
+
+func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
+	if listItem.RefLink != nil {
+		/*
+			TODO
+				slug := slugify(listItem.RefLink)
+				r.outs(w, footnoteItem(r.opts.FootnoteAnchorPrefix, slug))
+		*/
+		return
+	}
+
+	openTag := "<li>"
+	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
+		openTag = "<dd>"
+	}
+	if listItem.ListFlags&ast.ListTypeTerm != 0 {
+		openTag = "<dt>"
+	}
+	r.outs(w, openTag)
+}
+
+func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
+	closeTag := "</li>"
+	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
+		closeTag = "</dd>"
+	}
+	if listItem.ListFlags&ast.ListTypeTerm != 0 {
+		closeTag = "</dt>"
+	}
+	r.outs(w, closeTag)
+	r.cr(w)
+}
+
+func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
+	if entering {
+		r.listItemEnter(w, listItem)
+	} else {
+		r.listItemExit(w, listItem)
+	}
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -206,6 +307,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.paragraph(w, node, entering)
 	case *ast.HTMLBlock:
 		// discard; we use these only for <references>.
+	case *ast.List:
+		r.list(w, node, entering)
+	case *ast.ListItem:
+		r.listItem(w, node, entering)
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
@@ -253,13 +358,6 @@ func isList(node ast.Node) bool {
 	return ok
 }
 
-func isListTight(node ast.Node) bool {
-	if list, ok := node.(*ast.List); ok {
-		return list.Tight
-	}
-	return false
-}
-
 func isListItem(node ast.Node) bool {
 	_, ok := node.(*ast.ListItem)
 	return ok
@@ -268,103 +366,6 @@ func isListItem(node ast.Node) bool {
 func isListItemTerm(node ast.Node) bool {
 	data, ok := node.(*ast.ListItem)
 	return ok && data.ListFlags&ast.ListTypeTerm != 0
-}
-
-// TODO: move to internal package
-func skipSpace(data []byte, i int) int {
-	n := len(data)
-	for i < n && isSpace(data[i]) {
-		i++
-	}
-	return i
-}
-
-// TODO: move to internal package
-var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://")}
-var validPaths = [][]byte{[]byte("/"), []byte("./"), []byte("../")}
-
-func isSafeLink(link []byte) bool {
-	for _, path := range validPaths {
-		if len(link) >= len(path) && bytes.Equal(link[:len(path)], path) {
-			if len(link) == len(path) {
-				return true
-			} else if isAlnum(link[len(path)]) {
-				return true
-			}
-		}
-	}
-
-	for _, prefix := range validUris {
-		// TODO: handle unicode here
-		// case-insensitive prefix test
-		if len(link) > len(prefix) && bytes.Equal(bytes.ToLower(link[:len(prefix)]), prefix) && isAlnum(link[len(prefix)]) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// TODO: move to internal package
-// Create a url-safe slug for fragments
-func slugify(in []byte) []byte {
-	if len(in) == 0 {
-		return in
-	}
-	out := make([]byte, 0, len(in))
-	sym := false
-
-	for _, ch := range in {
-		if isAlnum(ch) {
-			sym = false
-			out = append(out, ch)
-		} else if sym {
-			continue
-		} else {
-			out = append(out, '-')
-			sym = true
-		}
-	}
-	var a, b int
-	var ch byte
-	for a, ch = range out {
-		if ch != '-' {
-			break
-		}
-	}
-	for b = len(out) - 1; b > 0; b-- {
-		if out[b] != '-' {
-			break
-		}
-	}
-	return out[a : b+1]
-}
-
-// TODO: move to internal package
-// isAlnum returns true if c is a digit or letter
-// TODO: check when this is looking for ASCII alnum and when it should use unicode
-func isAlnum(c byte) bool {
-	return (c >= '0' && c <= '9') || isLetter(c)
-}
-
-// isSpace returns true if c is a white-space charactr
-func isSpace(c byte) bool {
-	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v'
-}
-
-// isLetter returns true if c is ascii letter
-func isLetter(c byte) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-}
-
-// isPunctuation returns true if c is a punctuation symbol.
-func isPunctuation(c byte) bool {
-	for _, r := range []byte("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") {
-		if c == r {
-			return true
-		}
-	}
-	return false
 }
 
 func blockAttrs(node ast.Node) []string {
