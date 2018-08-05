@@ -148,6 +148,24 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 	}
 }
 
+func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
+	tag := tagWithAttributes("<t", blockAttrs(para))
+	r.outs(w, tag)
+}
+
+func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
+	r.outs(w, "</t>")
+	r.cr(w)
+}
+
+func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
+	if entering {
+		r.paragraphEnter(w, para)
+	} else {
+		r.paragraphExit(w, para)
+	}
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -175,7 +193,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Heading:
 		r.heading(w, node, entering)
 	case *ast.Paragraph:
-
+		r.paragraph(w, node, entering)
 	case *ast.HTMLBlock:
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
@@ -217,58 +235,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 }
 
-func (r *Renderer) writeTOC(w io.Writer, doc ast.Node) {
-	buf := bytes.Buffer{}
-
-	inHeading := false
-	tocLevel := 0
-	headingCount := 0
-
-	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
-		if nodeData, ok := node.(*ast.Heading); ok && !nodeData.IsTitleblock {
-			inHeading = entering
-			if !entering {
-				buf.WriteString("</a>")
-				return ast.GoToNext
-			}
-			nodeData.HeadingID = fmt.Sprintf("toc_%d", headingCount)
-			if nodeData.Level == tocLevel {
-				buf.WriteString("</li>\n\n<li>")
-			} else if nodeData.Level < tocLevel {
-				for nodeData.Level < tocLevel {
-					tocLevel--
-					buf.WriteString("</li>\n</ul>")
-				}
-				buf.WriteString("</li>\n\n<li>")
-			} else {
-				for nodeData.Level > tocLevel {
-					tocLevel++
-					buf.WriteString("\n<ul>\n<li>")
-				}
-			}
-
-			fmt.Fprintf(&buf, `<a href="#toc_%d">`, headingCount)
-			headingCount++
-			return ast.GoToNext
-		}
-
-		if inHeading {
-			return r.RenderNode(&buf, node, entering)
-		}
-
-		return ast.GoToNext
-	})
-
-	for ; tocLevel > 0; tocLevel-- {
-		buf.WriteString("</li>\n</ul>")
-	}
-
-	if buf.Len() > 0 {
-		io.WriteString(w, "<nav>\n")
-		w.Write(buf.Bytes())
-		io.WriteString(w, "\n\n</nav>\n")
-	}
-}
+// Check is we need these.
 
 func isList(node ast.Node) bool {
 	_, ok := node.(*ast.List)

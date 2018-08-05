@@ -12,6 +12,8 @@ import (
 )
 
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
+	// Order is fixed in RFC 7991.
+
 	d := t.TitleData
 	if d == nil {
 		return
@@ -31,18 +33,22 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
 
-	r.titleSeriesInfo(w, d.SeriesInfo)
-
 	attrs = attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
 	r.outs(w, d.Title)
 	r.outs(w, "</title>")
 
-	r.titleDate(w, d.Date)
+	r.titleSeriesInfo(w, d.SeriesInfo)
 
 	for _, author := range d.Author {
 		r.titleAuthor(w, author)
 	}
+
+	r.titleDate(w, d.Date)
+
+	r.outTagContent(w, "<area", nil, d.Area)
+
+	r.outTagContent(w, "<workgroup", nil, d.Workgroup)
 
 	for _, k := range d.Keyword {
 		if k == "" {
@@ -50,6 +56,9 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		}
 		r.outTagContent(w, "<keyword", nil, k)
 	}
+	// abstract - handled by paragraph
+	// note - handled by paragraph
+	// boilerplate - not supported.
 
 	return
 }
@@ -119,7 +128,7 @@ func (r *Renderer) titleDate(w io.Writer, d time.Time) {
 		attr = append(attr, fmt.Sprintf(`day="%d"`, x))
 	}
 	r.outTag(w, "<date", attr)
-	r.outs(w, "</date>")
+	r.outs(w, "</date>\n")
 }
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
