@@ -87,16 +87,20 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 
 	switch node.Matter {
 	case ast.DocumentMatterFront:
+		r.cr(w)
 		r.outs(w, "<front>")
 		r.cr(w)
 	case ast.DocumentMatterMain:
 		r.cr(w)
 		r.outs(w, "</front>")
 		r.cr(w)
+		r.cr(w)
 		r.outs(w, "<main>")
+		r.cr(w)
 	case ast.DocumentMatterBack:
 		r.cr(w)
 		r.outs(w, "</main>")
+		r.cr(w)
 		r.cr(w)
 		r.outs(w, "<back>")
 		r.cr(w)
@@ -195,11 +199,11 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 	switch r.documentMatter {
 	case ast.DocumentMatterFront:
-		r.outs(w, "</front>\n")
+		r.outs(w, "\n</front>\n")
 	case ast.DocumentMatterMain:
-		r.outs(w, "</main>\n")
+		r.outs(w, "\n</main>\n")
 	case ast.DocumentMatterBack:
-		r.outs(w, "</back>\n")
+		r.outs(w, "\n</back>\n")
 	}
 
 	if r.opts.Flags&XMLFragment != 0 {
@@ -210,6 +214,8 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 }
 
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
+	r.outs(w, `<?xml version='1.0' encoding='US-ASCII'?>
+<!DOCTYPE rfc SYSTEM 'rfc2629.dtd'>`)
 }
 
 func (r *Renderer) writeTOC(w io.Writer, doc ast.Node) {

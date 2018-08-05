@@ -1,9 +1,12 @@
 package xml3
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/gomarkdown/markdown/html"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte) {
@@ -42,7 +45,7 @@ func (r *Renderer) outTagContent(w io.Writer, name string, attrs []string, conte
 		s += " " + strings.Join(attrs, " ")
 	}
 	io.WriteString(w, s+">")
-	io.WriteString(w, content)
+	html.EscapeHTML(w, []byte(content))
 	io.WriteString(w, "</"+name[1:]+">\n")
 }
 
@@ -67,11 +70,18 @@ func attributes(keys, values []string) (s []string) {
 		if values[i] == "" { // skip entire k=v is value is empty
 			continue
 		}
-		s = append(s, fmt.Sprintf(`%s="%s"`, k, values[i]))
+		v := escapeHTMLString(values[i])
+		s = append(s, fmt.Sprintf(`%s="%s"`, k, v))
 	}
 	return s
 }
 
 func isAbstract(word []byte) bool {
 	return strings.EqualFold(string(word), "abstract")
+}
+
+func escapeHTMLString(s string) string {
+	buf := &bytes.Buffer{}
+	html.EscapeHTML(buf, []byte(s))
+	return buf.String()
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
 )
 
@@ -26,12 +27,14 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		[]string{intSliceToString(d.Updates), intSliceToString(d.Obsoletes)},
 	)...)
 	r.outTag(w, "<rfc", attrs)
+	r.cr(w)
+
 	// toc = yes
 	// symref = yes
 	// compact = yes
 	// topblock = yes
 
-	// front tag - todo
+	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
 
 	attrs = attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
@@ -116,9 +119,10 @@ func (r *Renderer) titleDate(w io.Writer, d time.Time) {
 		attr = append(attr, fmt.Sprintf(`month="%d"`, x))
 	}
 	if x := d.Day(); x > 0 {
-		attr = append(attr, fmt.Sprintf(`month="%d"`, x))
+		attr = append(attr, fmt.Sprintf(`day="%d"`, x))
 	}
 	r.outTag(w, "<date", attr)
+	r.outs(w, "</date>")
 }
 
 func intSliceToString(is []int) string {
