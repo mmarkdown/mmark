@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,18 +15,22 @@ import (
 
 // Usage: mmark <markdown-file>
 
-func usageAndExit() {
-	fmt.Printf("Usage: mmark <markdown-file>\n")
-	os.Exit(1)
-}
+var flagAst = flag.Bool("ast", false, "print abstract syntax tree and exit.")
 
 func main() {
-	nFiles := len(os.Args) - 1
-	if nFiles < 1 {
-		usageAndExit()
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS] %s\n", os.Args[0], "FILE...")
+		flag.PrintDefaults()
 	}
-	for i := 0; i < nFiles; i++ {
-		fileName := os.Args[i+1]
+
+	flag.Parse()
+
+	if len(flag.Args()) < 1 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	for _, fileName := range flag.Args() {
 		d, err := ioutil.ReadFile(fileName)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
@@ -38,10 +43,12 @@ func main() {
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.TitleHook}
 
-		doc := markdown.Parse(d, p)
-		fmt.Printf("Ast of file '%s':\n", fileName)
-		ast.Print(os.Stdout, doc)
-		fmt.Print("\n")
+		if *flagAst {
+			doc := markdown.Parse(d, p)
+			ast.Print(os.Stdout, doc)
+			fmt.Print("\n")
+			return
+		}
 
 		p = parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{
