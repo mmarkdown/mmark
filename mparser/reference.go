@@ -69,13 +69,11 @@ func anchorFromReference(data []byte) []byte {
 
 	anchor := bytes.Index(data, []byte("anchor="))
 	if anchor < 0 {
-		println("NO anchor")
 		return nil
 	}
 
 	beg := anchor + 7
 	if beg >= len(data) {
-		println("too big NO anchor")
 		return nil
 	}
 
@@ -86,7 +84,6 @@ func anchorFromReference(data []byte) []byte {
 	for i < len(data) && data[i] != quote {
 		i++
 	}
-	println(i, len(data))
 	// no end-of-reference marker
 	if i >= len(data) {
 		return nil
