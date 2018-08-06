@@ -85,3 +85,15 @@ func escapeHTMLString(s string) string {
 	html.EscapeHTML(buf, []byte(s))
 	return buf.String()
 }
+
+func appendLanguageAttr(attrs []string, info []byte) []string {
+	if len(info) == 0 {
+		return attrs
+	}
+	endOfLang := bytes.IndexAny(info, "\t ")
+	if endOfLang < 0 {
+		endOfLang = len(info)
+	}
+	s := `type="` + string(info[:endOfLang]) + `"`
+	return append(attrs, s)
+}

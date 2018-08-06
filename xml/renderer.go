@@ -279,12 +279,18 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
-	//	attrs = appendLanguageAttr(attrs, codeBlock.Info) - > switch to source when a sourcecode, or something special?
+	attrs = appendLanguageAttr(attrs, codeBlock.Info)
 	attrs = append(attrs, blockAttrs(codeBlock)...)
+
+	name := "artwork"
+	if codeBlock.Info != nil {
+		name = "sourcecode"
+	}
+
 	r.cr(w)
-	r.outTag(w, "<artwork", attrs)
+	r.outTag(w, "<"+name, attrs)
 	html.EscapeHTML(w, codeBlock.Literal)
-	r.outs(w, "</artwork>")
+	r.outs(w, "</"+name+">")
 	r.cr(w)
 }
 

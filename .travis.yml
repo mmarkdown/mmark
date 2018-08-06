@@ -1,0 +1,13 @@
+language: go
+
+go:
+    - tip
+
+before_install:
+    - go get -d -t -v ./...
+
+install:
+    - go build -v ./...
+
+script:
+    - go test -race -v ./...
