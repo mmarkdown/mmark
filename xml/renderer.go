@@ -3,7 +3,6 @@ package xml
 import (
 	"fmt"
 	"io"
-	"sort"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -158,7 +157,7 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 }
 
 func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
-	tag := tagWithAttributes("<t", blockAttrs(para))
+	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
@@ -195,7 +194,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
-	attrs = append(attrs, blockAttrs(nodeData)...)
+	attrs = append(attrs, html.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -280,7 +279,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, blockAttrs(codeBlock)...)
+	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
 
 	name := "artwork"
 	if codeBlock.Info != nil {
@@ -307,10 +306,10 @@ func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, enterin
 
 func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	if entering {
-		r.outs(w, "<postamble>")
+		r.outs(w, "<name>")
 		return
 	}
-	r.outs(w, "</postamble>")
+	r.outs(w, "</name>")
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
@@ -412,40 +411,6 @@ func isListItem(node ast.Node) bool {
 func isListItemTerm(node ast.Node) bool {
 	data, ok := node.(*ast.ListItem)
 	return ok && data.ListFlags&ast.ListTypeTerm != 0
-}
-
-func blockAttrs(node ast.Node) []string {
-	var attr *ast.Attribute
-	var s []string
-	if c := node.AsContainer(); c != nil && c.Attribute != nil {
-		attr = c.Attribute
-	}
-	if l := node.AsLeaf(); l != nil && l.Attribute != nil {
-		attr = l.Attribute
-	}
-	if attr == nil {
-		return nil
-	}
-
-	if attr.ID != nil {
-		s = append(s, fmt.Sprintf(`id="%s"`, attr.ID))
-	}
-
-	for _, c := range attr.Classes {
-		s = append(s, fmt.Sprintf(`class="%s"`, c))
-	}
-
-	// sort the attributes so it remain stable between runs
-	var keys = []string{}
-	for k, _ := range attr.Attrs {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	for _, k := range keys {
-		s = append(s, fmt.Sprintf(`%s="%s"`, k, attr.Attrs[k]))
-	}
-
-	return s
 }
 
 func tagWithAttributes(name string, attrs []string) string {
