@@ -1,4 +1,4 @@
-package xml3
+package xml
 
 import (
 	"bytes"
@@ -39,12 +39,13 @@ organization = "BBN STC"
 `
 
 func TestTitle(t *testing.T) {
+	// TODO: fix test
 	node := mast.NewTitle()
 
 	if _, err := toml.Decode(tomldata, node.TitleData); err != nil {
 		t.Fatalf("Failure to parsing title block: %s", err.Error())
 	}
-	r := New()
+	r := NewRenderer(RendererOptions{})
 	buf := &bytes.Buffer{}
 	r.titleBlock(buf, node)
 	println(buf.String())

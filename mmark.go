@@ -9,7 +9,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/miekg/markdown/xml3"
+	"github.com/miekg/markdown/xml"
 	"github.com/mmarkdown/mmark/mparser"
 )
 
@@ -43,8 +43,8 @@ func main() {
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{ParserHook: mparser.Hook}
 
-		opts := xml3.RendererOptions{
-			Flags: xml3.CommonFlags,
+		opts := xml.RendererOptions{
+			Flags: xml.CommonFlags,
 		}
 
 		doc := markdown.Parse(d, p)
@@ -62,8 +62,8 @@ func main() {
 			return
 		}
 
-		renderer := xml3.NewRenderer(opts)
-		xml := markdown.Render(doc, renderer)
-		fmt.Println(string(xml))
+		renderer := xml.NewRenderer(opts)
+		x := markdown.Render(doc, renderer)
+		fmt.Println(string(x))
 	}
 }

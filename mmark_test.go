@@ -9,7 +9,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mparser"
-	"github.com/mmarkdown/mmark/xml3"
+	"github.com/mmarkdown/mmark/xml"
 )
 
 func TestMmark(t *testing.T) {
@@ -41,10 +41,10 @@ func doTest(t *testing.T, basename string) {
 	p.Opts = parser.ParserOptions{
 		ParserHook: mparser.TitleHook,
 	}
-	opts := xml3.RendererOptions{
-		Flags: xml3.CommonFlags | xml3.XMLFragment,
+	opts := xml.RendererOptions{
+		Flags: xml.CommonFlags | xml.XMLFragment,
 	}
-	renderer := xml3.NewRenderer(opts)
+	renderer := xml.NewRenderer(opts)
 
 	filename := filepath.Join("testdata", basename+".md")
 	input, err := ioutil.ReadFile(filename)

@@ -1,4 +1,4 @@
-package xml3
+package xml
 
 import "bytes"
 

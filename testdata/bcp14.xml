@@ -1,1 +1,2 @@
-<strong>this is strong</strong><bcp14>MUST NOT</bcp14> <strong>MUST REALLY NOT</strong>
+<t><strong>this is strong</strong></t>
+<t><bcp14>MUST NOT</bcp14> <strong>MUST REALLY NOT</strong></t>
