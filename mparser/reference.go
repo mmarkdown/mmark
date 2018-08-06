@@ -12,7 +12,8 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 	seen := map[string]*mast.Reference{}
 	rawXML := map[string][]byte{}
 
-	// Gather all citations and reference HTML Blocks to see if we have XML we can output.
+	// Gather all citations.
+	// Gather all reference HTML Blocks to see if we have XML we can output.
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
 		switch c := node.(type) {
 		case *ast.Citation:
@@ -35,7 +36,7 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 	})
 
 	for _, r := range seen {
-		// If we have a reference and the raw XML add that here.
+		// If we have a reference anchor and the raw XML add that here.
 		if raw, ok := rawXML[string(bytes.ToLower(r.Anchor))]; ok {
 			r.RawXML = raw
 		}
@@ -68,11 +69,13 @@ func anchorFromReference(data []byte) []byte {
 
 	anchor := bytes.Index(data, []byte("anchor="))
 	if anchor < 0 {
+		println("NO anchor")
 		return nil
 	}
 
 	beg := anchor + 7
 	if beg >= len(data) {
+		println("too big NO anchor")
 		return nil
 	}
 
@@ -83,6 +86,7 @@ func anchorFromReference(data []byte) []byte {
 	for i < len(data) && data[i] != quote {
 		i++
 	}
+	println(i, len(data))
 	// no end-of-reference marker
 	if i >= len(data) {
 		return nil
@@ -104,10 +108,9 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 			data[i-1] == '>') {
 		i++
 	}
-	i++
 
 	// no end-of-reference marker
-	if i >= len(data) {
+	if i > len(data) {
 		return nil, nil, 0
 	}
 
