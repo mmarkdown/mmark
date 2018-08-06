@@ -294,6 +294,25 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	r.cr(w)
 }
 
+func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
+	if entering {
+		r.outs(w, "<figure>")
+		return
+	}
+
+	r.cr(w)
+	r.outs(w, "</figure>")
+	r.cr(w)
+}
+
+func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
+	if entering {
+		r.outs(w, "<postamble>")
+		return
+	}
+	r.outs(w, "</postamble>")
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -334,6 +353,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.listItem(w, node, entering)
 	case *ast.CodeBlock:
 		r.codeBlock(w, node)
+	case *ast.Caption:
+		r.caption(w, node, entering)
+	case *ast.CaptionFigure:
+		r.captionFigure(w, node, entering)
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
