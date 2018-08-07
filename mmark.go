@@ -41,7 +41,10 @@ func main() {
 			parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark
 
 		p := parser.NewWithExtensions(ext)
-		p.Opts = parser.ParserOptions{ParserHook: mparser.Hook}
+		p.Opts = parser.ParserOptions{
+			ParserHook:    mparser.Hook,
+			ReadIncludeFn: mparser.ReadInclude,
+		}
 
 		opts := xml.RendererOptions{
 			Flags: xml.CommonFlags,

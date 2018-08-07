@@ -32,7 +32,7 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 	node := mast.NewTitle()
 
 	if _, err := toml.Decode(string(data[beg:i+1]), node.TitleData); err != nil {
-		log.Printf("Failure to parsing title block: %s", err.Error())
+		log.Printf("Failure to parsing title block: %s", err)
 	}
 
 	return node, nil, i + 5
