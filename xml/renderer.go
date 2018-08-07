@@ -293,23 +293,31 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	r.cr(w)
 }
 
-func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
-	if entering {
-		r.outs(w, "<figure>")
+func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering bool) {
+	if !entering {
+		r.outOneOf(w, tableCell.IsHeader, "</th>", "</td>")
+		r.cr(w)
 		return
 	}
 
-	r.cr(w)
-	r.outs(w, "</figure>")
-	r.cr(w)
+	// entering
+	var attrs []string
+	openTag := "<td"
+	if tableCell.IsHeader {
+		openTag = "<th"
+	}
+	align := tableCell.Align.String()
+	if align != "" {
+		attrs = append(attrs, fmt.Sprintf(`align="%s"`, align))
+	}
+	if ast.GetPrevNode(tableCell) == nil {
+		r.cr(w)
+	}
+	r.outTag(w, openTag, attrs)
 }
 
-func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
-	if entering {
-		r.outs(w, "<name>")
-		return
-	}
-	r.outs(w, "</name>")
+func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
+	r.outOneOfCr(w, entering, "<tbody>", "</tbody>")
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
@@ -353,9 +361,20 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CodeBlock:
 		r.codeBlock(w, node)
 	case *ast.Caption:
-		r.caption(w, node, entering)
+		r.outOneOf(w, entering, "<name>", "</name>")
 	case *ast.CaptionFigure:
-		r.captionFigure(w, node, entering)
+		r.outOneOf(w, entering, "<figure>", "</figure>")
+	case *ast.Table:
+		tag := tagWithAttributes("<table", html.BlockAttrs(node))
+		r.outOneOfCr(w, entering, tag, "</table>")
+	case *ast.TableCell:
+		r.tableCell(w, node, entering)
+	case *ast.TableHead:
+		r.outOneOfCr(w, entering, "<thead>", "</thead>")
+	case *ast.TableBody:
+		r.tableBody(w, node, entering)
+	case *ast.TableRow:
+		r.outOneOfCr(w, entering, "<tr>", "</tr>")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
@@ -394,23 +413,6 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
-}
-
-// Check is we need these.
-
-func isList(node ast.Node) bool {
-	_, ok := node.(*ast.List)
-	return ok
-}
-
-func isListItem(node ast.Node) bool {
-	_, ok := node.(*ast.ListItem)
-	return ok
-}
-
-func isListItemTerm(node ast.Node) bool {
-	data, ok := node.(*ast.ListItem)
-	return ok && data.ListFlags&ast.ListTypeTerm != 0
 }
 
 func tagWithAttributes(name string, attrs []string) string {
