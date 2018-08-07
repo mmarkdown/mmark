@@ -56,11 +56,17 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 		return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
 	}
 	if left[0] == '/' { //regular expression
+		if left[len(left)-1] != '/' {
+			return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
+		}
 		if right[0] != '/' {
 			return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
 		}
+		if right[len(right)-1] != '/' {
+			return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
+		}
 
-		lo, hi, err = addrRegexp(data, string(left), string(right))
+		lo, hi, err = addrRegexp(data, string(left[1:len(left)-1]), string(right[1:len(right)-1]))
 		if err != nil {
 			return 0, 0, err
 		}
@@ -89,7 +95,7 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 		for i < len(data) {
 			if data[i] == '\n' {
 				j++
-				if j >= hi {
+				if j+1 >= hi {
 					break
 				}
 			}
@@ -107,10 +113,14 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 
 // addrRegexp searches for pattern start and pattern end
 func addrRegexp(data []byte, start, end string) (int, int, error) {
+	// match through newlines
+	start = "(?m:" + start + ")"
 	reStart, err := regexp.Compile(start)
 	if err != nil {
 		return 0, 0, err
 	}
+
+	end = "(?m:" + end + ")"
 	reEnd, err := regexp.Compile(end)
 	if err != nil {
 		return 0, 0, err
@@ -121,7 +131,7 @@ func addrRegexp(data []byte, start, end string) (int, int, error) {
 	}
 	lo := m[0]
 
-	m = reEnd.FindIndex(data)
+	m = reEnd.FindIndex(data[lo:]) // start *from* lo
 	if len(m) == 0 {
 		return 0, 0, errors.New("no match for " + end)
 	}
