@@ -143,8 +143,7 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 
 // addrRegexp searches for pattern start and pattern end
 func addrRegexp(data []byte, start, end string) (int, int, error) {
-	// match through newlines
-	start = "(?m:" + start + ")"
+	start = "(?m:" + start + ")" // match through newlines
 	reStart, err := regexp.Compile(start)
 	if err != nil {
 		return 0, 0, err
