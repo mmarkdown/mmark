@@ -40,8 +40,13 @@ func parseAddress(addr []byte, data []byte) ([]byte, error) {
 		if len(prefix) == 0 {
 			return nil, fmt.Errorf("invalid prefix in address specification: %s", addr)
 		}
-		data = addPrefix(data, prefix)
-		return data, nil
+
+		addr = append(addr[:x], addr[end+1:]...)
+		addr = bytes.Replace(addr, []byte(";"), []byte(""), 1)
+		if len(addr) == 0 {
+			data = addPrefix(data, prefix)
+			return data, nil
+		}
 	}
 
 	lo, hi, err := addrToByteRange(addr, data)
@@ -59,7 +64,12 @@ func parseAddress(addr []byte, data []byte) ([]byte, error) {
 			hi++
 		}
 	}
-	return data[lo:hi], nil
+
+	data = data[lo:hi]
+	if prefix != nil {
+		data = addPrefix(data, prefix)
+	}
+	return data, nil
 }
 
 // addrToByteRange evaluates the given address. It returns the start and end index of the data we should return.
@@ -169,10 +179,16 @@ func skipUntilChar(data []byte, i int, c byte) int {
 }
 
 func addPrefix(data, prefix []byte) []byte {
-	data = append(prefix, data...)
-	new := append([]byte("\n"), prefix...)
-	newline := bytes.Count(data, []byte("\n"))
-	data = bytes.Replace(data, []byte("\n"), new, newline-1) // skip last
-	println("data", string(data))
-	return data
+	b := &bytes.Buffer{}
+	b.Write(prefix)
+	// assured that data ends in newline
+	i := 0
+	for i < len(data)-1 {
+		b.WriteByte(data[i])
+		if data[i] == '\n' {
+			b.Write(prefix)
+		}
+		i++
+	}
+	return b.Bytes()
 }
