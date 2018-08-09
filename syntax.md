@@ -426,7 +426,12 @@ The following example applies the attributes: `type` and `id` to the blockquote:
 {title="The blockquote title" #myid}
 > A blockquote with a title
 ~~~
-
+Gets expanded into:
+~~~
+<blockquote id="myid" title="The blockquote title">
+    <t>A blockquote with a title</t>
+</blockquote>
+~~~
 
 * Tables
 * Code Blocks and Fenced Code Blocks
