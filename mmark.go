@@ -15,7 +15,10 @@ import (
 
 // Usage: mmark <markdown-file>
 
-var flagAst = flag.Bool("ast", false, "print abstract syntax tree and exit.")
+var (
+	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit.")
+	flagFragment = flag.Bool("fragment", false, "don't create a full document.")
+)
 
 func main() {
 	flag.Usage = func() {
@@ -48,6 +51,9 @@ func main() {
 
 		opts := xml.RendererOptions{
 			Flags: xml.CommonFlags,
+		}
+		if *flagFragment {
+			opts.Flags |= xml.XMLFragment
 		}
 
 		doc := markdown.Parse(d, p)
