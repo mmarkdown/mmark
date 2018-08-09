@@ -384,6 +384,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.tableBody(w, node, entering)
 	case *ast.TableRow:
 		r.outOneOfCr(w, entering, "<tr>", "</tr>")
+	case *ast.BlockQuote:
+		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
+		r.outOneOfCr(w, entering, tag, "</blockquote>")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
