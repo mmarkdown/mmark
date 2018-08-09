@@ -103,7 +103,7 @@ Source code:
     println(hello)
     ````
     ~~~
-    Will be typesets as source code with the language set go `go`.
+    Will be typesets as source code with the language set to `go`.
 
 ## Block Elements
 
@@ -415,21 +415,18 @@ Normal markdown synax.
 
 ## Block Level Attributes
 
-A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allow you to 
-set classes, anchors and other type of *extra* information for the next block level element.
+A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to 
+set classes, an anchor and other types of *extra* information for the next block level element.
 
+The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
+valid.
+
+The following example applies the attributes: `type` and `id` to the blockquote:
 ~~~
 {title="The blockquote title" #myid}
 > A blockquote with a title
 ~~~
 
-**TODO**: better text here.
-**TODO**: drop use of ial
-
-This block-level element is used to attach attributes to another block-level element. An IAL
-has to be put directly before a block-level element of which the attributes should be attached.
-The full syntax is: `{#id .class key="value"}`. Values may be omitted `{.class}` is valid
-as well. IAL are processed for the following elements:
 
 * Tables
 * Code Blocks and Fenced Code Blocks
@@ -438,15 +435,7 @@ as well. IAL are processed for the following elements:
 * Images
 * Quotes
 
-For all other elements they are ignored, but not discarded. This means they will be applied to the
-next element that *does* use the IAL!
-
-Here are some examples for IALs:
-
 ~~~
-{title="The blockquote title" #myid}
-> A blockquote with a title
-
 {.go}
     Some code here
 ~~~
