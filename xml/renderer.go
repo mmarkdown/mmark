@@ -17,6 +17,7 @@ type Flags int
 const (
 	FlagsNone   Flags = iota
 	XMLFragment       // Don't generate a complete XML document
+	SkipHTML          // Skip preformatted HTML blocks - skips comments
 
 	CommonFlags Flags = FlagsNone
 )
@@ -320,6 +321,12 @@ func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
 	r.outOneOfCr(w, entering, "<tbody>", "</tbody>")
 }
 
+func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
+	if r.opts.Flags&SkipHTML == 0 {
+		r.out(w, span.Literal)
+	}
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -352,6 +359,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.heading(w, node, entering)
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
+	case *ast.HTMLSpan:
+		r.htmlSpan(w, node) // only html comments are allowed.
 	case *ast.HTMLBlock:
 		// discard; we use these only for <references>.
 	case *ast.List:
