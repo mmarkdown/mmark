@@ -269,14 +269,6 @@ Caption: Caption for both figures in v3 (in v2 this is ignored).
 
 > TODO TODO TODO
 
-#### Styling Lists
-
-> TODO TODO TODO
-
-### Block Tables
-
-> TODO TODO TODO
-
 ### XML References
 
 Any valid XML reference fragment found anywhere in the document, can be used as a citation reference.
