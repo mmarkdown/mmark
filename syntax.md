@@ -204,7 +204,7 @@ Captioning works as well:
 
 ~~~
 <{{test.go}}[/START/,/END/]
-Figure: A sample function.
+Caption: A sample function.
 ~~~
 
 ### Document Divisions
@@ -308,13 +308,13 @@ F> +-----+
 F> | ART |
 F> +-----+
 F> ~~~~
-F> Figure: This caption is ignored in v3, but used in v2.
+F> Caption: This caption is ignored in v3, but used in v2.
 F>
 F> ~~~ c
 F> printf("%s\n", "hello");
 F> ~~~
 F>
-Figure: Caption for both figures in v3 (in v2 this is ignored).
+Caption: Caption for both figures in v3 (in v2 this is ignored).
 ~~~
 
 ### Example lists
@@ -368,7 +368,7 @@ To make `item` primary, use another `!`: `(!!item, subitem)`.
 
 Mmark uses the citation syntax from Pandoc: `[@RFC2535]`, the citation can either be informative
 (default) or normative, this can be indicated by using the `?` or `!` modifier: `[@!RFC2535]` create
-a normative reference for RFC 2535. To suppress a citation use `[-@RFC1000]`. It will still add the
+a normative reference for RFC 2535. To suppress a citation use `[@-RFC1000]`. It will still add the
 citation to the references, but does not show up in the document as a citation.
 
 The first seen modifier determines the type (suppressed, normative or informative).
@@ -381,7 +381,7 @@ For I-Ds you may want to add a draft sequence number, which can be done as such:
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index.
 
-## Cross References
+### Cross References
 
 Cross references can use the syntax `[](#id)`, but usually the need for the title within the
 brackets is not needed, so Mmark has the shorter syntax `(#id)` to cross reference in the document.
@@ -415,7 +415,7 @@ Normal markdown synax.
 
 ## Block Level Attributes
 
-A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to 
+A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
 set classes, an anchor and other types of *extra* information for the next block level element.
 
 The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
@@ -433,14 +433,24 @@ Gets expanded into:
 </blockquote>
 ~~~
 
-* Tables
-* Code Blocks and Fenced Code Blocks
-* Lists
-* Headers
-* Images
-* Quotes
+### Callouts
+
+Callouts are way to reference code from paragraphs following that code. Mmark uses the following
+syntax for specifying a callout `<<N>>` where N is integer > 0.
+
+In code blocks you can use the *same* syntax to create a callout:
 
 ~~~
-{.go}
-    Some code here
+    Code  <<1>>
+    More  <<2>>
+
+As you can see in <<1>> but not in <<2>>. There is no <<3>>.
 ~~~
+
+Using callouts in source code examples will lead to code examples that do not compile.
+To fix this the callout needs to be placed in a comment, but then your source show useless empty comments.
+To fix this Mmark will detect (and remove!) the comment from the callout, leaving your
+example pristine in the document.
+
+Note that callouts *in code blocks* are only detected if the renderer has been configured to look
+for them. The default mmark configuration is to detect them after `//` and `#` comment starters.
