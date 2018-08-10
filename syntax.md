@@ -248,46 +248,6 @@ Any text prefixed with `A>` will become an
 [aside](https://developer.mozilla.org/en/docs/Web/HTML/Element/aside). This is similar to a block
 quote.
 
-### Callouts
-
-> TODO TODO TODO
-
-In code blocks you can use the syntax angle bracket - number - angle bracket: `<number>` to create
-a callout. Such callouts can be referenced in the text after the code block. An example, where
-we first create a code block with two callouts and then reference the callouts in the text:
-Note we call the `{callout="yes}"` an [Inline Attribute List](#inline-attribute-lists).
-
-~~~
-{callout="yes"}
-    Code  <1>
-    More  <1>
-    Not a callout \<3>
-
-As you can see in <1> but not in \<1>. There is no <3>.
-~~~
-
-This would be rendered:
-
-~~~
-     Code <1>
-     Code <2>
-     Not a callout <3>
-
-As you can see in (1, 2) but not in <1>. There is no <3>.
-~~~
-
-You can escape a callout with a backslash. The backslash will be removed in the output (both in
-source code and text). The callout identifiers will be *remembered* until the next code block.
-
-There is currently no way to propose alternative syntax for the callout reference other than
-`<number>`.
-
-Using callouts in source code examples will lead to code examples that do not compile.
-To fix this the callout needs to be placed in a comment, but then your source show useless empty comments.
-To fix this Mmark can optionally detect (and remove!) the comment from the callout, leaving your
-example pristine. This can be enabled using the [IAL](#inline-attribute-lists): `{callout="//"}`.
-The allowed comment patterns are `//`, `#`, `/*`, `%`, `;`.
-
 ### Figures and Subfigures
 
 > TODO TODO TODO
