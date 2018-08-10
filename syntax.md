@@ -9,32 +9,7 @@ based on a [new markdown implementation](https://github.com/mmarkdown/markdown)
 and some (small) language changes as well. We think these language changes lead to a more consistent
 user experience and lead to less confusion.
 
-# Changes from version 1
-
-These are the changes from Mmark version 1:
-
-* Caption under tables, figure, quotes and code block are now *always* done with `Caption: `. No
-  more `Table: `, `Quote: `, and `Figure: `.
-* Citations:
-   * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
-   * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
-   * **TODO** Reference text is allowed `[@ref p. 23]`.
-* **TODO** Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
-* Including files with a prefix is now specified in the address specification:
-  `{{myfile}}[prefix="C: "]` will use `C: ` as the prefix. No more mucking about with block
-  attribute lists that are hard to discover.
-* **TODO** Extended table syntax.
-* **TODO** Code block call outs are now a renderer setting, not a [Block Level Attribute](#block-level-attributes).
-* Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
-
-Syntax that is not supported anymore:
-
-* HTML abbreviations.
-* The different list syntaxes have been dropped, use a [Block Level
-  Attribute](#block-level-attributes) to tweak the output.
-* Tasks lists.
-* Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
-  flag `renderer.SkipHTML`.
+See [changes from v1](#changes-from-version-1) if you're comming from version 1.
 
 # Mmark V2 Syntax
 
@@ -67,6 +42,19 @@ complete books. It <strike>steals</strike> borrows syntax elements from [pandoc]
 [pandoc]: http://johnmacfarlane.net/pandoc/
 [CommonMark]: http://commonmark.org/
 [Scholarly markdown]: http://scholarlymarkdown.com/Scholarly-Markdown-Guide.html
+
+## What does Mmark add?
+
+Mmark adds:
+
+* Extended title block
+* Including other files with the option to specify line ranges and/or prefix each line with a string
+* Document divisions
+* Captions for code, tables and quotes
+* Asides and other unnumbered sections (i.e. Abstract)
+* Indices
+* Citations
+* Callouts
 
 ### RFC 7991 XML Output
 
@@ -414,3 +402,30 @@ example pristine in the document.
 
 Note that callouts *in code blocks* are only detected if the renderer has been configured to look
 for them. The default mmark configuration is to detect them after `//` and `#` comment starters.
+
+# Changes from version 1
+
+These are the changes from Mmark version 1:
+
+* Caption under tables, figure, quotes and code block are now *always* done with `Caption: `. No
+  more `Table: `, `Quote: `, and `Figure: `.
+* Citations:
+   * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
+   * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
+   * **TODO** Reference text is allowed `[@ref p. 23]`.
+* **TODO** Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
+* Including files with a prefix is now specified in the address specification:
+  `{{myfile}}[prefix="C: "]` will use `C: ` as the prefix. No more mucking about with block
+  attribute lists that are hard to discover.
+* **TODO** Extended table syntax.
+* **TODO** Code block call outs are now a renderer setting, not a [Block Level Attribute](#block-level-attributes).
+* Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
+
+Syntax that is not supported anymore:
+
+* HTML abbreviations.
+* The different list syntaxes have been dropped, use a [Block Level
+  Attribute](#block-level-attributes) to tweak the output.
+* Tasks lists.
+* Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
+  flag `renderer.SkipHTML`.
