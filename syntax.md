@@ -409,7 +409,7 @@ These are the changes from Mmark version 1:
 * Including files with a prefix is now specified in the address specification:
   `{{myfile}}[prefix="C: "]` will use `C: ` as the prefix. No more mucking about with block
   attribute lists that are hard to discover.
-* **TODO** Extended table syntax.
+* **TODO** Extended table syntax; if this ever comes back it needs to more robust implementation.
 * **TODO** Code block call outs are now a renderer setting, not a [Block Level Attribute](#block-level-attributes).
 * Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
 
@@ -421,3 +421,4 @@ Syntax that is not supported anymore:
 * Tasks lists.
 * Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
   flag `renderer.SkipHTML`.
+* Parts.

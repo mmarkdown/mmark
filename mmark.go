@@ -21,6 +21,8 @@ var (
 	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
 	flagFragment = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML     = flag.Bool("html", false, "create HTML output")
+	flagCss      = flag.String("css", "", "link to a CSS stylesheet")
+	flagHead     = flag.String("head", "", "link to HTML to be included in head")
 )
 
 func main() {
@@ -86,6 +88,16 @@ func main() {
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
 			}
+			opts.CSS = *flagCss
+			if *flagHead != "" {
+				head, err := ioutil.ReadFile(*flagHead)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", *flagHead, err)
+					continue
+				}
+				opts.Head = head
+			}
+
 			renderer = html.NewRenderer(opts)
 		} else {
 			opts := xml.RendererOptions{
