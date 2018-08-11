@@ -8,8 +8,9 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/markdown/html"
+	"github.com/miekg/markdown/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
 )
@@ -79,7 +80,8 @@ func main() {
 
 		if *flagHTML {
 			opts := html.RendererOptions{
-				Comments: [][]byte{[]byte("//"), []byte("#")},
+				Comments:       [][]byte{[]byte("//"), []byte("#")},
+				RenderNodeHook: mhtml.RenderHook,
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage

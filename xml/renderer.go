@@ -28,6 +28,10 @@ type RendererOptions struct {
 
 	Flags Flags // Flags allow customizing this renderer's behavior
 
+	// if set, called at the start of RenderNode(). Allows replacing
+	// rendering of some nodes
+	RenderNodeHook html.RenderNodeFunc
+
 	// Comments is a list of comments the renderer should detect when
 	// parsing code blocks and detecting callouts.
 	Comments [][]byte
@@ -342,6 +346,12 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
+	if r.opts.RenderNodeHook != nil {
+		status, didHandle := r.opts.RenderNodeHook(w, node, entering)
+		if didHandle {
+			return status
+		}
+	}
 	switch node := node.(type) {
 	case *ast.Document:
 		// do nothing
