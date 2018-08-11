@@ -79,7 +79,7 @@ func main() {
 
 		if *flagHTML {
 			opts := html.RendererOptions{
-				Comments: [][]byte{[]byte("//")},
+				Comments: [][]byte{[]byte("//"), []byte("#")},
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
@@ -87,7 +87,8 @@ func main() {
 			renderer = html.NewRenderer(opts)
 		} else {
 			opts := xml.RendererOptions{
-				Flags: xml.CommonFlags,
+				Flags:    xml.CommonFlags,
+				Comments: [][]byte{[]byte("//"), []byte("#")},
 			}
 			if *flagFragment {
 				opts.Flags |= xml.XMLFragment

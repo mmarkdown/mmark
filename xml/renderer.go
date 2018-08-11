@@ -27,6 +27,10 @@ type RendererOptions struct {
 	Callout string
 
 	Flags Flags // Flags allow customizing this renderer's behavior
+
+	// Comments is a list of comments the renderer should detect when
+	// parsing code blocks and detecting callouts.
+	Comments [][]byte
 }
 
 // Renderer implements Renderer interface for IETF XMLv3 output. See RFC 7991.
@@ -289,7 +293,11 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 
 	r.cr(w)
 	r.outTag(w, "<"+name, attrs)
-	html.EscapeHTML(w, codeBlock.Literal)
+	if r.opts.Comments != nil {
+		r.EscapeHTMLCallouts(w, codeBlock.Literal)
+	} else {
+		html.EscapeHTML(w, codeBlock.Literal)
+	}
 	r.outs(w, "</"+name+">")
 	r.cr(w)
 }
@@ -327,6 +335,12 @@ func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 	}
 }
 
+func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
+	r.outs(w, "<em>")
+	r.out(w, callout.ID)
+	r.outs(w, "</em>")
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	switch node := node.(type) {
 	case *ast.Document:
@@ -343,7 +357,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.cr(w)
 	case *ast.Hardbreak:
 		r.hardBreak(w, node)
+	case *ast.Callout:
+		r.callout(w, node)
 	case *ast.Emph:
+		r.outOneOf(w, entering, "<em>", "</em>")
 		r.outOneOf(w, entering, "<em>", "</em>")
 	case *ast.Strong:
 		r.strong(w, node, entering)
