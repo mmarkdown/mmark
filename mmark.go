@@ -29,17 +29,26 @@ func main() {
 	}
 
 	flag.Parse()
-
-	if len(flag.Args()) < 1 {
-		flag.Usage()
-		os.Exit(1)
+	args := flag.Args()
+	if len(args) == 0 {
+		args = []string{"os.Stdin"}
 	}
 
-	for _, fileName := range flag.Args() {
-		d, err := ioutil.ReadFile(fileName)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
-			continue
+	for _, fileName := range args {
+		var d []byte
+		var err error
+		if fileName == "os.Stdin" {
+			d, err = ioutil.ReadAll(os.Stdin)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Couldn't read '%s', error: '%s'\n", fileName, err)
+				continue
+			}
+		} else {
+			d, err = ioutil.ReadFile(fileName)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
+				continue
+			}
 		}
 
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
@@ -71,6 +80,9 @@ func main() {
 		if *flagHTML {
 			opts := html.RendererOptions{
 				Comments: [][]byte{[]byte("//")},
+			}
+			if !*flagFragment {
+				opts.Flags |= html.CompletePage
 			}
 			renderer = html.NewRenderer(opts)
 		} else {
