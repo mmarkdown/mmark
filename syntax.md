@@ -16,7 +16,7 @@ See [changes from v1](#changes-from-version-1) if you're comming from version 1.
 This document describes all the *extra* syntax elements that can be used in Mmark. Mmark's syntax is
 based on the ["standard" Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
 
-> Read the above document, it helps you understand how markdown looks and feels.
+> Read the above document if you haven't already, it helps you understand how markdown looks and feels.
 
 For the rest we build up on <https://github.com/gomarkdown/markdown> and support all syntax
 [it supports](https://github.com/gomarkdown/markdown/blob/master/README.md). We enable the following
@@ -44,6 +44,8 @@ complete books. It <strike>steals</strike> borrows syntax elements from [pandoc]
 [Scholarly markdown]: http://scholarlymarkdown.com/Scholarly-Markdown-Guide.html
 
 ## What does Mmark add?
+
+TODO(miek): this list needs to link to the sections detailing the options.
 
 Mmark adds:
 
@@ -234,7 +236,7 @@ And for a quote:
 
 Any text prefixed with `A>` will become an
 [aside](https://developer.mozilla.org/en/docs/Web/HTML/Element/aside). This is similar to a block
-quote.
+quote, but can be styled differently.
 
 ### Figures and Subfigures
 
@@ -300,9 +302,10 @@ will do this.
 
 ### Indices
 
-Defining indices allows you to create an index. The define an index use the `(!item)`. Sub items
-can be added as well, with `(!item; subitem)`.
-To make `item` primary, use another `!`: `(!!item, subitem)`.
+Defining indices allows you to create an index. The define an index use the `(!item)`. Sub items can
+be added as well, with `(!item; subitem)`. To make `item` primary, use another `!`: `(!!item,
+subitem)`. If any index is defined the end of the document contains the list of indices. The
+`-index=false` flag suppresses this generation.
 
 ### Citations
 
@@ -320,6 +323,9 @@ with an `<reference>` block.
 For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index.
+
+A reference section is create by default, but you can suppress it by using the command line flag
+`-reference=false`.
 
 ### Cross References
 
@@ -394,6 +400,7 @@ example pristine in the document.
 
 Note that callouts *in code blocks* are only detected if the renderer has been configured to look
 for them. The default mmark configuration is to detect them after `//` and `#` comment starters.
+See the `-comment` option for to change this.
 
 # Changes from version 1
 
@@ -413,7 +420,7 @@ These are the changes from Mmark version 1:
 * **TODO** Code block call outs are now a renderer setting, not a [Block Level Attribute](#block-level-attributes).
 * Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
 
-Syntax that is not supported anymore:
+Syntax that is *not* supported anymore:
 
 * HTML abbreviations.
 * The different list syntaxes have been dropped, use a [Block Level
@@ -421,4 +428,4 @@ Syntax that is not supported anymore:
 * Tasks lists.
 * Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
   flag `renderer.SkipHTML`.
-* Parts.
+* Parts

@@ -18,11 +18,13 @@ import (
 // Usage: mmark <markdown-file>
 
 var (
-	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
-	flagFragment = flag.Bool("fragment", false, "don't create a full document")
-	flagHTML     = flag.Bool("html", false, "create HTML output")
-	flagCss      = flag.String("css", "", "link to a CSS stylesheet")
-	flagHead     = flag.String("head", "", "link to HTML to be included in head")
+	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
+	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
+	flagHTML      = flag.Bool("html", false, "create HTML output")
+	flagCss       = flag.String("css", "", "link to a CSS stylesheet")
+	flagHead      = flag.String("head", "", "link to HTML to be included in head")
+	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
+	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
 )
 
 func main() {
@@ -67,12 +69,17 @@ func main() {
 		}
 
 		doc := markdown.Parse(d, p)
-		norm, inform := mparser.CitationToReferences(p, doc)
-		if norm != nil {
-			ast.AppendChild(doc, norm)
+		if *flagReference {
+			norm, inform := mparser.CitationToReferences(p, doc)
+			if norm != nil {
+				ast.AppendChild(doc, norm)
+			}
+			if inform != nil {
+				ast.AppendChild(doc, inform)
+			}
 		}
-		if inform != nil {
-			ast.AppendChild(doc, inform)
+		if *flagIndex {
+			// index stuff
 		}
 
 		if *flagAst {
@@ -85,6 +92,7 @@ func main() {
 
 		if *flagHTML {
 			opts := html.RendererOptions{
+				// TODO(miek): makes this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
 			}
