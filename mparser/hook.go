@@ -23,8 +23,8 @@ func Hook(data []byte) (ast.Node, []byte, int) {
 // 4,5 - line numbers separated by commas
 // /start/,/end/ - regexp separated by commas
 // optional a prefix="" string.
-func (c *Cwd) ReadInclude(path string, address []byte) []byte {
-	path = c.Path(path)
+func (c *Cwd) ReadInclude(p string, address []byte) []byte {
+	path := c.Path(p)
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("Failure to read %s: %s", path, err)
@@ -40,5 +40,6 @@ func (c *Cwd) ReadInclude(path string, address []byte) []byte {
 		data = append(data, '\n')
 	}
 
+	c.Update(p)
 	return data
 }
