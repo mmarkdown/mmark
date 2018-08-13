@@ -38,6 +38,8 @@ func main() {
 	}
 
 	for _, fileName := range args {
+		cwd := mparser.NewCwd()
+
 		var d []byte
 		var err error
 		if fileName == "os.Stdin" {
@@ -52,6 +54,7 @@ func main() {
 				fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
 				continue
 			}
+			cwd.Update(fileName)
 		}
 
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
@@ -60,7 +63,7 @@ func main() {
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{
 			ParserHook:    mparser.Hook,
-			ReadIncludeFn: mparser.ReadInclude,
+			ReadIncludeFn: cwd.ReadInclude,
 		}
 
 		doc := markdown.Parse(d, p)

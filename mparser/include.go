@@ -11,9 +11,36 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
+	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 )
+
+// Cwd holds the directory component of the current file being processed.
+type Cwd struct {
+	dir string
+}
+
+func NewCwd() *Cwd {
+	d, _ := os.Getwd()
+	return &Cwd{dir: d}
+}
+
+// Update updates c with new.
+func (c *Cwd) Update(new string) {
+	if path.IsAbs(new) {
+		c.dir = path.Dir(new)
+		return
+	}
+	c.dir = path.Dir(filepath.Join(c.dir, new))
+}
+
+// Path returns the full path we should use according to c.
+func (c *Cwd) Path(p string) string {
+	return filepath.Join(c.dir, p)
+}
 
 // parseAddress parses a code address directive and returns the bytes or an error.
 func parseAddress(addr []byte, data []byte) ([]byte, error) {

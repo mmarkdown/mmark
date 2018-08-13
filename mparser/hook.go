@@ -18,13 +18,13 @@ func Hook(data []byte) (ast.Node, []byte, int) {
 }
 
 // ReadInclude is the hook to read includes.
-// Its supports:
+// Its supports the following options for address.
 //
 // 4,5 - line numbers separated by commas
 // /start/,/end/ - regexp separated by commas
-//
-// for address.
-func ReadInclude(path string, address []byte) []byte {
+// optional a prefix="" string.
+func (c *Cwd) ReadInclude(path string, address []byte) []byte {
+	path = c.Path(path)
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("Failure to read %s: %s", path, err)

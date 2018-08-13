@@ -38,9 +38,10 @@ var ext = parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | 
 
 func doTest(t *testing.T, basename string) {
 	p := parser.NewWithExtensions(ext)
+	cwd := mparser.NewCwd()
 	p.Opts = parser.ParserOptions{
 		ParserHook:    mparser.TitleHook,
-		ReadIncludeFn: mparser.ReadInclude,
+		ReadIncludeFn: cwd.ReadInclude,
 	}
 	opts := xml.RendererOptions{
 		Flags: xml.CommonFlags | xml.XMLFragment,
