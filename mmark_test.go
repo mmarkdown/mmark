@@ -37,17 +37,6 @@ var ext = parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | 
 	parser.OrderedListStart | parser.Attributes | parser.Mmark
 
 func doTest(t *testing.T, basename string) {
-	p := parser.NewWithExtensions(ext)
-	cwd := mparser.NewCwd()
-	p.Opts = parser.ParserOptions{
-		ParserHook:    mparser.TitleHook,
-		ReadIncludeFn: cwd.ReadInclude,
-	}
-	opts := xml.RendererOptions{
-		Flags: xml.CommonFlags | xml.XMLFragment,
-	}
-	renderer := xml.NewRenderer(opts)
-
 	filename := filepath.Join("testdata", basename+".md")
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -61,6 +50,17 @@ func doTest(t *testing.T, basename string) {
 		t.Errorf("couldn't open '%s', error: %v\n", filename, err)
 	}
 	expected = bytes.TrimSpace(expected)
+
+	p := parser.NewWithExtensions(ext)
+	init := mparser.NewInitial(filename)
+	p.Opts = parser.ParserOptions{
+		ParserHook:    mparser.TitleHook,
+		ReadIncludeFn: init.ReadInclude,
+	}
+	opts := xml.RendererOptions{
+		Flags: xml.CommonFlags | xml.XMLFragment,
+	}
+	renderer := xml.NewRenderer(opts)
 
 	actual := markdown.ToHTML(input, p, renderer)
 	actual = bytes.TrimSpace(actual)

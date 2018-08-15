@@ -1,3 +1,3 @@
-{{testdata/includes}}[prefix="C: "]
+{{includes}}[prefix="C: "]
 
 not included text
