@@ -387,8 +387,8 @@ syntax for specifying a callout `<<N>>` where N is integer > 0.
 In code blocks you can use the *same* syntax to create a callout:
 
 ~~~
-    Code  <<1>>
-    More  <<2>>
+    Code  //<<1>>
+    More  //<<2>>
 
 As you can see in <<1>> but not in <<2>>. There is no <<3>>.
 ~~~
@@ -402,6 +402,8 @@ Note that callouts *in code blocks* are only detected if the renderer has been c
 for them. The default mmark configuration is to detect them after `//` and `#` comment starters.
 See the `-comment` option for to change this.
 
+Lone callouts without them being prefixed with a comment means they are not detected by Mmark.
+
 # Changes from version 1
 
 These are the changes from Mmark version 1:
@@ -412,12 +414,14 @@ These are the changes from Mmark version 1:
    * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
    * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
    * **TODO** Reference text is allowed `[@ref p. 23]`.
-* **TODO** Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
+* Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
+* Code block call outs are now a renderer setting, not a [Block Level
+  Attribute](#block-level-attributes). Callout in code are *only* detected if they are used after
+  a comment.
 * Including files with a prefix is now specified in the address specification:
   `{{myfile}}[prefix="C: "]` will use `C: ` as the prefix. No more mucking about with block
   attribute lists that are hard to discover.
 * **TODO** Extended table syntax; if this ever comes back it needs to more robust implementation.
-* **TODO** Code block call outs are now a renderer setting, not a [Block Level Attribute](#block-level-attributes).
 * Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
 
 Syntax that is *not* supported anymore:
