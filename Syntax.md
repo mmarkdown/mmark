@@ -11,6 +11,11 @@ user experience and lead to less confusion.
 
 See [changes from v1](#changes-from-version-1) if you're comming from version 1.
 
+Biggest changes:
+
+* Including files is now done relative to the file being parsed (i.e. the *sane* way).
+* Block attributes apply to block elements *only*.
+
 # Why this new version?
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST), and
