@@ -11,6 +11,14 @@ user experience and lead to less confusion.
 
 See [changes from v1](#changes-from-version-1) if you're comming from version 1.
 
+# Why this new version?
+
+It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST), and
+it looks like it will be easier to add new renderers with this setup. It is also closer to Common
+Mark. So we took this oppertunity to support RFC 7991 XML, (re-)add HTML5 and ponder LaTeX and RFC
+7749 XML (xml2rfc version 2). With simpler code, more things upstreamed, so less code to maintain
+here.
+
 # Mmark V2 Syntax
 
 This document describes all the *extra* syntax elements that can be used in Mmark. Mmark's syntax is
