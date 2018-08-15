@@ -79,7 +79,9 @@ func main() {
 			}
 		}
 		if *flagIndex {
-			// index stuff
+			if idx := mparser.IndexToIndices(p, doc); idx != nil {
+				ast.AppendChild(doc, idx)
+			}
 		}
 
 		if *flagAst {
