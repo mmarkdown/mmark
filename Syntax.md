@@ -175,9 +175,13 @@ block. The file's extension *will be used* as the language. The syntax is:
 ~~~
 {{pathname}}[address]
 ~~~
-And address can be `N,M`, where `N` and `M` are line numbers. Or `/N/,/M/`, where `N` and `M` are
-regular expressions that include from where to where to include the file. Each of these can have
-an optional `prefix=""` specifier.
+And address can be `N,M`, where `N` and `M` are line numbers. If `M` is not specified, i.e. `N,` it
+is taken that we should include the entire file starting from `N`.
+
+Or you can use regular expression with: `/N/,/M/`, where `N` and `M` are regular expressions that
+include from where to where to include the file.
+
+Each of these can have an optional `prefix=""` specifier.
 
 ~~~
 {{filename}}[3,5]

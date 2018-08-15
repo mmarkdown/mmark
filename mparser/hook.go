@@ -21,6 +21,7 @@ func Hook(data []byte) (ast.Node, []byte, int) {
 // Its supports the following options for address.
 //
 // 4,5 - line numbers separated by commas
+// N, - line numbers, end not specified, read until the end.
 // /start/,/end/ - regexp separated by commas
 // optional a prefix="" string.
 func (i Initial) ReadInclude(from, file string, address []byte) []byte {

@@ -115,9 +115,13 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 	left := bytes.TrimSpace(chunk[0])
 	right := bytes.TrimSpace(chunk[1])
 
-	if len(left) == 0 || len(right) == 0 {
+	if len(left) == 0 {
 		return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
 	}
+	if len(right) == 0 {
+		// open ended right term
+	}
+
 	if left[0] == '/' { //regular expression
 		if left[len(left)-1] != '/' {
 			return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
@@ -150,6 +154,11 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 		}
 		lo = i
 
+		if len(right) == 0 {
+			hi = len(data)
+			goto End
+		}
+
 		hi, err = strconv.Atoi(string(right))
 		if err != nil {
 			return 0, 0, err
@@ -167,6 +176,7 @@ func addrToByteRange(addr, data []byte) (lo, hi int, err error) {
 		hi = i
 	}
 
+End:
 	if lo > hi {
 		return 0, 0, fmt.Errorf("invalid address specification: %s", addr)
 	}
