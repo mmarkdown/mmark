@@ -10,7 +10,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/markdown/mhtml"
+	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
 )
@@ -40,23 +40,25 @@ func main() {
 	}
 
 	for _, fileName := range args {
-		cwd := mparser.NewCwd()
-
-		var d []byte
-		var err error
+		var (
+			d    []byte
+			err  error
+			init mparser.Initial
+		)
 		if fileName == "os.Stdin" {
+			init = mparser.NewInitial("")
 			d, err = ioutil.ReadAll(os.Stdin)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Couldn't read '%s', error: '%s'\n", fileName, err)
 				continue
 			}
 		} else {
+			init = mparser.NewInitial(fileName)
 			d, err = ioutil.ReadFile(fileName)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
 				continue
 			}
-			cwd.Update(fileName)
 		}
 
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
@@ -65,7 +67,7 @@ func main() {
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{
 			ParserHook:    mparser.Hook,
-			ReadIncludeFn: cwd.ReadInclude,
+			ReadIncludeFn: init.ReadInclude,
 		}
 
 		doc := markdown.Parse(d, p)

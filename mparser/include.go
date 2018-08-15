@@ -18,37 +18,34 @@ import (
 	"strconv"
 )
 
-// Cwd holds the directory component of the current file being processed.
-type Cwd struct {
-	stack []string
-}
+// The initial file we are working on, empty for stdin and adjusted is we
+// we have an absolute or relative file.
+type Initial string
 
-func NewCwd() *Cwd {
-	d, _ := os.Getwd()
-	return &Cwd{stack: []string{d}}
-}
-
-// Update updates c with new.
-func (c *Cwd) Update(new string) {
-	if path.IsAbs(new) {
-		c.stack = append(c.stack, path.Dir(new))
-		return
+func NewInitial(s string) Initial {
+	if path.IsAbs(s) {
+		return Initial(path.Dir(s))
 	}
-	last := c.stack[len(c.stack)-1]
-	c.stack = append(c.stack, path.Dir(filepath.Join(last, new)))
-}
 
-func (c *Cwd) Up() {
-	if len(c.stack) == 0 {
-		return
+	cwd, _ := os.Getwd()
+	if s == "" {
+		return Initial(cwd)
 	}
-	c.stack = c.stack[:len(c.stack)-1]
+	return Initial(path.Dir(filepath.Join(cwd, s)))
 }
 
-// Path returns the full path we should use according to c.
-func (c *Cwd) Path(p string) string {
-	last := c.stack[len(c.stack)-1]
-	return filepath.Join(last, p)
+// path returns the full path we should use according to from, file and initial.
+func (i Initial) path(from, file string) string {
+	if path.IsAbs(file) {
+		return file
+	}
+	if path.IsAbs(from) {
+		filepath.Join(from, file)
+	}
+
+	f1 := filepath.Join(string(i), from)
+
+	return filepath.Join(f1, file)
 }
 
 // parseAddress parses a code address directive and returns the bytes or an error.
