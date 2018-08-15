@@ -1,6 +1,7 @@
 package mhtml
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -18,11 +19,27 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		reference(w, node, entering)
 		return ast.GoToNext, true
 	case *mast.Title:
-		// nothing yet, here
+		// outout toml title block in html.
 		//title(w, node, entering)
+		return ast.GoToNext, true
+	case *mast.Indices:
+		io.WriteString(w, "<h1>Index</h1>\n")
+		return ast.GoToNext, true
+	case *mast.IndexItem:
+		indexItem(w, node)
 		return ast.GoToNext, true
 	}
 	return ast.GoToNext, false
+}
+
+func indexItem(w io.Writer, node *mast.IndexItem) {
+	for i := range node.Items {
+		w.Write(node.Items[i].Item)
+		w.Write([]byte(" "))
+		w.Write(node.Items[i].Subitem)
+		w.Write([]byte(" "))
+		fmt.Fprintf(w, "%d\n", node.Items[i].ID)
+	}
 }
 
 func references(w io.Writer, node ast.Node, entering bool) {
