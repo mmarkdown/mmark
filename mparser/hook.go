@@ -33,7 +33,7 @@ func (i Initial) ReadInclude(from, file string, address []byte) []byte {
 
 	data, err = parseAddress(address, data)
 	if err != nil {
-		log.Printf("Failure to read: %s", err)
+		log.Printf("Failure to parse address for %s: %s", path, err)
 		return nil
 	}
 	if data[len(data)-1] != '\n' {
