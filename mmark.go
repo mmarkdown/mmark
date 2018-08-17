@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/gomarkdown/markdown"
@@ -99,6 +100,7 @@ func main() {
 				// TODO(miek): makes this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
+				Flags:          html.SmartypantsDashes,
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
@@ -107,7 +109,7 @@ func main() {
 			if *flagHead != "" {
 				head, err := ioutil.ReadFile(*flagHead)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", *flagHead, err)
+					log.Printf("Couldn't open %q, error: %q", *flagHead, err)
 					continue
 				}
 				opts.Head = head

@@ -43,6 +43,7 @@ extensions by default:
 * *MathJax*, parse MathJax
 * *OrderedListStart*, notice start element of ordered list.
 * *Attributes* allow block level attributes.
+* *SmartypantsDashes* expad `--` and `---` into ndash and mdashes.
 
 Mmark adds numerous enhancements to make it suitable for writing (IETF) Internet Drafts and even
 complete books. It <strike>steals</strike> borrows syntax elements from [pandoc], [kramdown],
