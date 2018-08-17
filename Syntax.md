@@ -222,7 +222,7 @@ Captioning works as well:
 
 ~~~
 <{{test.go}}[/START/,/END/]
-Caption: A sample function.
+Figure: A sample function.
 ~~~
 
 ### Document Divisions
@@ -235,15 +235,15 @@ thing on the line.
 ## Captions
 
 Mmark supports caption below [tables](#tables), [code blocks](#code-blocks) and [block
-quotes](#block-quotes). You can caption each elements with `Caption: `. The caption extends to the
-first *empty* line. Some examples:
+quotes](#block-quotes). You can caption each elements with 'Table: `, `Figure: ` and `Quote: ` 
+respectivily. The caption extends to the first *empty* line. Some examples:
 
 ~~~
 Name    | Age
 --------|-----:
 Bob     | 27
 Alice   | 23
-Caption: This is the table caption.
+Table: This is the table caption.
 ~~~
 
 Or for a code block:
@@ -253,12 +253,12 @@ Or for a code block:
          return true
      }
      ~~~
-     Caption: This is a caption for a code block.
+     Figure: This is a caption for a code block.
 
 And for a quote:
 
      > Ability is nothing without opportunity.
-     Caption: https://example.com, Napoleon Bonaparte
+     Quote: https://example.com, Napoleon Bonaparte
 
 ### Asides
 
@@ -443,8 +443,6 @@ Any text in between `$` and `$` will be assumed to be .. TODO
 
 These are the changes from Mmark version 1:
 
-* Caption under tables, figure, quotes and code block are now *always* done with `Caption: `. No
-  more `Table: `, `Quote: `, and `Figure: `.
 * Citations:
    * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
    * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
