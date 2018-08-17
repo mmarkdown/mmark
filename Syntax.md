@@ -76,11 +76,10 @@ Mmark adds:
 
 Because markdown is not perfect, there are some gotchas you have to be aware of:
 
-* Adding a `Caption` under a quote block needs a newline before it, otherwise the caption text
+* Adding a caption under a quote block (`Quote: `) needs a newline before it, otherwise the caption text
   will be detected as being part of the quote.
 * Including files in lists requires a empty line to be present in the list item; otherwise mmark
-  will only assume inline elements and not parse the includes.
-
+  will only assume inline elements and not parse the includes (which are block level elements).
 
 ### RFC 7991 XML Output
 
@@ -286,13 +285,13 @@ F> +-----+
 F> | ART |
 F> +-----+
 F> ~~~~
-F> Caption: This caption is ignored in v3, but used in v2.
+F> Figure: This caption is ignored in v3, but used in v2.
 F>
 F> ~~~ c
 F> printf("%s\n", "hello");
 F> ~~~
 F>
-Caption: Caption for both figures in v3 (in v2 this is ignored).
+Figure: Caption for both figures in v3 (in v2 this is ignored).
 ~~~
 
 ### Example lists
