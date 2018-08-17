@@ -72,6 +72,16 @@ Mmark adds:
 * Citations
 * Callouts
 
+### Syntax Gotchas
+
+Because markdown is not perfect, there are some gotchas you have to be aware of:
+
+* Adding a `Caption` under a quote block needs a newline before it, otherwise the caption text
+  will be detected as being part of the quote.
+* Including files in lists requires a empty line to be present in the list item; otherwise mmark
+  will only assume inline elements and not parse the includes.
+
+
 ### RFC 7991 XML Output
 
 This is the output format used for generating Internet-Drafts and RFCs. The generated XML needs to
@@ -337,7 +347,7 @@ Gets expanded into:
 ~~~
 
 
-## Span Elements
+## Inline Elements
 
 
 
