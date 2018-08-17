@@ -315,7 +315,30 @@ Note that for citing I-Ds and RFCs you *don't* need to include any XML, as Mmark
 automatically from their online location: or technically more correct: the xml2rfc post processor
 will do this.
 
+### Block Level Attributes
+
+A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
+set classes, an anchor and other types of *extra* information for the next block level element.
+
+The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
+valid.
+
+The following example applies the attributes: `type` and `id` to the blockquote:
+~~~
+{title="The blockquote title" #myid}
+> A blockquote with a title
+~~~
+Gets expanded into:
+~~~
+<blockquote id="myid" title="The blockquote title">
+    <t>A blockquote with a title</t>
+</blockquote>
+~~~
+
+
 ## Span Elements
+
+
 
 ### Indices
 
@@ -376,26 +399,6 @@ subscripts, use `P~a\ cat~`, not `P~a cat~`.
 Normal markdown synax.
 **SVG TODO and maybe new syntax**
 
-## Block Level Attributes
-
-A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
-set classes, an anchor and other types of *extra* information for the next block level element.
-
-The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
-valid.
-
-The following example applies the attributes: `type` and `id` to the blockquote:
-~~~
-{title="The blockquote title" #myid}
-> A blockquote with a title
-~~~
-Gets expanded into:
-~~~
-<blockquote id="myid" title="The blockquote title">
-    <t>A blockquote with a title</t>
-</blockquote>
-~~~
-
 ### Callouts
 
 Callouts are way to reference code from paragraphs following that code. Mmark uses the following
@@ -420,6 +423,10 @@ for them. The default mmark configuration is to detect them after `//` and `#` c
 See the `-comment` option for to change this.
 
 Lone callouts without them being prefixed with a comment means they are not detected by Mmark.
+
+### Inline math
+
+Any text in between `$` and `$` will be assumed to be .. TODO
 
 # Changes from version 1
 
