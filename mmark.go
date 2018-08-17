@@ -100,7 +100,7 @@ func main() {
 				// TODO(miek): makes this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
-				Flags:          html.SmartypantsDashes,
+				Flags:          html.CommonFlags,
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
