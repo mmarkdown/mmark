@@ -235,7 +235,7 @@ thing on the line.
 ## Captions
 
 Mmark supports caption below [tables](#tables), [code blocks](#code-blocks) and [block
-quotes](#block-quotes). You can caption each elements with 'Table: `, `Figure: ` and `Quote: ` 
+quotes](#block-quotes). You can caption each elements with `Table: `, `Figure: ` and `Quote: ` 
 respectivily. The caption extends to the first *empty* line. Some examples:
 
 ~~~
