@@ -57,7 +57,7 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 		return
 	}
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
-		if isAbstract(heading.Special) {
+		if heading.IsSpecial && isAbstract(heading.Literal) {
 			// No <name> when abstract, should not output anything
 			return
 		}
@@ -124,9 +124,9 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	var attrs []string
 	tag := "<section"
-	if heading.Special != nil {
+	if heading.IsSpecial {
 		tag = "<note"
-		if isAbstract(heading.Special) {
+		if isAbstract(heading.Literal) {
 			tag = "<abstract"
 		}
 	}
@@ -405,12 +405,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.outOneOfCr(w, entering, tag, "</table>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
-	case *ast.TableHead:
+	case *ast.TableHeader:
 		r.outOneOfCr(w, entering, "<thead>", "</thead>")
 	case *ast.TableBody:
 		r.tableBody(w, node, entering)
 	case *ast.TableRow:
 		r.outOneOfCr(w, entering, "<tr>", "</tr>")
+	case *ast.TableFooter:
+		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
 	case *ast.BlockQuote:
 		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")

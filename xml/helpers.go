@@ -65,9 +65,9 @@ func (r *Renderer) sectionClose(w io.Writer) {
 	}
 
 	tag := "</section>"
-	if r.section.Special != nil {
+	if r.section.IsSpecial {
 		tag = "</note>"
-		if isAbstract(r.section.Special) {
+		if isAbstract(r.section.Literal) {
 			tag = "</abstract>"
 		}
 	}
