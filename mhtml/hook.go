@@ -1,6 +1,7 @@
 package mhtml
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 
@@ -28,6 +29,15 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		}
 		io.WriteString(w, "<h1>Index</h1>\n")
 		return ast.GoToNext, true
+	case *mast.IndexLetter:
+		if !entering {
+			return ast.GoToNext, true
+		}
+		io.WriteString(w, `<h3 class="idxletter">`)
+		io.WriteString(w, string(node.Literal))
+		io.WriteString(w, "</h3>")
+
+		return ast.GoToNext, true
 	case *mast.IndexItem:
 		if !entering {
 			return ast.GoToNext, true
@@ -39,12 +49,42 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 }
 
 func indexItem(w io.Writer, node *mast.IndexItem) {
+	// First gather all the links for single items, and subitems. Both may have multiple links.
+	itemLinks := map[string][]string{}
+	subItemLinks := map[string][]string{} // index on item,subitem
+	for _, n := range node.Items {
+		item := string(n.Item)
+		if n.Subitem == nil {
+			itemLinks[item] = append(itemLinks[item], n.ID)
+			continue
+		}
+		sub := string(n.Subitem)
+		subItemLinks[item+","+sub] = append(subItemLinks[item+","+sub], n.ID)
+	}
+
+	// Now range again through the Items and assign each unique on the list of Ids
+	links := map[*ast.Index][]string{}
+	for _, n := range node.Items {
+		item := string(n.Item)
+		if refs, ok := itemLinks[item]; ok {
+			links[n] = refs
+			continue
+		}
+		sub := string(n.Subitem)
+		if refs, ok := subItemLinks[item+","+sub]; ok {
+			links[n] = refs
+		}
+	}
+
 	for i := range node.Items {
-		w.Write(node.Items[i].Item)
-		w.Write([]byte("\n "))
+		if bytes.Compare(node.Items[i].Item, prevItem) != 0 {
+			w.Write(node.Items[i].Item)
+			w.Write([]byte("\n "))
+		}
 		w.Write(node.Items[i].Subitem)
 		w.Write([]byte(" "))
-		fmt.Fprintf(w, "%d\n", node.Items[i].ID)
+		fmt.Fprintf(w, "%s\n", node.Items[i].ID)
+		prevItem = node.Items[i].Item
 	}
 }
 

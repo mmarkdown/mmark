@@ -9,7 +9,8 @@ import (
 )
 
 // IndexToIndices crawls the entire doc searching for indices, it will then return
-// an ast.DocumentIndex that contains ast.Indices.
+// an mast.Indices that contains mast.IndexItems that group all indices with the same
+// item.
 func IndexToIndices(p *parser.Parser, doc ast.Node) *mast.Indices {
 	all := map[string]*mast.IndexItem{}
 
@@ -40,8 +41,16 @@ func IndexToIndices(p *parser.Parser, doc ast.Node) *mast.Indices {
 	sort.Strings(keys)
 
 	indices := &mast.Indices{}
+	prevLetter := ""
 	for _, k := range keys {
+		letter := string(k[0])
+		if letter != prevLetter {
+			il := &mast.IndexLetter{}
+			il.Literal = []byte(letter)
+			ast.AppendChild(indices, il)
+		}
 		ast.AppendChild(indices, all[k])
+		prevLetter = letter
 	}
 
 	return indices

@@ -83,9 +83,9 @@ func main() {
 			}
 		}
 		if *flagIndex {
-			//if idx := mparser.IndexToIndices(p, doc); idx != nil {
-			//ast.AppendChild(doc, idx)
-			//}
+			if idx := mparser.IndexToIndices(p, doc); idx != nil {
+				ast.AppendChild(doc, idx)
+			}
 		}
 
 		if *flagAst {

@@ -16,3 +16,8 @@ type IndexItem struct {
 	// map from the main item to index.
 	Items []*ast.Index
 }
+
+// IndexLetter has the Letter of this index item.
+type IndexLetter struct {
+	ast.Leaf
+}
