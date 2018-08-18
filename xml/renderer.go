@@ -85,7 +85,7 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 	// *iff* we have a text node as a child *and* that text is 2119, we output bcp14 tags, otherwise just string.
 	text := ast.GetFirstChild(node)
 	if t, ok := text.(*ast.Text); ok {
-		if is2119(t.Literal) {
+		if Is2119(t.Literal) {
 			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
 			return
 		}

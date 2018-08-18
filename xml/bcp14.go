@@ -16,7 +16,7 @@ var words2119 = [][]byte{
 	[]byte("OPTIONAL"),
 }
 
-func is2119(word []byte) bool {
+func Is2119(word []byte) bool {
 	for _, bcp := range words2119 {
 		if bytes.Compare(word, bcp) == 0 {
 			return true

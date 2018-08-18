@@ -5,15 +5,9 @@ import (
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
-
-var htmlEscaper = [256][]byte{
-	'&': []byte("&amp;"),
-	'<': []byte("&lt;"),
-	'>': []byte("&gt;"),
-	'"': []byte("&quot;"),
-}
 
 // EscapeHTMLCallouts writes html-escaped d to w. It escapes &, <, > and " characters, *but*
 // expands callouts <<N>> with the callout HTML, i.e. by calling r.callout() with a newly created
@@ -39,7 +33,7 @@ Parse:
 			}
 		}
 
-		escSeq := htmlEscaper[d[i]]
+		escSeq := html.Escaper[d[i]]
 		if escSeq != nil {
 			w.Write(escSeq)
 		} else {
