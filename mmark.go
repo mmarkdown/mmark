@@ -26,6 +26,7 @@ var (
 	flagHead      = flag.String("head", "", "link to HTML to be included in head")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
+	flagTwo       = flag.Bool("2", false, "generate RFC 7749 XML")
 )
 
 func main() {
