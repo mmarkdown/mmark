@@ -1,4 +1,4 @@
-package xml
+package xml2
 
 import (
 	"bytes"
@@ -48,5 +48,4 @@ func TestTitle(t *testing.T) {
 	r := NewRenderer(RendererOptions{})
 	buf := &bytes.Buffer{}
 	r.titleBlock(buf, node)
-	// TODO(miek): actual test.
 }
