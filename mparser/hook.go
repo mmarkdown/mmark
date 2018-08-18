@@ -3,6 +3,7 @@ package mparser
 import (
 	"io/ioutil"
 	"log"
+	"path/filepath"
 
 	"github.com/gomarkdown/markdown/ast"
 )
@@ -28,13 +29,13 @@ func (i Initial) ReadInclude(from, file string, address []byte) []byte {
 	path := i.path(from, file)
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Printf("Failure to read: %s", err)
+		log.Printf("Failure to read: %q (from %q)", err, filepath.Join(from, "*"))
 		return nil
 	}
 
 	data, err = parseAddress(address, data)
 	if err != nil {
-		log.Printf("Failure to parse address for %s: %s", path, err)
+		log.Printf("Failure to parse address for %q: %q (from %q)", path, err, filepath.Join(from, "*"))
 		return nil
 	}
 	if data[len(data)-1] != '\n' {
