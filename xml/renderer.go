@@ -345,6 +345,30 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 	r.outs(w, "</em>")
 }
 
+func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
+	if entering {
+		r.outTag(w, "<xref", []string{"target=\"" + string(cr.Destination) + "\""})
+		return
+	}
+	r.outs(w, "</xref>")
+}
+
+func (r *Renderer) index(w io.Writer, index *ast.Index) {
+	r.outs(w, "<iref")
+	r.outs(w, " item=\"")
+	html.EscapeHTML(w, index.Item)
+	r.outs(w, "\"")
+	if index.Primary {
+		r.outs(w, ` primary="true"`)
+	}
+	if len(index.Subitem) != 0 {
+		r.outs(w, " subitem=\"")
+		html.EscapeHTML(w, index.Subitem)
+		r.outs(w, "\"")
+	}
+	r.outs(w, "></iref>")
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
 		status, didHandle := r.opts.RenderNodeHook(w, node, entering)
@@ -419,6 +443,12 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Aside:
 		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
+	case *ast.CrossReference:
+		r.crossReference(w, node, entering)
+	case *ast.Index:
+		if entering {
+			r.index(w, node)
+		}
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
