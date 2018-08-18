@@ -68,7 +68,7 @@ Mmark adds:
 * Including other files with the option to specify line ranges and/or prefix each line with a string
 * Document divisions
 * Captions for code, tables and quotes
-* Asides and other unnumbered sections (i.e. Abstract)
+* Asides and other unnumbered (special) sections (i.e. Abstract)
 * Indices
 * Citations
 * Callouts
@@ -199,6 +199,11 @@ organization = "Mmark"
 ~~~
 
 An `#` acts as a comment in this block. TOML itself is specified [here](https://github.com/toml-lang/toml).
+
+### Special Sections
+
+Any section that needs special handling, like an abstract or preface can be started with `.#
+Heading`. This creates a special section that is usually unnumbered.
 
 ### Including Files
 
