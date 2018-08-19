@@ -393,6 +393,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.references(w, node, entering)
 	case *mast.Reference:
 		r.reference(w, node)
+	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
+		// generated to xml2rfc, do nothing
 	case *ast.Text:
 		r.text(w, node)
 	case *ast.Softbreak:
