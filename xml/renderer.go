@@ -369,6 +369,14 @@ func (r *Renderer) index(w io.Writer, index *ast.Index) {
 	r.outs(w, "></iref>")
 }
 
+func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
+	r.outs(w, "<eref")
+	r.outs(w, " target=\"")
+	html.EscapeHTML(w, link.Destination)
+	r.outs(w, `"></iref>`) // link.Content/Literal can be used here.
+
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
 		status, didHandle := r.opts.RenderNodeHook(w, node, entering)
@@ -449,6 +457,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		if entering {
 			r.index(w, node)
 		}
+	case *ast.Link:
+		r.link(w, node, entering)
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
