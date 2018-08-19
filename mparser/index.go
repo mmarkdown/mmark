@@ -2,6 +2,7 @@ package mparser
 
 import (
 	"bytes"
+	"fmt"
 	"sort"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -31,25 +32,23 @@ func IndexToDocumentIndex(p *parser.Parser, doc ast.Node) *mast.DocumentIndex {
 			item := string(i.Item)
 
 			if _, ok := main[item]; !ok {
-				//				println("1")
 				main[item] = &mast.IndexItem{Index: i}
 			}
 			// only the main item
 			if i.Subitem == nil {
-				ast.AppendChild(main[item], newLink(i.ID, i.Primary))
-				//				println(len(main[item].GetChildren()))
+				ast.AppendChild(main[item], newLink(i.ID, len(main[item].GetChildren()), i.Primary))
 				return ast.GoToNext
 			}
-			// check if we already have a child with the subitem and then just add the ID
+			// check if we already have a child with the subitem and then just add the link
 			for _, sub := range subitem[item] {
 				if bytes.Compare(sub.Subitem, i.Subitem) == 0 {
-					ast.AppendChild(sub, newLink(i.ID, i.Primary))
+					ast.AppendChild(sub, newLink(i.ID, len(sub.GetChildren()), i.Primary))
 					return ast.GoToNext
 				}
 			}
 
 			sub := &mast.IndexSubItem{Index: i}
-			ast.AppendChild(sub, newLink(i.ID, i.Primary))
+			ast.AppendChild(sub, newLink(i.ID, len(subitem[item]), i.Primary))
 			subitem[item] = append(subitem[item], sub)
 		}
 		return ast.GoToNext
@@ -88,7 +87,9 @@ func IndexToDocumentIndex(p *parser.Parser, doc ast.Node) *mast.DocumentIndex {
 	return docIndex
 }
 
-func newLink(id string, primary bool) *mast.IndexLink {
+func newLink(id string, number int, primary bool) *mast.IndexLink {
 	link := &ast.Link{Destination: []byte(id)}
-	return &mast.IndexLink{Link: link, Primary: primary}
+	il := &mast.IndexLink{Link: link, Primary: primary}
+	il.Literal = []byte(fmt.Sprintf("%d", number))
+	return il
 }

@@ -51,8 +51,12 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		io.WriteString(w, span)
 		return ast.GoToNext, true
 	case *mast.IndexLink:
-		io.WriteString(w, `<a href="`+string(node.Destination)+`">`)
-		io.WriteString(w, "</a>")
+		if !entering {
+			io.WriteString(w, "</a>")
+			return ast.GoToNext, true
+		}
+		io.WriteString(w, `<a href="#`+string(node.Destination)+`">`)
+		w.Write(node.Literal)
 		return ast.GoToNext, true
 
 	}
