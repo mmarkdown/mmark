@@ -51,14 +51,14 @@ func main() {
 			init = mparser.NewInitial("")
 			d, err = ioutil.ReadAll(os.Stdin)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Couldn't read '%s', error: '%s'\n", fileName, err)
+				log.Printf("Couldn't read %q: %q", fileName, err)
 				continue
 			}
 		} else {
 			init = mparser.NewInitial(fileName)
 			d, err = ioutil.ReadFile(fileName)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Couldn't open '%s', error: '%s'\n", fileName, err)
+				log.Printf("Couldn't open %q: %q", fileName, err)
 				continue
 			}
 		}
