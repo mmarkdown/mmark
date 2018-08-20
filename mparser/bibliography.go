@@ -2,15 +2,18 @@ package mparser
 
 import (
 	"bytes"
+	"encoding/xml"
+	"log"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/mast/reference"
 )
 
-func CitationToBibliography(p *parser.Parser, doc ast.Node) (ast.Node, ast.Node) {
+func CitationToBibliography(p *parser.Parser, doc ast.Node) (normative ast.Node, informative ast.Node) {
 	seen := map[string]*mast.BibliographyItem{}
-	rawXML := map[string][]byte{}
+	raw := map[string][]byte{}
 
 	// Gather all citations.
 	// Gather all reference HTML Blocks to see if we have XML we can output.
@@ -29,35 +32,46 @@ func CitationToBibliography(p *parser.Parser, doc ast.Node) (ast.Node, ast.Node)
 			}
 		case *ast.HTMLBlock:
 			anchor := anchorFromReference(c.Content)
-			rawXML[string(bytes.ToLower(anchor))] = c.Content
-
+			raw[string(bytes.ToLower(anchor))] = c.Content
 		}
 		return ast.GoToNext
 	})
 
-	bibInformative := &mast.Bibliography{}
-	bibNormative := &mast.Bibliography{}
 	for _, r := range seen {
 		// If we have a reference anchor and the raw XML add that here.
-		if raw, ok := rawXML[string(bytes.ToLower(r.Anchor))]; ok {
-			r.RawXML = raw
+		if raw, ok := raw[string(bytes.ToLower(r.Anchor))]; ok {
+			var x reference.Reference
+			if e := xml.Unmarshal(raw, &x); e != nil {
+				log.Printf("Failed to unmarshal reference: %q: %s", r.Anchor, e)
+				continue
+			}
+			r.Raw = raw
+			r.Reference = x
 		}
 
 		switch r.Type {
 		case ast.CitationTypeInformative:
 			if informative == nil {
-				informative = &mast.BibliographyItem{}
-				p.Inline(informative, []byte("Informative References"))
+				informative = &mast.Bibliography{}
+				ast.AppendChild(informative, &ast.List{Tight: true})
 			}
-			ast.AppendChild(informative, r)
+			li := &ast.ListItem{}
+			ast.AppendChild(li, r)
+
+			list := ast.GetFirstChild(informative)
+			ast.AppendChild(list, li)
 		case ast.CitationTypeSuppressed:
 			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
-				normative = &mast.BibliographyItem{}
-				p.Inline(normative, []byte("Normative References"))
+				normative = &mast.Bibliography{}
+				ast.AppendChild(normative, &ast.List{Tight: true})
 			}
-			ast.AppendChild(normative, r)
+			li := &ast.ListItem{}
+			ast.AppendChild(li, r)
+
+			list := ast.GetFirstChild(normative)
+			ast.AppendChild(list, li)
 		}
 	}
 	return normative, informative

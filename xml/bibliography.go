@@ -26,8 +26,8 @@ func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering b
 }
 
 func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
-	if node.RawXML != nil {
-		r.out(w, node.RawXML)
+	if node.Raw != nil {
+		r.out(w, node.Raw)
 		r.cr(w)
 		return
 	}

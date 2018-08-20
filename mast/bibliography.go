@@ -1,6 +1,9 @@
 package mast
 
-import "github.com/gomarkdown/markdown/ast"
+import (
+	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/mast/reference"
+)
 
 // Bibliography represents markdown bibliography node.
 type Bibliography struct {
@@ -15,5 +18,7 @@ type BibliographyItem struct {
 
 	Anchor []byte
 	Type   ast.CitationTypes
-	RawXML []byte // If there is a <reference> in the doc
+
+	Raw       []byte              // raw reference XML
+	Reference reference.Reference // parsed reference XML
 }
