@@ -74,6 +74,7 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 
 func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	io.WriteString(w, `<div class="item" id="`+string(bib.Anchor)+`">`+"\n")
+	io.WriteString(w, `<span class="cite">`+string(bib.Anchor)+"</span>\n")
 	io.WriteString(w, `<span class="author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
 	io.WriteString(w, `<span class="title">`+bib.Reference.Front.Title+"</span>\n")
 	if bib.Reference.Format.Target != "" {
