@@ -20,6 +20,10 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		io.WriteString(w, "<h1>Bibliography</h1>\n<div class=\"bibliography\">\n")
 		return ast.GoToNext, true
 	case *mast.BibliographyItem:
+		if !entering {
+			io.WriteString(w, "\n</div>\n")
+			return ast.GoToNext, true
+		}
 		bibliographyItem(w, node, entering)
 		return ast.GoToNext, true
 	case *mast.Title:
@@ -68,8 +72,17 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 	return ast.GoToNext, false
 }
 
-func bibliographyItem(w io.Writer, node ast.Node, entering bool) {
-	println("reference: TODO")
+func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
+	io.WriteString(w, `<div class="item" id="`+string(bib.Anchor)+`">`+"\n")
+	io.WriteString(w, `<span class="author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
+	io.WriteString(w, `<span class="title">`+bib.Reference.Front.Title+"</span>\n")
+	if bib.Reference.Format.Target != "" {
+		io.WriteString(w, "<a href=\""+bib.Reference.Format.Target+"\">"+bib.Reference.Format.Target+"</a>\n")
+	}
+	if bib.Reference.Front.Date.Year != "" {
+		io.WriteString(w, "<date>"+bib.Reference.Front.Date.Year+"</date>\n")
+	}
+	io.WriteString(w, "</div>\n")
 }
 
 func wrapInSpan(content []byte, class string) string {
