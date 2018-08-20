@@ -8,9 +8,8 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
-// TitleHook will parse a title and add it to the ast tree.
+// TitleHook will parse a title and returns it.
 func TitleHook(data []byte) (ast.Node, []byte, int) {
-	// parse text between %%% and %%% and return it as a Title node.
 	i := 0
 	if len(data) < 3 {
 		return nil, nil, 0
@@ -32,7 +31,7 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 	node := mast.NewTitle()
 
 	if _, err := toml.Decode(string(data[beg:i+1]), node.TitleData); err != nil {
-		log.Printf("Failure to parsing title block: %s", err)
+		log.Printf("Failure parsing title block: %s", err)
 	}
 
 	return node, nil, i + 5

@@ -18,6 +18,7 @@ const (
 	FlagsNone   Flags = iota
 	XMLFragment       // Don't generate a complete XML document
 	SkipHTML          // Skip preformatted HTML blocks - skips comments
+	SkipImages        // Skip embedded images
 
 	CommonFlags Flags = FlagsNone
 )
@@ -374,7 +375,46 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	r.outs(w, " target=\"")
 	html.EscapeHTML(w, link.Destination)
 	r.outs(w, `"></iref>`) // link.Content/Literal can be used here.
+}
 
+func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
+	if entering {
+		r.imageEnter(w, node)
+	} else {
+		r.imageExit(w, node)
+	}
+}
+
+func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
+	dest := image.Destination
+	r.outs(w, `<img src="`)
+	html.EscapeHTML(w, dest)
+	r.outs(w, `" alt="`)
+}
+
+func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
+	if image.Title != nil {
+		r.outs(w, `" name="`)
+		html.EscapeHTML(w, image.Title)
+	}
+	r.outs(w, `" />`)
+}
+
+func (r *Renderer) code(w io.Writer, node *ast.Code) {
+	r.outs(w, "<tt>")
+	html.EscapeHTML(w, node.Literal)
+	r.outs(w, "</tt>")
+}
+
+func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
+	r.outs(w, `<artwork type="math">`+"\n")
+	if r.opts.Comments != nil {
+		r.EscapeHTMLCallouts(w, mathBlock.Literal)
+	} else {
+		html.EscapeHTML(w, mathBlock.Literal)
+	}
+	r.outs(w, `</artwork>`)
+	r.cr(w)
 }
 
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
@@ -463,6 +503,15 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.link(w, node, entering)
 	case *ast.Math:
 		r.outOneOf(w, entering, "<tt>", "</tt>")
+	case *ast.Image:
+		if r.opts.Flags&SkipImages != 0 {
+			return ast.SkipChildren
+		}
+		r.image(w, node, entering)
+	case *ast.Code:
+		r.code(w, node)
+	case *ast.MathBlock:
+		r.mathBlock(w, node)
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}

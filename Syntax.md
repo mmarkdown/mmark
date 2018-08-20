@@ -68,7 +68,7 @@ Mmark adds:
 * Including other files with the option to specify line ranges and/or prefix each line with a string
 * Document divisions
 * Captions for code, tables and quotes
-* Asides and other unnumbered (special) sections (i.e. Abstract)
+* Asides and other unnumbered (special) sections (i.e. Abstract or Preface)
 * Indices
 * Citations
 * Callouts
@@ -85,7 +85,7 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
 ### RFC 7991 XML Output
 
 This is the output format used for generating Internet-Drafts and RFCs. The generated XML needs to
-be processed by another tool (xml2rfc) to generate to official (final) output. The XML from *mmark*
+be processed by another tool (xml2rfc) to generate to official (final) output. The XML from *Mmark*
 can be used directly to upload to the IETF tools website.
 
 Title Block:
@@ -119,7 +119,7 @@ Source code:
     ~~~
     Will be typesets as source code with the language set to `go`.
 
-### XML RFC 7441(?) XML Output
+### XML RFC 7749 Output
 
 > This renderer does not exit yet.
 
@@ -138,7 +138,7 @@ A Title Block contains a document's meta data; title, authors, date and other el
 that can be specified are copied from the [xml2rfc v3
 standard](https://tools.ietf.org/html/rfc7791). More on these below. The complete title block is
 specified in [TOML](https://github.com/toml-lang/toml). Examples title blocks can be [found in the
-repository of mmark](https://github.com/mmarkdown/mmark/tree/master/rfc).
+repository of Mmark](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
 The title block itself needs three or more `%`'s at the start and end of the block. A minimal title
 block would look like this:
@@ -172,13 +172,13 @@ An example would be:
 
 ~~~ toml
 %%%
-title = "Using mmark to create I-Ds and RFCs"
+title = "Using Mmark to create I-Ds and RFCs"
 abbrev = "mmark2rfc"
 updates = [1925, 7511]
 ipr= "trust200902"
 area = "Internet"
 workgroup = ""
-keyword = ["markdown", "xml", "mmark"]
+keyword = ["markdown", "xml", "Mmark"]
 
 [seriesInfo]
 status = "informational"
@@ -282,6 +282,7 @@ Or for a code block:
 And for a quote:
 
      > Ability is nothing without opportunity.
+
      Quote: https://example.com, Napoleon Bonaparte
 
 ### Asides

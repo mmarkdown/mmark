@@ -11,6 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
@@ -66,9 +67,17 @@ func main() {
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
 			parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark
 
+		documentTitle := "" // hack to get document title fromm toml title block and then set it here.
+
 		p := parser.NewWithExtensions(ext)
 		p.Opts = parser.ParserOptions{
-			ParserHook:    mparser.Hook,
+			ParserHook: func(data []byte) (ast.Node, []byte, int) {
+				node, data, consumed := mparser.Hook(data)
+				if t, ok := node.(*mast.Title); ok {
+					documentTitle = t.TitleData.Title
+				}
+				return node, data, consumed
+			},
 			ReadIncludeFn: init.ReadInclude,
 		}
 
@@ -98,7 +107,7 @@ func main() {
 
 		if *flagHTML {
 			opts := html.RendererOptions{
-				// TODO(miek): makes this an option.
+				// TODO(miek): make this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
 				Flags:          html.CommonFlags,
@@ -114,6 +123,9 @@ func main() {
 					continue
 				}
 				opts.Head = head
+			}
+			if documentTitle != "" {
+				opts.Title = documentTitle
 			}
 
 			renderer = html.NewRenderer(opts)
