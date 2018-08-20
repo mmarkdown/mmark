@@ -11,11 +11,15 @@ type RenderNodeFunc func(w io.Writer, node ast.Node, entering bool) (ast.WalkSta
 
 func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node := node.(type) {
-	case *mast.References:
-		references(w, node, entering)
+	case *mast.Bibliography:
+		if !entering {
+			io.WriteString(w, "\n</div>\n")
+			return ast.GoToNext, true
+		}
+		io.WriteString(w, "<h1>Bibliography</h1>\n<div class=\"bibliography\">\n")
 		return ast.GoToNext, true
-	case *mast.Reference:
-		reference(w, node, entering)
+	case *mast.BibliographyItem:
+		bibliographyItem(w, node, entering)
 		return ast.GoToNext, true
 	case *mast.Title:
 		// outout toml title block in html.
@@ -63,11 +67,7 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 	return ast.GoToNext, false
 }
 
-func references(w io.Writer, node ast.Node, entering bool) {
-	println("references: TODO")
-}
-
-func reference(w io.Writer, node ast.Node, entering bool) {
+func bibliographyItem(w io.Writer, node ast.Node, entering bool) {
 	println("reference: TODO")
 }
 

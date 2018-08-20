@@ -74,7 +74,7 @@ func main() {
 
 		doc := markdown.Parse(d, p)
 		if *flagReference {
-			norm, inform := mparser.CitationToReferences(p, doc)
+			norm, inform := mparser.CitationToBibliography(p, doc)
 			if norm != nil {
 				ast.AppendChild(doc, norm)
 			}

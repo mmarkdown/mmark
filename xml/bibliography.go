@@ -14,7 +14,7 @@ var (
 	rfcRe = regexp.MustCompile(`/RFC(/d+)/`)
 )
 
-func (r *Renderer) references(w io.Writer, node *mast.References, entering bool) {
+func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
 	if entering {
 		r.sectionClose(w)
 		r.section = nil
@@ -25,7 +25,7 @@ func (r *Renderer) references(w io.Writer, node *mast.References, entering bool)
 	r.outs(w, "</references>\n")
 }
 
-func (r *Renderer) reference(w io.Writer, node *mast.Reference) {
+func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	if node.RawXML != nil {
 		r.out(w, node.RawXML)
 		r.cr(w)
@@ -34,7 +34,7 @@ func (r *Renderer) reference(w io.Writer, node *mast.Reference) {
 
 	tag := ""
 	switch {
-	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
+	case bytes.HasPrefix(node.Anchor, []byte("RFC")): // TODO(miek): use regexp here.
 		tag = makeXiInclude(toolsIetfOrg, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 	}
 	r.outs(w, tag)

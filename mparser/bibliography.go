@@ -8,8 +8,8 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
-func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informative ast.Node) {
-	seen := map[string]*mast.Reference{}
+func CitationToBibliography(p *parser.Parser, doc ast.Node) (ast.Node, ast.Node) {
+	seen := map[string]*mast.BibliographyItem{}
 	rawXML := map[string][]byte{}
 
 	// Gather all citations.
@@ -21,7 +21,7 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 				if _, ok := seen[string(bytes.ToLower(d))]; ok {
 					continue
 				}
-				ref := &mast.Reference{}
+				ref := &mast.BibliographyItem{}
 				ref.Anchor = d
 				ref.Type = c.Type[i]
 
@@ -35,6 +35,8 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 		return ast.GoToNext
 	})
 
+	bibInformative := &mast.Bibliography{}
+	bibNormative := &mast.Bibliography{}
 	for _, r := range seen {
 		// If we have a reference anchor and the raw XML add that here.
 		if raw, ok := rawXML[string(bytes.ToLower(r.Anchor))]; ok {
@@ -44,15 +46,15 @@ func CitationToReferences(p *parser.Parser, doc ast.Node) (normative, informativ
 		switch r.Type {
 		case ast.CitationTypeInformative:
 			if informative == nil {
-				informative = &mast.References{}
-				p.Inline(informative, []byte("Normative References"))
+				informative = &mast.BibliographyItem{}
+				p.Inline(informative, []byte("Informative References"))
 			}
 			ast.AppendChild(informative, r)
 		case ast.CitationTypeSuppressed:
 			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
-				normative = &mast.References{}
+				normative = &mast.BibliographyItem{}
 				p.Inline(normative, []byte("Normative References"))
 			}
 			ast.AppendChild(normative, r)

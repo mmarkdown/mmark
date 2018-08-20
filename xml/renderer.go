@@ -66,7 +66,7 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 		r.outs(w, "</name>")
 		return
 	}
-	if _, parentIsReferences := text.Parent.(*mast.References); parentIsReferences {
+	if _, parentIsBibliography := text.Parent.(*mast.Bibliography); parentIsBibliography {
 		r.outs(w, "<name>")
 		html.EscapeHTML(w, text.Literal)
 		r.outs(w, "</name>")
@@ -389,10 +389,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		// do nothing
 	case *mast.Title:
 		r.titleBlock(w, node)
-	case *mast.References:
-		r.references(w, node, entering)
-	case *mast.Reference:
-		r.reference(w, node)
+	case *mast.Bibliography:
+		r.bibliography(w, node, entering)
+	case *mast.BibliographyItem:
+		r.bibliographyItem(w, node)
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
 		// generated to xml2rfc, do nothing
 	case *ast.Text:
