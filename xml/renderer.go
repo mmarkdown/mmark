@@ -461,6 +461,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		}
 	case *ast.Link:
 		r.link(w, node, entering)
+	case *ast.Math:
+		r.outOneOf(w, entering, "<tt>", "</tt>")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
