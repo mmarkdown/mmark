@@ -551,9 +551,7 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
-	r.outs(w, `<meta name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go">`)
-	r.cr(w)
-	r.outs(w, `<meta charset="utf-8">`)
+	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
 	r.cr(w)
 }
 

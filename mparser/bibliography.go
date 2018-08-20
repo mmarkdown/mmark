@@ -53,25 +53,15 @@ func CitationToBibliography(p *parser.Parser, doc ast.Node) (normative ast.Node,
 		case ast.CitationTypeInformative:
 			if informative == nil {
 				informative = &mast.Bibliography{}
-				ast.AppendChild(informative, &ast.List{Tight: true})
 			}
-			li := &ast.ListItem{}
-			ast.AppendChild(li, r)
-
-			list := ast.GetFirstChild(informative)
-			ast.AppendChild(list, li)
+			ast.AppendChild(informative, r)
 		case ast.CitationTypeSuppressed:
 			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
 				normative = &mast.Bibliography{}
-				ast.AppendChild(normative, &ast.List{Tight: true})
 			}
-			li := &ast.ListItem{}
-			ast.AppendChild(li, r)
-
-			list := ast.GetFirstChild(normative)
-			ast.AppendChild(list, li)
+			ast.AppendChild(normative, r)
 		}
 	}
 	return normative, informative
