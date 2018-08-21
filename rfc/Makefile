@@ -2,7 +2,6 @@ MMARK :=../mmark
 TXT := $(patsubst %.md,%.md.txt,$(wildcard *.md))
 XML := $(patsubst %.md,%.md.xml,$(wildcard *.md))
 
-
 txt: $(TXT)
 
 %.md.txt: %.md

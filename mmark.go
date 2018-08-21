@@ -11,6 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/miekg/markdown/xml2"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
@@ -134,18 +135,15 @@ func main() {
 
 			renderer = html.NewRenderer(opts)
 		} else if *flagTwo {
-			/*
-				opts := xml2.RendererOptions{
-					Flags:    xml2.CommonFlags,
-					Comments: [][]byte{[]byte("//"), []byte("#")},
-				}
-				if *flagFragment {
-					opts.Flags |= xml2.XMLFragment
-				}
+			opts := xml2.RendererOptions{
+				Flags:    xml2.CommonFlags,
+				Comments: [][]byte{[]byte("//"), []byte("#")},
+			}
+			if *flagFragment {
+				opts.Flags |= xml2.XMLFragment
+			}
 
-				renderer = xml2.NewRenderer(opts)
-			*/
-
+			renderer = xml2.NewRenderer(opts)
 		} else {
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,

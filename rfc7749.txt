@@ -1,0 +1,4259 @@
+
+
+
+
+
+
+Internet Architecture Board (IAB)                             J. Reschke
+Request for Comments: 7749                                    greenbytes
+Obsoletes: 2629                                            February 2016
+Category: Informational
+ISSN: 2070-1721
+
+
+                   The "xml2rfc" Version 2 Vocabulary
+
+Abstract
+
+   This document defines the "xml2rfc" version 2 vocabulary: an XML-
+   based language used for writing RFCs and Internet-Drafts.
+
+   Version 2 represents the state of the vocabulary (as implemented by
+   several tools and as used by the RFC Editor) around 2014.
+
+   This document obsoletes RFC 2629.
+
+Status of This Memo
+
+   This document is not an Internet Standards Track specification; it is
+   published for informational purposes.
+
+   This document is a product of the Internet Architecture Board (IAB)
+   and represents information that the IAB has deemed valuable to
+   provide for permanent record.  It represents the consensus of the
+   Internet Architecture Board (IAB).  Documents approved for
+   publication by the IAB are not a candidate for any level of Internet
+   Standard; see Section 2 of RFC 5741.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc7749.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.
+
+
+
+
+
+Reschke                       Informational                     [Page 1]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+Table of Contents
+
+   1. Introduction ....................................................4
+      1.1. Syntax Notation ............................................4
+   2. Elements ........................................................5
+      2.1. <abstract> .................................................5
+      2.2. <address> ..................................................5
+      2.3. <annotation> ...............................................6
+      2.4. <area> .....................................................6
+      2.5. <artwork> ..................................................7
+      2.6. <author> ..................................................10
+      2.7. <back> ....................................................11
+      2.8. <c> .......................................................12
+      2.9. <city> ....................................................12
+      2.10. <code> ...................................................12
+      2.11. <country> ................................................12
+      2.12. <cref> ...................................................13
+      2.13. <date> ...................................................14
+      2.14. <email> ..................................................15
+      2.15. <eref> ...................................................15
+      2.16. <facsimile> ..............................................16
+      2.17. <figure> .................................................16
+      2.18. <format> .................................................18
+      2.19. <front> ..................................................19
+      2.20. <iref> ...................................................20
+      2.21. <keyword> ................................................21
+      2.22. <list> ...................................................21
+      2.23. <middle> .................................................23
+      2.24. <note> ...................................................24
+      2.25. <organization> ...........................................24
+      2.26. <phone> ..................................................24
+      2.27. <postal> .................................................25
+      2.28. <postamble> ..............................................25
+      2.29. <preamble> ...............................................26
+      2.30. <reference> ..............................................26
+      2.31. <references> .............................................27
+      2.32. <region> .................................................28
+      2.33. <rfc> ....................................................28
+      2.34. <section> ................................................32
+      2.35. <seriesInfo> .............................................33
+      2.36. <spanx> ..................................................34
+      2.37. <street> .................................................35
+      2.38. <t> ......................................................35
+      2.39. <texttable> ..............................................36
+      2.40. <title> ..................................................38
+      2.41. <ttcol> ..................................................38
+      2.42. <uri> ....................................................39
+
+
+
+
+Reschke                       Informational                     [Page 2]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+      2.43. <vspace> .................................................39
+      2.44. <workgroup> ..............................................39
+      2.45. <xref> ...................................................40
+   3. Escaping for Use in XML ........................................42
+   4. Special Unicode Code Points ....................................42
+   5. Including Files ................................................43
+   6. Internationalization Considerations ............................44
+   7. Security Considerations ........................................44
+   8. IANA Considerations ............................................44
+      8.1. Internet Media Type Registration ..........................44
+   9. References .....................................................46
+      9.1. Normative References ......................................46
+      9.2. Informative References ....................................46
+   Appendix A. Front-Page ("Boilerplate") Generation .................50
+     A.1. The "category" Attribute ...................................50
+     A.2. The "ipr" Attribute ........................................50
+       A.2.1. Current Values: "*trust200902" .........................51
+       A.2.2. Historic Values ........................................52
+     A.3. The "submissionType" Attribute .............................54
+     A.4. The "consensus" Attribute ..................................55
+   Appendix B. Changes from RFC 2629 ("v1") ..........................56
+     B.1. Removed Elements ...........................................56
+     B.2. Changed Defaults ...........................................56
+     B.3. Changed Elements ...........................................57
+     B.4. New Elements ...............................................57
+   Appendix C. RELAX NG Schema .......................................58
+     C.1. Checking Validity ..........................................65
+   IAB Members at the Time of Approval ...............................66
+   Acknowledgments ...................................................66
+   Index .............................................................67
+   Author's Address ..................................................76
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 3]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+1.  Introduction
+
+   This document describes version 2 ("v2") of the "xml2rfc" vocabulary:
+   an XML-based language ("Extensible Markup Language" [XML]) used for
+   writing RFCs [RFC7322] and Internet-Drafts [IDGUIDE].
+
+   Version 2 represents the state of the vocabulary (as implemented by
+   several tools and as used by the RFC Editor) around 2014.
+
+   It obsoletes the original version ("v1") [RFC2629], which contained
+   the original language definition and which was subsequently extended.
+   Many of the changes leading to version 2 have been described in
+   "Writing I-Ds and RFCs using XML (revised)" [V1rev], but that
+   document has not been updated since 2008.
+
+   Processing Instructions (Section 2.6 of [XML]) generally are specific
+   to a given processor and thus are not considered to be part of the
+   vocabulary.  See Section 4.1 of [TCLReadme] for a list of the
+   Processing Instructions supported by the first implementation of an
+   xml2rfc processor.
+
+   Note that the vocabulary contains certain constructs that might not
+   be used when generating the final text; however, they can provide
+   useful data for other uses (such as index generation, populating a
+   keyword database, or syntax checks).
+
+1.1.  Syntax Notation
+
+   The XML vocabulary here is defined in prose, based on the RELAX NG
+   schema [RNC] contained in Appendix C (specified in RELAX NG Compact
+   Notation (RNC)).
+
+   Note that the schema can be used for automated validity checks, but
+   certain constraints are only described in prose (example: the
+   conditionally required presence of the "abbrev" attribute).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 4]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.  Elements
+
+   The sections below describe all elements and their attributes.
+
+   Note that attributes not labeled "mandatory" are optional.
+
+   Except inside <artwork>, horizontal whitespace and line breaks are
+   collapsed into a single whitespace, and leading and trailing
+   whitespace is trimmed off.
+
+2.1.  <abstract>
+
+   Contains the Abstract of the document.  The Abstract ought to be
+   self-contained and thus should not contain references or unexpanded
+   abbreviations.  See Section 4.3 of [RFC7322] for more information.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model:
+
+   One or more <t> elements (Section 2.38)
+
+2.2.  <address>
+
+   Provides address information for the author.
+
+   This element appears as a child element of <author> (Section 2.6).
+
+   Content model:
+
+   In this order:
+
+   1.  One optional <postal> element (Section 2.27)
+
+   2.  One optional <phone> element (Section 2.26)
+
+   3.  One optional <facsimile> element (Section 2.16)
+
+   4.  One optional <email> element (Section 2.14)
+
+   5.  One optional <uri> element (Section 2.42)
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 5]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.3.  <annotation>
+
+   Provides additional prose augmenting a bibliographical reference.
+
+   This element appears as a child element of <reference>
+   (Section 2.30).
+
+   Content model:
+
+   In any order:
+
+   o  Text
+
+   o  <xref> elements (Section 2.45)
+
+   o  <eref> elements (Section 2.15)
+
+   o  <iref> elements (Section 2.20)
+
+   o  <cref> elements (Section 2.12)
+
+   o  <spanx> elements (Section 2.36)
+
+2.4.  <area>
+
+   Provides information about the IETF area to which this document
+   relates (currently not used when generating documents).
+
+   The value ought to be either the full name or the abbreviation of one
+   of the IETF areas as listed on <https://www.ietf.org/iesg/area.html>.
+   The list at the time that this document is being published is
+   "Applications and Real-Time" ("art"), "General" ("gen"), "Internet"
+   ("int"), "Operations and Management" ("ops"), "Routing" ("rtg"),
+   "Security" ("sec"), and "Transport" ("tsv").
+
+   Note that the set of IETF areas can change over time; for instance,
+   "Applications and Real-Time" ("art") replaced "Applications" ("app")
+   and "Real-time Applications and Infrastructure" ("rai") in 2015.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model: only text content.
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 6]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.5.  <artwork>
+
+   This element allows the inclusion of "artwork" in the document.
+
+   <artwork> is the only element in the vocabulary that provides full
+   control of horizontal whitespace and line breaks; thus, it is used
+   for a variety of things, such as:
+
+   o  diagrams ("line art"),
+
+   o  source code,
+
+   o  formal languages (such as ABNF [RFC5234] or the RNC notation used
+      in this document),
+
+   o  message flow diagrams,
+
+   o  complex tables, or
+
+   o  protocol unit diagrams.
+
+   Note that processors differ in the handling of horizontal TAB
+   characters (some expand them, some treat them as single spaces), and
+   thus these ought to be avoided.
+
+   Alternatively, the "src" attribute allows referencing an external
+   graphics file, such as a bitmap or a vector drawing, using a URI
+   ("Uniform Resource Identifier") [RFC3986].  In this case, the textual
+   content acts as a fallback for output formats that do not support
+   graphics; thus, it ought to contain either (1) a "line art" variant
+   of the graphics or (2) prose that describes the included image in
+   sufficient detail.  Note that RFCs occasionally are published with
+   enhanced diagrams; [RFC5598] is a recent example of an RFC that was
+   published along with a PDF with images.
+
+   This element appears as a child element of <figure> (Section 2.17).
+
+   Content model:
+
+   Text
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 7]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.5.1.  "align" Attribute
+
+   Controls whether the artwork appears left justified (default),
+   centered, or right justified.
+
+   Allowed values:
+
+   o  "left" (default)
+
+   o  "center"
+
+   o  "right"
+
+2.5.2.  "alt" Attribute
+
+   Alternative text description of the artwork (not just the caption).
+
+2.5.3.  "height" Attribute
+
+   The suggested height of the graphics (when it was included using the
+   "src" attribute).
+
+   This attribute is format dependent and ought to be avoided.
+
+   When generating HTML output [HTML], current implementations copy the
+   attribute "as is", thus effectively treating it as CSS (Cascading
+   Style Sheets) pixels (see Section 4.3.2 of [CSS]).  For other output
+   formats, it is usually ignored.
+
+2.5.4.  "name" Attribute
+
+   A filename suitable for the contents (such as for extraction to a
+   local file).
+
+   This attribute generally isn't used for document generation, but it
+   can be helpful for other kinds of tools (such as automated syntax
+   checkers, which work by extracting the source code).
+
+2.5.5.  "src" Attribute
+
+   The URI reference of a graphics file (Section 4.1 of [RFC3986]).
+
+   Note that this can be a "data" URI [RFC2397] as well, in which case
+   the graphics file is wholly part of the XML file.
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 8]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.5.6.  "type" Attribute
+
+   Specifies the type of the artwork.
+
+   The value is either an Internet Media Type (see [RFC2046]) or a
+   keyword (such as "abnf").  The set of recognized keywords varies
+   across implementations.
+
+   How it is used depends on context and application.  For instance, a
+   formatter can attempt to syntax-highlight code in certain known
+   languages.
+
+2.5.7.  "width" Attribute
+
+   The suggested width of the graphics (when it was included using the
+   "src" attribute).
+
+   This attribute is format dependent and ought to be avoided.
+
+   When generating HTML output [HTML], current implementations copy the
+   attribute "as is", thus effectively treating it as CSS pixels (see
+   Section 4.3.2 of [CSS]).  For other output formats, it is usually
+   ignored.
+
+2.5.8.  "xml:space" Attribute
+
+   Determines whitespace handling.
+
+   "preserve" is both the default value and the only meaningful setting
+   (because that's what the <artwork> element is for).
+
+   See also Section 2.10 of [XML].
+
+   Allowed values:
+
+   o  "default"
+
+   o  "preserve" (default)
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                     [Page 9]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.6.  <author>
+
+   Provides information about a document's author.  This is used both
+   for the document itself (at the beginning of the document) and for
+   referenced documents (inside of <reference>).
+
+   The <author> elements contained within the document's <front> element
+   are used to fill the boilerplate, and also to generate the "Author's
+   Address" section (see Section 4.12 of [RFC7322]).
+
+   Note that an "author" can also be just an organization (by not
+   specifying any of the name attributes, but adding the <organization>
+   child element).
+
+   Furthermore, the "role" attribute can be used to mark an author as
+   "editor".  This is reflected on the front page and in the "Author's
+   Address" section, as well as in bibliographical references.  Note
+   that this specification does not define a precise meaning for the
+   term "editor".
+
+   See Sections 4.10 and 4.11 of [RFC7322] for more information.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model:
+
+   In this order:
+
+   1.  One optional <organization> element (Section 2.25)
+
+   2.  One optional <address> element (Section 2.2)
+
+2.6.1.  "fullname" Attribute
+
+   The full name (used in the automatically generated "Author's Address"
+   section).
+
+2.6.2.  "initials" Attribute
+
+   An abbreviated variant of the given name(s), to be used in
+   conjunction with the separately specified surname.  It usually
+   appears on the front page, in footers, and in references.
+
+   Some processors will post-process the value -- for instance, when it
+   only contains a single letter (in which case they might add a
+   trailing dot).  Relying on this kind of post-processing can lead to
+   results varying across formatters and thus ought to be avoided.
+
+
+
+
+Reschke                       Informational                    [Page 10]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.6.3.  "role" Attribute
+
+   Specifies the role the author had in creating the document.
+
+   Allowed values:
+
+   o  "editor"
+
+2.6.4.  "surname" Attribute
+
+   The author's surname, to be used in conjunction with the separately
+   specified initials.  It usually appears on the front page, in
+   footers, and in references.
+
+2.7.  <back>
+
+   Contains the "back" part of the document: the references and
+   appendices.  In <back>, <section> elements indicate appendices.
+
+   This element appears as a child element of <rfc> (Section 2.33).
+
+   Content model:
+
+   In this order:
+
+   1.  Optional <references> elements (Section 2.31)
+
+   2.  Optional <section> elements (Section 2.34)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 11]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.8.  <c>
+
+   Provides the content of a cell in a table.
+
+   This element appears as a child element of <texttable>
+   (Section 2.39).
+
+   Content model:
+
+   In any order:
+
+   o  Text
+
+   o  <xref> elements (Section 2.45)
+
+   o  <eref> elements (Section 2.15)
+
+   o  <iref> elements (Section 2.20)
+
+   o  <cref> elements (Section 2.12)
+
+   o  <spanx> elements (Section 2.36)
+
+2.9.  <city>
+
+   Gives the city name in a postal address.
+
+   This element appears as a child element of <postal> (Section 2.27).
+
+   Content model: only text content.
+
+2.10.  <code>
+
+   Gives the postal region code.
+
+   This element appears as a child element of <postal> (Section 2.27).
+
+   Content model: only text content.
+
+2.11.  <country>
+
+   Gives the country in a postal address.
+
+   This element appears as a child element of <postal> (Section 2.27).
+
+   Content model: only text content.
+
+
+
+
+
+Reschke                       Informational                    [Page 12]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.12.  <cref>
+
+   Represents a comment.
+
+   Comments can be used in a document while it is a work in progress.
+   They usually appear (1) inline and visually highlighted, (2) at the
+   end of the document (depending on file format and settings of the
+   formatter), or (3) not at all (when generating an RFC).
+
+   This element appears as a child element of <annotation>
+   (Section 2.3), <c> (Section 2.8), <postamble> (Section 2.28),
+   <preamble> (Section 2.29), and <t> (Section 2.38).
+
+   Content model: only text content.
+
+2.12.1.  "anchor" Attribute
+
+   Document-wide unique identifier for this comment.  The processor will
+   autogenerate an identifier when none is given.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]),
+   additionally constrained to US-ASCII characters [USASCII].
+
+2.12.2.  "source" Attribute
+
+   Holds the "source" of a comment, such as the name or the initials of
+   the person who made the comment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 13]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.13.  <date>
+
+   Provides information about the publication date.
+
+   Note that this element is used for the boilerplate of the document
+   being produced, and also inside bibliographic references.
+
+   In the "boilerplate" case, it defines the publication date, which,
+   when producing Internet-Drafts, will be used for computing the
+   expiration date (see Section 8 of [IDGUIDE]).  When one or more of
+   "year", "month", or "day" are left out, the processor will attempt to
+   use the current system date if the attributes that are present are
+   consistent with that date.
+
+   Note that in this case, month names need to match the full (English)
+   month name ("January", "February", "March", "April", "May", "June",
+   "July", "August", "September", "October", "November", or "December")
+   in order for expiration calculations to work (some implementations
+   might support additional formats, though).
+
+   In the case of bibliographic references, the date information can
+   have prose text for the month or year.  For example, vague dates
+   (year="ca. 2000"), date ranges (year="2012-2013"), non-specific
+   months (month="Second quarter") and so on are allowed.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model: this element does not have any contents.
+
+2.13.1.  "day" Attribute
+
+   In the "boilerplate" case, the day of publication; this is a number.
+   Otherwise, an indication of the publication day, with the format not
+   being restricted.
+
+2.13.2.  "month" Attribute
+
+   In the "boilerplate" case, the month of publication; this is the
+   English name of the month.  Otherwise, an indication of the
+   publication month, with the format not being restricted.
+
+2.13.3.  "year" Attribute
+
+   In the "boilerplate" case, the year of publication; this is a number
+   (usually four-digit).  Otherwise, an indication of the publication
+   year, with the format not being restricted.
+
+
+
+
+
+Reschke                       Informational                    [Page 14]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.14.  <email>
+
+   Provides an email address.
+
+   The value is expected to be an email address conforming to the
+   addr-spec definition in Section 2 of [RFC6068] (so does not include
+   the prefix "mailto:").
+
+   This element appears as a child element of <address> (Section 2.2).
+
+   Content model: only text content.
+
+2.15.  <eref>
+
+   Represents an "external" link (as specified in the "target"
+   attribute).
+
+   If the element has no text content, the value of the "target"
+   attribute will be inserted in angle brackets (as described in
+   Appendix C of [RFC3986]) and, depending on the capabilities of the
+   output format, hyperlinked.
+
+   Otherwise, the text content will be used (and potentially
+   hyperlinked).  Depending on output format and formatter, additional
+   text might be inserted (such as a "URI" counter, and a "URIs" section
+   in the back of the document).  Avoid this variant when consistent
+   rendering across formats and formatters is desired.
+
+   This element appears as a child element of <annotation>
+   (Section 2.3), <c> (Section 2.8), <postamble> (Section 2.28),
+   <preamble> (Section 2.29), and <t> (Section 2.38).
+
+   Content model: only text content.
+
+2.15.1.  "target" Attribute (Mandatory)
+
+   URI of the link target (see Section 3 of [RFC3986]).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 15]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.16.  <facsimile>
+
+   Represents the phone number of a fax machine.
+
+   The value is expected to be the scheme-specific part of a "tel" URI
+   (so does not include the prefix "tel:"), using the "global numbers"
+   syntax.  See Section 3 of [RFC3966] for details.
+
+   This element appears as a child element of <address> (Section 2.2).
+
+   Content model: only text content.
+
+2.17.  <figure>
+
+   This element is used to represent a figure, consisting of an optional
+   preamble, the actual figure, an optional postamble, and an optional
+   title.
+
+   This element appears as a child element of <section> (Section 2.34)
+   and <t> (Section 2.38).
+
+   Content model:
+
+   In this order:
+
+   1.  Optional <iref> elements (Section 2.20)
+
+   2.  One optional <preamble> element (Section 2.29)
+
+   3.  One <artwork> element (Section 2.5)
+
+   4.  One optional <postamble> element (Section 2.28)
+
+2.17.1.  "align" Attribute
+
+   Used to change the alignment of <preamble> and <postamble>.
+
+   Note: does not affect title or <artwork> alignment.
+
+   Allowed values:
+
+   o  "left" (default)
+
+   o  "center"
+
+   o  "right"
+
+
+
+
+
+Reschke                       Informational                    [Page 16]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.17.2.  "alt" Attribute
+
+   Duplicates functionality available on <artwork>; avoid it.
+
+2.17.3.  "anchor" Attribute
+
+   Document-wide unique identifier for this figure.
+
+   Furthermore, the presence of this attribute causes the figure to be
+   numbered.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]).
+
+2.17.4.  "height" Attribute
+
+   Duplicates functionality available on <artwork>; avoid it.
+
+2.17.5.  "src" Attribute
+
+   Duplicates functionality available on <artwork>; avoid it.
+
+2.17.6.  "suppress-title" Attribute
+
+   Figures that have an "anchor" attribute will automatically get an
+   autogenerated title (such as "Figure 1"), even if the "title"
+   attribute is absent.  Setting this attribute to "true" will prevent
+   this.
+
+   Allowed values:
+
+   o  "true"
+
+   o  "false" (default)
+
+2.17.7.  "title" Attribute
+
+   The title for the figure; this usually appears on a line after the
+   figure.
+
+2.17.8.  "width" Attribute
+
+   Duplicates functionality available on <artwork>; avoid it.
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 17]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.18.  <format>
+
+   Provides a link to an additional format variant for a reference.
+
+   Note that these additional links are neither used in published RFCs
+   nor supported by all tools.  If the goal is to provide a single URI
+   for a reference, the "target" attribute on <reference> can be used
+   instead.
+
+   This element appears as a child element of <reference>
+   (Section 2.30).
+
+   Content model: this element does not have any contents.
+
+2.18.1.  "octets" Attribute
+
+   Octet length of linked-to document.
+
+2.18.2.  "target" Attribute
+
+   URI of document.
+
+2.18.3.  "type" Attribute (Mandatory)
+
+   The type of the linked-to document, such as "TXT", "HTML", or "PDF".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 18]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.19.  <front>
+
+   Represents the "front matter": metadata (such as author information),
+   the Abstract, and additional notes.
+
+   This element appears as a child element of <reference> (Section 2.30)
+   and <rfc> (Section 2.33).
+
+   Content model:
+
+   In this order:
+
+   1.  One <title> element (Section 2.40)
+
+   2.  One or more <author> elements (Section 2.6)
+
+   3.  One <date> element (Section 2.13)
+
+   4.  Optional <area> elements (Section 2.4)
+
+   5.  Optional <workgroup> elements (Section 2.44)
+
+   6.  Optional <keyword> elements (Section 2.21)
+
+   7.  One optional <abstract> element (Section 2.1)
+
+   8.  Optional <note> elements (Section 2.24)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 19]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.20.  <iref>
+
+   Provides terms for the document's index.
+
+   Index entries can be either regular entries (when just the "item"
+   attribute is given) or nested entries (by specifying "subitem" as
+   well), grouped under a regular entry.
+
+   In this document, for instance, every element definition appears as a
+   regular index entry ("iref element 2.20").  In addition, for each use
+   of that element inside another parent element, a nested entry was
+   added ("iref element 2.20, ... inside annotation 2.3").
+
+   Index entries generally refer to the exact place where the <iref>
+   element occurred.  An exception is the occurrence as a child element
+   of <section>, in which case the whole section is considered to be
+   relevant for that index entry.  In some formats, index entries of
+   this type might be displayed as ranges.
+
+   This element appears as a child element of <annotation>
+   (Section 2.3), <c> (Section 2.8), <figure> (Section 2.17),
+   <postamble> (Section 2.28), <preamble> (Section 2.29), <section>
+   (Section 2.34), and <t> (Section 2.38).
+
+   Content model: this element does not have any contents.
+
+2.20.1.  "item" Attribute (Mandatory)
+
+   The item to include.
+
+2.20.2.  "primary" Attribute
+
+   Setting this to "true" declares the occurrence as "primary", which
+   might cause it to be highlighted in the index.
+
+   Allowed values:
+
+   o  "true"
+
+   o  "false" (default)
+
+2.20.3.  "subitem" Attribute
+
+   The subitem to include.
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 20]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.21.  <keyword>
+
+   Specifies a keyword applicable to the document.
+
+   Note that each element should only contain a single keyword; for
+   multiple keywords, the element can simply be repeated.
+
+   Keywords are used both in the RFC Index and in the metadata of
+   generated documents.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model: only text content.
+
+2.22.  <list>
+
+   Delineates a text list.
+
+   Each list item is represented by a <t> element.  The vocabulary
+   currently does not directly support list items consisting of multiple
+   paragraphs; if this is needed, <vspace> (Section 2.43) can be used as
+   a workaround.
+
+   This element appears as a child element of <t> (Section 2.38).
+
+   Content model:
+
+   One or more <t> elements (Section 2.38)
+
+2.22.1.  "counter" Attribute
+
+   This attribute holds a token that serves as an identifier for a
+   counter.  The intended use is continuation of lists, where the
+   counter will be incremented for every list item, and there is no way
+   to reset the counter.
+
+   Note that this attribute functions only when the "style" attribute is
+   using the "format..." syntax (Section 2.22.3); otherwise, it is
+   ignored.
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 21]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.22.2.  "hangIndent" Attribute
+
+   For list styles with potentially wide labels, this attribute can
+   override the default indentation level, measured in number of
+   characters.
+
+   Note that it only affects styles with variable-width labels
+   ("format..." and "hanging"; see below), and it may not affect formats
+   in which the list item text appears _below_ the label.
+
+2.22.3.  "style" Attribute
+
+   This attribute is used to control the display of a list.
+
+   The value of this attribute is inherited by any nested lists that do
+   not have this attribute set.  It may be set to:
+
+   "empty"
+
+      For unlabeled list items; it can also be used for indentation
+      purposes (this is the default value when there is an enclosing
+      list where the style is specified).
+
+   "hanging"
+
+      For lists where the items are labeled with a piece of text.
+
+      The label text is specified in the "hangText" attribute of the <t>
+      element (Section 2.38.2).
+
+   "letters"
+
+      For ordered lists using letters as labels (lowercase letters
+      followed by a period; after "z", it rolls over to a two-letter
+      format).  For nested lists, processors usually flip between
+      uppercase and lowercase.
+
+   "numbers"
+
+      For ordered lists using numbers as labels.
+
+   "symbols"
+
+      For unordered (bulleted) lists.
+
+      The style of the bullets is chosen automatically by the processor
+      (some implementations allow overriding the default using a
+      Processing Instruction).
+
+
+
+Reschke                       Informational                    [Page 22]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   And finally:
+
+   "format ..."
+
+      For lists with customized labels, consisting of fixed text and an
+      item counter in various formats.
+
+      The value is a free-form text that allows counter values to be
+      inserted using a "percent-letter" format.  For instance, "[REQ%d]"
+      generates labels of the form "[REQ1]", where "%d" inserts the item
+      number as a decimal number.
+
+      The following formats are supported:
+
+      %c lowercase letters (a, b, c, etc.)
+
+      %C uppercase letters (A, B, C, etc.)
+
+      %d decimal numbers (1, 2, 3, etc.)
+
+      %i lowercase Roman numerals (i, ii, iii, etc.)
+
+      %I uppercase Roman numerals (I, II, III, etc.)
+
+      %% represents a percent sign
+
+      Other formats are reserved for future use.
+
+2.23.  <middle>
+
+   Represents the main content of the document.
+
+   This element appears as a child element of <rfc> (Section 2.33).
+
+   Content model:
+
+   One or more <section> elements (Section 2.34)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 23]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.24.  <note>
+
+   Creates an unnumbered section that appears after the Abstract.
+
+   It is usually used for additional information to reviewers (working
+   group information, mailing list, ...), or for additional publication
+   information such as "IESG Notes".
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model:
+
+   One or more <t> elements (Section 2.38)
+
+2.24.1.  "title" Attribute (Mandatory)
+
+   The title of the note.
+
+2.25.  <organization>
+
+   Specifies the affiliation (Section 4.1.2 of [RFC7322]) of an author.
+
+   This information appears both in the "Author's Address" section and
+   on the front page (see Section 4.1.1 of [RFC7322] for more
+   information).  If the value is long, an abbreviated variant can be
+   specified in the "abbrev" attribute.
+
+   This element appears as a child element of <author> (Section 2.6).
+
+   Content model: only text content.
+
+2.25.1.  "abbrev" Attribute
+
+   Abbreviated variant.
+
+2.26.  <phone>
+
+   Represents a phone number.
+
+   The value is expected to be the scheme-specific part of a "tel" URI
+   (so does not include the prefix "tel:"), using the "global numbers"
+   syntax.  See Section 3 of [RFC3966] for details.
+
+   This element appears as a child element of <address> (Section 2.2).
+
+   Content model: only text content.
+
+
+
+
+
+Reschke                       Informational                    [Page 24]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.27.  <postal>
+
+   Contains child elements providing postal information.
+
+   Note that at least one <street> element needs to be present; however,
+   formatters will handle empty values just fine.
+
+   This element appears as a child element of <address> (Section 2.2).
+
+   Content model:
+
+   In this order:
+
+   1.  One or more <street> elements (Section 2.37)
+
+   2.  In any order:
+
+       *  <city> elements (Section 2.9)
+
+       *  <region> elements (Section 2.32)
+
+       *  <code> elements (Section 2.10)
+
+       *  <country> elements (Section 2.11)
+
+2.28.  <postamble>
+
+   Gives text that appears at the bottom of a figure or table.
+
+   This element appears as a child element of <figure> (Section 2.17)
+   and <texttable> (Section 2.39).
+
+   Content model:
+
+   In any order:
+
+   o  Text
+
+   o  <xref> elements (Section 2.45)
+
+   o  <eref> elements (Section 2.15)
+
+   o  <iref> elements (Section 2.20)
+
+   o  <cref> elements (Section 2.12)
+
+   o  <spanx> elements (Section 2.36)
+
+
+
+
+Reschke                       Informational                    [Page 25]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.29.  <preamble>
+
+   Gives text that appears at the top of a figure or table.
+
+   This element appears as a child element of <figure> (Section 2.17)
+   and <texttable> (Section 2.39).
+
+   Content model:
+
+   In any order:
+
+   o  Text
+
+   o  <xref> elements (Section 2.45)
+
+   o  <eref> elements (Section 2.15)
+
+   o  <iref> elements (Section 2.20)
+
+   o  <cref> elements (Section 2.12)
+
+   o  <spanx> elements (Section 2.36)
+
+2.30.  <reference>
+
+   Represents a bibliographical reference.
+
+   This element appears as a child element of <references>
+   (Section 2.31).
+
+   Content model:
+
+   In this order:
+
+   1.  One <front> element (Section 2.19)
+
+   2.  Optional <seriesInfo> elements (Section 2.35)
+
+   3.  Optional <format> elements (Section 2.18)
+
+   4.  Optional <annotation> elements (Section 2.3)
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 26]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.30.1.  "anchor" Attribute (Mandatory)
+
+   Document-wide unique identifier for this reference.  Usually, this
+   will be used both to "label" the reference in the "References"
+   section, and as an identifier in links to this reference entry.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]),
+   additionally constrained to US-ASCII characters [USASCII].  Thus, the
+   character repertoire consists of "A-Z", "a-z", "0-9", "_", "-", ".",
+   and ":", where "0-9", ".", and "-" are disallowed as start
+   characters.
+
+2.30.2.  "target" Attribute
+
+   Holds the URI for the reference.
+
+   Note that, depending on the <seriesInfo> element, a URI might not be
+   needed and might not be desirable, as it can be automatically
+   generated (for instance, for RFCs).
+
+2.31.  <references>
+
+   Contains a set of bibliographical references.
+
+   In the early days of the RFC series, there was only one "References"
+   section per RFC.  This convention was later changed to group
+   references into two sets -- "Normative" and "Informative" -- as
+   described in Section 4.8.6 of [RFC7322].  This vocabulary supports
+   the split with the "title" attribute.
+
+   By default, the order of references is significant.  Processors,
+   however, can be instructed to sort them based on their anchor names.
+
+   This element appears as a child element of <back> (Section 2.7).
+
+   Content model:
+
+   One or more <reference> elements (Section 2.30)
+
+2.31.1.  "title" Attribute
+
+   Provides the title for the "References" section (defaulting to
+   "References").
+
+   In general, the title should be either "Normative References" or
+   "Informative References".
+
+
+
+
+
+Reschke                       Informational                    [Page 27]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.32.  <region>
+
+   Provides the region name in a postal address.
+
+   This element appears as a child element of <postal> (Section 2.27).
+
+   Content model: only text content.
+
+2.33.  <rfc>
+
+   This is the root element of the xml2rfc vocabulary.
+
+   Processors distinguish between RFC mode ("number" attribute being
+   present) and Internet-Draft mode ("docName" attribute being present):
+   it is invalid to specify both.  Setting neither "number" nor
+   "docName" can be useful for producing other types of documents but is
+   out of scope for this specification.
+
+   Content model:
+
+   In this order:
+
+   1.  One <front> element (Section 2.19)
+
+   2.  One <middle> element (Section 2.23)
+
+   3.  One optional <back> element (Section 2.7)
+
+2.33.1.  "category" Attribute
+
+   Document category (see Appendix A.1).
+
+   Allowed values:
+
+   o  "std"
+
+   o  "bcp"
+
+   o  "info"
+
+   o  "exp"
+
+   o  "historic"
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 28]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.33.2.  "consensus" Attribute
+
+   Affects the generated boilerplate.
+
+   See [RFC5741] for more information.
+
+   Allowed values:
+
+   o  "no"
+
+   o  "yes"
+
+2.33.3.  "docName" Attribute
+
+   For Internet-Drafts, this specifies the draft name (which appears
+   below the title).
+
+   A processor should give an error if both the "docName" and "number"
+   attributes are given in the <rfc> element.
+
+   Note that the file extension is not part of the draft, so in general
+   it should end with the current draft number ("-", plus two digits).
+
+   Furthermore, it is good practice to disambiguate current editor
+   copies from submitted drafts (for instance, by replacing the draft
+   number with the string "latest").
+
+   See Section 7 of [IDGUIDE] for further information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 29]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.33.4.  "ipr" Attribute
+
+   Represents the Intellectual Property status of the document.  See
+   Appendix A.2 for details.
+
+   Allowed values:
+
+   o  "full2026"
+
+   o  "noDerivativeWorks2026"
+
+   o  "none"
+
+   o  "full3667"
+
+   o  "noModification3667"
+
+   o  "noDerivatives3667"
+
+   o  "full3978"
+
+   o  "noModification3978"
+
+   o  "noDerivatives3978"
+
+   o  "trust200811"
+
+   o  "noModificationTrust200811"
+
+   o  "noDerivativesTrust200811"
+
+   o  "trust200902"
+
+   o  "noModificationTrust200902"
+
+   o  "noDerivativesTrust200902"
+
+   o  "pre5378Trust200902"
+
+2.33.5.  "iprExtract" Attribute
+
+   Identifies a single section within the document (by its "anchor"
+   attribute) for which extraction "as is" is explicitly allowed (this
+   is only relevant for historic values of the "ipr" attribute).
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 30]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.33.6.  "number" Attribute
+
+   The number of the RFC to be produced.
+
+   A processor should give an error if both the "docName" and "number"
+   attributes are given in the <rfc> element.
+
+2.33.7.  "obsoletes" Attribute
+
+   A comma-separated list of RFC _numbers_ or Internet-Draft names.
+
+   Processors ought to parse the attribute value, so that incorrect
+   references can be detected and, depending on output format,
+   hyperlinks can be generated.  Also, the value ought to be reformatted
+   to insert whitespace after each comma if not already present.
+
+2.33.8.  "seriesNo" Attribute
+
+   Number within a document series.
+
+   The document series is defined by the "category" attribute;
+   "seriesNo" is only applicable to the values "info" ("FYI" series),
+   "std" ("STD" series), and "bcp" ("BCP" series).
+
+2.33.9.  "submissionType" Attribute
+
+   The document stream.
+
+   See Section 2 of [RFC5741] for details.
+
+   Allowed values:
+
+   o  "IETF" (default)
+
+   o  "IAB"
+
+   o  "IRTF"
+
+   o  "independent"
+
+2.33.10.  "updates" Attribute
+
+   A comma-separated list of RFC _numbers_ or Internet-Draft names.
+
+   Processors ought to parse the attribute value, so that incorrect
+   references can be detected and, depending on output format,
+   hyperlinks can be generated.  Also, the value ought to be reformatted
+   to insert whitespace after each comma if not already present.
+
+
+
+Reschke                       Informational                    [Page 31]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.33.11.  "xml:lang" Attribute
+
+   The natural language used in the document (defaults to "en").
+
+   See Section 2.12 of [XML] for more information.
+
+2.34.  <section>
+
+   Represents a section (when inside a <middle> element) or an appendix
+   (when inside a <back> element).
+
+   Subsections are created by nesting <section> elements inside
+   <section> elements.
+
+   This element appears as a child element of <back> (Section 2.7),
+   <middle> (Section 2.23), and <section> (Section 2.34).
+
+   Content model:
+
+   In this order:
+
+   1.  In any order:
+
+       *  <t> elements (Section 2.38)
+
+       *  <figure> elements (Section 2.17)
+
+       *  <texttable> elements (Section 2.39)
+
+       *  <iref> elements (Section 2.20)
+
+   2.  Optional <section> elements (Section 2.34)
+
+2.34.1.  "anchor" Attribute
+
+   Document-wide unique identifier for this section.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]).
+
+2.34.2.  "title" Attribute (Mandatory)
+
+   The title of the section.
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 32]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.34.3.  "toc" Attribute
+
+   Determines whether the section is included in the Table of Contents.
+
+   The processor usually has defaults for whether a Table of Contents
+   will be produced at all, and sections of which maximal depth will be
+   included (frequently: 3).  "include" and "exclude" allow overriding
+   the processor's default behavior for the element they are specified
+   on (they do not affect either nested or parent elements).
+
+   Allowed values:
+
+   o  "include"
+
+   o  "exclude"
+
+   o  "default" (default)
+
+2.35.  <seriesInfo>
+
+   Specifies the document series in which this document appears, and
+   also specifies an identifier within that series.
+
+   This element appears as a child element of <reference>
+   (Section 2.30).
+
+   Content model: this element does not have any contents.
+
+2.35.1.  "name" Attribute (Mandatory)
+
+   The name of the series.
+
+   Some series names might trigger specific processing (such as for
+   autogenerating links, inserting descriptions such as "work in
+   progress", or additional functionality like reference diagnostics).
+   Examples for IETF-related series names are "BCP", "FYI",
+   "Internet-Draft", "RFC", and "STD".
+
+2.35.2.  "value" Attribute (Mandatory)
+
+   The identifier within the series specified by the "name" attribute.
+
+   For BCPs, FYIs, RFCs, and STDs, this is the number within the series.
+
+   For Internet-Drafts, it is the full draft name (ending with the
+   two-digit version number).
+
+
+
+
+
+Reschke                       Informational                    [Page 33]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.36.  <spanx>
+
+   Wraps a piece of text, indicating special formatting styles.
+
+   When generating plain text, processors usually emulate font changes
+   using characters such as "*" and "_".
+
+   The following styles are defined:
+
+   emph  Simple emphasis (this is the default).
+
+   strong  Strong emphasis.
+
+   verb  "Verbatim" text (usually displayed using a monospaced
+      font face).
+
+   This element appears as a child element of <annotation>
+   (Section 2.3), <c> (Section 2.8), <postamble> (Section 2.28),
+   <preamble> (Section 2.29), and <t> (Section 2.38).
+
+   Content model: only text content.
+
+2.36.1.  "style" Attribute
+
+   The style to be used (defaults to "emph").
+
+2.36.2.  "xml:space" Attribute
+
+   Determines whitespace handling.
+
+   According to the DTD, the default value is "preserve".  However,
+   tests show that it doesn't have any effect on processing; thus, this
+   attribute will be removed in future versions of the vocabulary.
+
+   See also Section 2.10 of [XML].
+
+   Allowed values:
+
+   o  "default"
+
+   o  "preserve" (default)
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 34]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.37.  <street>
+
+   Provides a street address.
+
+   This element appears as a child element of <postal> (Section 2.27).
+
+   Content model: only text content.
+
+2.38.  <t>
+
+   Contains a paragraph of text.
+
+   This element appears as a child element of <abstract> (Section 2.1),
+   <list> (Section 2.22), <note> (Section 2.24), and <section>
+   (Section 2.34).
+
+   Content model:
+
+   In any order:
+
+   o  Text
+
+   o  <list> elements (Section 2.22)
+
+   o  <figure> elements (Section 2.17)
+
+   o  <xref> elements (Section 2.45)
+
+   o  <eref> elements (Section 2.15)
+
+   o  <iref> elements (Section 2.20)
+
+   o  <cref> elements (Section 2.12)
+
+   o  <spanx> elements (Section 2.36)
+
+   o  <vspace> elements (Section 2.43)
+
+2.38.1.  "anchor" Attribute
+
+   Document-wide unique identifier for this paragraph.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]).
+
+2.38.2.  "hangText" Attribute
+
+   Holds the label ("hanging text") for items in lists using the
+   "hanging" style (see Section 2.22.3).
+
+
+
+Reschke                       Informational                    [Page 35]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.39.  <texttable>
+
+   Contains a table, consisting of an optional preamble, a header line,
+   rows, an optional postamble, and an optional title.
+
+   The number of columns in the table is determined by the number of
+   <ttcol> elements.  The number of rows in the table is determined by
+   the number of <c> elements divided by the number of columns.  There
+   is no requirement that the number of <c> elements be evenly divisible
+   by the number of columns.
+
+   This element appears as a child element of <section> (Section 2.34).
+
+   Content model:
+
+   In this order:
+
+   1.  One optional <preamble> element (Section 2.29)
+
+   2.  One or more <ttcol> elements (Section 2.41)
+
+   3.  Optional <c> elements (Section 2.8)
+
+   4.  One optional <postamble> element (Section 2.28)
+
+2.39.1.  "align" Attribute
+
+   Determines the horizontal alignment of the table.
+
+   Allowed values:
+
+   o  "left"
+
+   o  "center" (default)
+
+   o  "right"
+
+2.39.2.  "anchor" Attribute
+
+   Document-wide unique identifier for this table.
+
+   Furthermore, the presence of this attribute causes the table to be
+   numbered.
+
+   The value needs to be a valid XML "Name" (Section 2.3 of [XML]).
+
+
+
+
+
+
+Reschke                       Informational                    [Page 36]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.39.3.  "style" Attribute
+
+   Selects which borders should be drawn, where
+
+   o  "all" means borders around all table cells,
+
+   o  "full" is like "all", except no horizontal lines between table
+      rows (except below the column titles),
+
+   o  "headers" adds just a separator between column titles and
+      rows, and
+
+   o  "none" means no borders at all.
+
+   Allowed values:
+
+   o  "all"
+
+   o  "none"
+
+   o  "headers"
+
+   o  "full" (default)
+
+2.39.4.  "suppress-title" Attribute
+
+   Tables that have an "anchor" attribute will automatically get an
+   autogenerated title (such as "Table 1"), even if the "title"
+   attribute is absent.  Setting this attribute to "true" will
+   prevent this.
+
+   Allowed values:
+
+   o  "true"
+
+   o  "false" (default)
+
+2.39.5.  "title" Attribute
+
+   The title for the table; this usually appears on a line below the
+   table body.
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 37]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.40.  <title>
+
+   Represents the document title.
+
+   When this element appears in the <front> element of the current
+   document, the title might also appear in page headers or footers.  If
+   it's long (~40 characters), the "abbrev" attribute is used to specify
+   an abbreviated variant.
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model: only text content.
+
+2.40.1.  "abbrev" Attribute
+
+   Specifies an abbreviated variant of the document title.
+
+2.41.  <ttcol>
+
+   Contains a column heading in a table.
+
+   This element appears as a child element of <texttable>
+   (Section 2.39).
+
+   Content model: only text content.
+
+2.41.1.  "align" Attribute
+
+   Determines the horizontal alignment within the table column.
+
+   Allowed values:
+
+   o  "left" (default)
+
+   o  "center"
+
+   o  "right"
+
+2.41.2.  "width" Attribute
+
+   The desired column width (as integer 0..100 followed by "%").
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 38]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.42.  <uri>
+
+   Contains a web address associated with the author.
+
+   The contents should be a valid URI (see Section 3 of [RFC3986]).
+
+   This element appears as a child element of <address> (Section 2.2).
+
+   Content model: only text content.
+
+2.43.  <vspace>
+
+   This element can be used to force the inclusion of a single line
+   break or multiple blank lines.
+
+   Note that this is a purely presentational element; thus, its use
+   ought to be avoided, except within a <list> as discussed in
+   Section 2.22.
+
+   This element appears as a child element of <t> (Section 2.38).
+
+   Content model: this element does not have any contents.
+
+2.43.1.  "blankLines" Attribute
+
+   Number of blank lines to be inserted, where "0" indicates a single
+   line break (defaults to "0").
+
+   For paged output formats, no additional blank lines should be
+   generated after a page break.
+
+2.44.  <workgroup>
+
+   This element is used to specify the Working Group (IETF) or Research
+   Group (IRTF) from which the document originates, if any.  The
+   recommended format is the official name of the Working Group (with
+   some capitalization).
+
+   In Internet-Drafts, this is used in the upper left corner of the
+   boilerplate, replacing the default "Network Working Group" string.
+   Formatting software can append the words "Working Group" or "Research
+   Group", depending on the "submissionType" property of the <rfc>
+   element (Section 2.33.9).
+
+   This element appears as a child element of <front> (Section 2.19).
+
+   Content model: only text content.
+
+
+
+
+Reschke                       Informational                    [Page 39]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+2.45.  <xref>
+
+   Inserts a cross-reference to a different part of a document.
+
+   The generated text depends on (1) whether the <xref> is empty (in
+   which case the processor will try to generate a meaningful text
+   fragment), (2) the "format" attribute, and (3) the nature (XML
+   element type) of the referenced document part.
+
+   Any element that allows the "anchor" attribute can be referenced;
+   however, there are restrictions with respect to the text content
+   being generated.  For instance, a <t> can be a reference target;
+   however, because paragraphs are not (visibly) numbered, the author
+   will have to make sure that the combination of prose and contained
+   text content is sufficient for a reader to understand what is being
+   referred to.
+
+   This element appears as a child element of <annotation>
+   (Section 2.3), <c> (Section 2.8), <postamble> (Section 2.28),
+   <preamble> (Section 2.29), and <t> (Section 2.38).
+
+   Content model: only text content.
+
+2.45.1.  "format" Attribute
+
+   This attribute is used to control the format of the generated
+   reference text.
+
+   "counter"
+
+      Inserts a counter, such as the number of a section, figure, table,
+      or list item.
+
+      For targets that are not inherently numbered, such as references
+      or comments, it uses the anchor name instead.
+
+   "default"
+
+      Inserts a text fragment that describes the referenced part
+      completely, such as "Section 2", "Table 4", or "[XML]".
+
+   "none"
+
+      There will be no autogenerated text.
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 40]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   "title"
+
+      Inserts a title for the referenced element (usually obtained from
+      the referenced element's "title" attribute; some processors also
+      use the <title> child element or a <reference> target).
+
+   Not all combinations of text content, "format" attribute, and type of
+   referenced part lead to predictable results across different
+   formatters.  In case this matters, the following combinations need to
+   be avoided:
+
+   o  Non-empty text content with any format other than "none".
+
+   o  Empty text content with format "counter" for any target that isn't
+      inherently numbered.
+
+   o  Empty text content with format "title" for any target that doesn't
+      have a title.
+
+   Allowed values:
+
+   o  "counter"
+
+   o  "title"
+
+   o  "none"
+
+   o  "default" (default)
+
+2.45.2.  "pageno" Attribute
+
+   Unused.
+
+   It's unclear what the purpose of this attribute is; processors seem
+   to ignore it, and it never was documented.
+
+   Allowed values:
+
+   o  "true"
+
+   o  "false" (default)
+
+2.45.3.  "target" Attribute (Mandatory)
+
+   Identifies the document component being referenced.
+
+   The value needs to match the value of the "anchor" attribute of
+   another element in the document.
+
+
+
+Reschke                       Informational                    [Page 41]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+3.  Escaping for Use in XML
+
+   Text in XML cannot use the literal characters "<" and "&", as they
+   have special meaning to the XML processor (starting entities,
+   elements, etc.).  Usually, these characters will need to be
+   substituted by "&lt;" and "&amp;" (see Section 4.6 of [XML]).
+
+   ">" does not require escaping, unless it appears in the sequence
+   "]]>" (which indicates the end of a CDATA section; see below).
+
+   Escaping the individual characters can be a lot of work (when done
+   manually) and also messes up alignment in artwork.  Another approach
+   to escaping is to use CDATA sections (Section 2.7 of [XML]).  Within
+   these, no further escaping is needed, except when the "end-of-CDATA"
+   marker needs to be used (in that case, the CDATA section needs to be
+   closed, and a new one needs to be started).
+
+4.  Special Unicode Code Points
+
+   Although the current RFC format does not allow non-ASCII Unicode
+   characters [UNICODE], some of them can be used to enforce certain
+   behaviors of formatters.
+
+   For instance:
+
+   non-breaking space (U+00A0)
+
+      Represents a space character where no line break should happen.
+      This is frequently used in titles (by excluding certain space
+      characters from the line-breaking algorithm, the processor will
+      use the remaining whitespace occurrences for line breaks).
+
+   non-breaking hyphen (U+2011)
+
+      Similarly, this represents a hyphen character where no line
+      breaking ought to occur.
+
+   word joiner (U+2060)
+
+      Also called "zero width non-breaking space" -- can be used to
+      disallow line breaking between two non-whitespace characters.
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 42]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   Note that in order to use these characters by name, they need to be
+   declared in either the Document Type Definition (DTD) or the
+   "internal subset" (Section 2.8 of [XML]), like this:
+
+   <?xml version="1.0"?>
+
+   <!DOCTYPE rfc [
+
+     <!-- declare nbsp and friends -->
+     <!ENTITY nbsp    "&#xa0;">
+     <!ENTITY nbhy    "&#x2011;">
+     <!ENTITY wj      "&#x2060;">
+   ]>
+
+5.  Including Files
+
+   This version of the vocabulary does not support an inclusion
+   mechanism on its own -- thus, a document always needs to be
+   self-contained.
+
+   That being said, some processors do support file inclusion using
+   Processing Instructions (Section 2.6 of [XML] and Section 4.1.2 of
+   [TCLReadme]).
+
+   Furthermore, XML itself allows inclusion of external content using
+   the "internal subset" (Section 2.8 of [XML]).  Unfortunately, this
+   requires declaring the external data in the DTD upfront.
+
+   For instance:
+
+   <?xml version="1.0"?>
+
+   <!DOCTYPE rfc [
+
+     <!-- allow later RFC 2629 reference using "&rfc2629;" -->
+     <!-- the data will be fetched from xml2rfc.ietf.org -->
+     <!ENTITY rfc2629 PUBLIC
+     "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2629.xml">
+   ]>
+
+   ...declares the entity "rfc2629", which then can be used in the
+   "References" section:
+
+     <references>
+       &rfc2629;
+     </references>
+
+
+
+
+
+Reschke                       Informational                    [Page 43]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   Note that this mechanism only works for well-formed XML fragments;
+   thus, any plain text that would need to be escaped in XML can't be
+   included as is.
+
+6.  Internationalization Considerations
+
+   This format is based on [XML] and thus does not have any issues
+   representing arbitrary Unicode [UNICODE] characters in text content.
+
+   However, the current canonical RFC format is restricted to US-ASCII
+   characters (see [USASCII] and Section 3 of [RFC2223]).  It is
+   possible that this rule will be relaxed in future revisions of the
+   RFC format (for instance, to allow non-ASCII characters in examples
+   and contact information).  In that case, it is expected that the
+   vocabulary will be extended accordingly.
+
+7.  Security Considerations
+
+   The "name" attribute of the <artwork> element (Section 2.5.4) can be
+   used to derive a filename for saving to a local file system.
+   Trusting this kind of information without pre-processing is a known
+   security risk; see Section 4.3 of [RFC6266] for more information.
+
+   Furthermore, the nature of XML, plus vocabulary features such as
+   typed artwork, make it attractive to extract content from documents
+   for further processing, such as for the purpose of checking syntax or
+   computing/verifying examples.  In the latter case, care needs to be
+   taken that only trusted content is processed.
+
+   All security considerations related to XML processing are relevant as
+   well (see Section 7 of [RFC3470]).
+
+8.  IANA Considerations
+
+8.1.  Internet Media Type Registration
+
+   IANA maintains the registry of Internet Media Types [BCP13] at
+   <http://www.iana.org/assignments/media-types>.
+
+   This document serves as the specification for the Internet Media Type
+   "application/rfc+xml".  The following has been registered with IANA.
+
+   Type name:  application
+
+   Subtype name:  rfc+xml
+
+   Required parameters:  There are no required parameters.
+
+
+
+
+Reschke                       Informational                    [Page 44]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   Optional parameters:  "charset": This parameter has identical
+      semantics to the charset parameter of the "application/xml"
+      Media Type specified in Section 9.1 of [RFC7303].
+
+   Encoding considerations:  Identical to those of "application/xml" as
+      described in Section 9.1 of [RFC7303].
+
+   Security considerations:  As defined in Section 7.  In addition, as
+      this media type uses the "+xml" convention, it inherits the
+      security considerations described in Section 10 of [RFC7303].
+
+   Interoperability considerations:  Some aspects of this vocabulary
+      currently cannot be used interoperably; among the reasons for this
+      are that they weren't precisely defined in the first place, that
+      they have been added in an ad hoc fashion later on, or that they
+      are specific to certain output formats.  This specification
+      attempts to identify these cases in the description of the
+      individual elements/attributes.
+
+   Published specification:  This specification.
+
+   Applications that use this media type:  Applications that transform
+      xml2rfc to output formats such as plain text or HTML, plus
+      additional analysis tools.
+
+   Fragment identifier considerations:  The "anchor" attribute is used
+      for assigning document-wide unique identifiers that can be used as
+      shorthand pointers, as described in Section 3.2 of [XPOINTER].
+
+   Additional information:
+
+      Deprecated alias names for this type:  None.
+
+      Magic number(s):  As specified for "application/xml" in
+         Section 9.1 of [RFC7303].
+
+      File extension(s):  .xml or .rfcxml when disambiguation from other
+         XML files is needed.
+
+      Macintosh file type code(s):  TEXT
+
+   Person & email address to contact for further information:  See the
+      Author's Address section of RFC 7749.
+
+   Intended usage:  COMMON
+
+   Restrictions on usage:  None.
+
+
+
+
+Reschke                       Informational                    [Page 45]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   Author:  See the Author's Address section of RFC 7749.
+
+   Change controller:  RFC Series Editor (rse@rfc-editor.org)
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
+              Extensions (MIME) Part Two: Media Types", RFC 2046,
+              DOI 10.17487/RFC2046, November 1996,
+              <http://www.rfc-editor.org/info/rfc2046>.
+
+   [RFC3966]  Schulzrinne, H., "The tel URI for Telephone Numbers",
+              RFC 3966, DOI 10.17487/RFC3966, December 2004,
+              <http://www.rfc-editor.org/info/rfc3966>.
+
+   [RFC6068]  Duerst, M., Masinter, L., and J. Zawinski, "The 'mailto'
+              URI Scheme", RFC 6068, DOI 10.17487/RFC6068, October 2010,
+              <http://www.rfc-editor.org/info/rfc6068>.
+
+   [RFC7303]  Thompson, H. and C. Lilley, "XML Media Types", RFC 7303,
+              DOI 10.17487/RFC7303, July 2014,
+              <http://www.rfc-editor.org/info/rfc7303>.
+
+   [XML]      Bray, T., Paoli, J., Sperberg-McQueen, C., Maler, E., and
+              F. Yergeau, "Extensible Markup Language (XML) 1.0
+              (Fifth Edition)", W3C Recommendation REC-xml-20081126,
+              November 2008,
+              <http://www.w3.org/TR/2008/REC-xml-20081126/>.
+
+              Latest version available at <http://www.w3.org/TR/xml>.
+
+9.2.  Informative References
+
+   [BCP13]    Freed, N., Klensin, J., and T. Hansen, "Media Type
+              Specifications and Registration Procedures", BCP 13,
+              RFC 6838, January 2013,
+              <http://www.rfc-editor.org/info/bcp13>.
+
+   [CSS]      Bos, B., Celic, T., Hickson, I., and H. Lie, "Cascading
+              Style Sheets Level 2 Revision 1 (CSS 2.1) Specification",
+              W3C Recommendation REC-CSS2-20110607, June 2011,
+              <http://www.w3.org/TR/2011/REC-CSS2-20110607/>.
+
+              Latest version available at <http://www.w3.org/TR/CSS2>.
+
+
+
+
+
+Reschke                       Informational                    [Page 46]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   [HTML]     Hickson, I., Berjon, R., Faulkner, S., Leithead, T., Doyle
+              Navara, E., O'Connor, E., and S. Pfeiffer, "HTML5", W3C
+              Recommendation REC-html5-20141028, October 2014,
+              <http://www.w3.org/TR/2014/REC-html5-20141028/>.
+
+              Latest version available at <http://www.w3.org/TR/html5/>.
+
+   [IDGUIDE]  Housley, R., "Guidelines to Authors of Internet-Drafts",
+              December 2010,
+              <http://www.ietf.org/id-info/guidelines.html>.
+
+   [JING]     Thai Open Source Software Center Ltd, "Jing - A RELAX NG
+              validator in Java", 2008,
+              <http://www.thaiopensource.com/relaxng/jing.html>.
+
+              Downloads: <https://code.google.com/p/jing-trang/
+              downloads/list>.
+
+   [RFC2026]  Bradner, S., "The Internet Standards Process --
+              Revision 3", BCP 9, RFC 2026, DOI 10.17487/RFC2026,
+              October 1996, <http://www.rfc-editor.org/info/rfc2026>.
+
+   [RFC2223]  Postel, J. and J. Reynolds, "Instructions to RFC Authors",
+              RFC 2223, DOI 10.17487/RFC2223, October 1997,
+              <http://www.rfc-editor.org/info/rfc2223>.
+
+   [RFC2397]  Masinter, L., "The "data" URL scheme", RFC 2397,
+              DOI 10.17487/RFC2397, August 1998,
+              <http://www.rfc-editor.org/info/rfc2397>.
+
+   [RFC2629]  Rose, M., "Writing I-Ds and RFCs using XML", RFC 2629,
+              DOI 10.17487/RFC2629, June 1999,
+              <http://www.rfc-editor.org/info/rfc2629>.
+
+   [RFC3470]  Hollenbeck, S., Rose, M., and L. Masinter, "Guidelines for
+              the Use of Extensible Markup Language (XML) within IETF
+              Protocols", BCP 70, RFC 3470, DOI 10.17487/RFC3470,
+              January 2003, <http://www.rfc-editor.org/info/rfc3470>.
+
+   [RFC3667]  Bradner, S., "IETF Rights in Contributions", RFC 3667,
+              DOI 10.17487/RFC3667, February 2004,
+              <http://www.rfc-editor.org/info/rfc3667>.
+
+   [RFC3978]  Bradner, S., Ed., "IETF Rights in Contributions",
+              RFC 3978, DOI 10.17487/RFC3978, March 2005,
+              <http://www.rfc-editor.org/info/rfc3978>.
+
+
+
+
+
+Reschke                       Informational                    [Page 47]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              <http://www.rfc-editor.org/info/rfc3986>.
+
+   [RFC5234]  Crocker, D., Ed., and P. Overell, "Augmented BNF for
+              Syntax Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <http://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC5378]  Bradner, S., Ed., and J. Contreras, Ed., "Rights
+              Contributors Provide to the IETF Trust", BCP 78, RFC 5378,
+              DOI 10.17487/RFC5378, November 2008,
+              <http://www.rfc-editor.org/info/rfc5378>.
+
+   [RFC5598]  Crocker, D., "Internet Mail Architecture", RFC 5598,
+              DOI 10.17487/RFC5598, July 2009,
+              <http://www.rfc-editor.org/info/rfc5598>.
+
+              PDF version: <http://www.rfc-editor.org/rfc/rfc5598.pdf>
+
+   [RFC5741]  Daigle, L., Ed., Kolkman, O., Ed., and IAB, "RFC Streams,
+              Headers, and Boilerplates", RFC 5741,
+              DOI 10.17487/RFC5741, December 2009,
+              <http://www.rfc-editor.org/info/rfc5741>.
+
+   [RFC6266]  Reschke, J., "Use of the Content-Disposition Header Field
+              in the Hypertext Transfer Protocol (HTTP)", RFC 6266,
+              DOI 10.17487/RFC6266, June 2011,
+              <http://www.rfc-editor.org/info/rfc6266>.
+
+   [RFC7322]  Flanagan, H. and S. Ginoza, "RFC Style Guide", RFC 7322,
+              DOI 10.17487/RFC7322, September 2014,
+              <http://www.rfc-editor.org/info/rfc7322>.
+
+   [RNC]      Clark, J., "RELAX NG Compact Syntax", OASIS,
+              November 2002, <http://www.oasis-open.org/committees/
+              relax-ng/compact-20021121.html>.
+
+   [TCLReadme]
+              Rose, M., Fenner, B., and C. Levert, "xml2rfc v1.35pre1",
+              October 2009, <http://svn.tools.ietf.org/svn/tools/
+              xml2rfc/archive/README.html>.
+
+   [TLP1.0]   IETF Trust, "Legal Provisions Relating to IETF Documents",
+              November 2008,
+              <http://trustee.ietf.org/license-info/IETF-TLP-1.htm>.
+
+
+
+
+Reschke                       Informational                    [Page 48]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   [TLP2.0]   IETF Trust, "Legal Provisions Relating to IETF Documents",
+              February 2009,
+              <http://trustee.ietf.org/license-info/IETF-TLP-2.htm>.
+
+   [TLP3.0]   IETF Trust, "Legal Provisions Relating to IETF Documents",
+              September 2009,
+              <http://trustee.ietf.org/license-info/IETF-TLP-3.htm>.
+
+   [TLP4.0]   IETF Trust, "Legal Provisions Relating to IETF Documents",
+              December 2009,
+              <http://trustee.ietf.org/license-info/IETF-TLP-4.htm>.
+
+   [TLP5.0]   IETF Trust, "Legal Provisions Relating to IETF Documents",
+              March 2015,
+              <http://trustee.ietf.org/license-info/IETF-TLP-5.htm>.
+
+   [UNICODE]  The Unicode Consortium, "The Unicode Standard",
+              <http://www.unicode.org/versions/latest/>.
+
+   [USASCII]  American National Standards Institute, "Coded Character
+              Set -- 7-bit American Standard Code for Information
+              Interchange", ANSI X3.4, 1986.
+
+   [V1rev]    Rose, M., "Writing I-Ds and RFCs using XML (revised)",
+              February 2008,
+              <http://svn.tools.ietf.org/svn/tools/xml2rfc/archive/
+              draft-mrose-writing-rfcs.html>.
+
+   [XPOINTER] Grosso, P., Maler, E., Marsh, J., and N. Walsh, "XPointer
+              Framework", W3C Recommendation REC-xptr-framework-
+              20030325, March 2003,
+              <http://www.w3.org/TR/2003/REC-xptr-framework-20030325/>.
+
+              Latest version available at
+              <http://www.w3.org/TR/xptr-framework/>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 49]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+Appendix A.  Front-Page ("Boilerplate") Generation
+
+A.1.  The "category" Attribute
+
+   For RFCs, the "category" attribute (Section 2.33.1) determines the
+   "maturity level" (see Section 4 of [RFC2026]).  The allowed values
+   are "std" for "Standards Track", "bcp" for "BCP", "info" for
+   "Informational", "exp" for "Experimental", and "historic" for
+   "Historic".
+
+   For Internet-Drafts, the "category" attribute is not needed; when
+   supplied, it will appear as "Intended Status".  Supplying this
+   information can be useful to reviewers.
+
+A.2.  The "ipr" Attribute
+
+   This attribute value can take a long list of values, each of which
+   describes an IPR policy for the document (Section 2.33.4).  The
+   values are not the result of a grand design, but they remain simply
+   for historic reasons.  Of these values, only a few are currently in
+   use; all others are supported by various tools for backwards
+   compatibility with old source files.
+
+      *Note:* some variations of the boilerplate are selected based on
+      the document's date; therefore, it is important to specify the
+      "year", "month", and "day" attributes of the <date> element when
+      archiving the XML source of an Internet-Draft on the day of
+      submission.
+
+   _Disclaimer: THIS ONLY PROVIDES IMPLEMENTATION INFORMATION.
+   IF YOU NEED LEGAL ADVICE, PLEASE CONTACT A LAWYER._
+   For further information, refer to
+   <http://trustee.ietf.org/docs/IETF-Copyright-FAQ.pdf>.
+
+   For the current "Status of This Memo" text, the "submissionType"
+   attribute (Section 2.33.9) determines whether a statement about "Code
+   Components" is inserted (which is the case for the value "IETF",
+   which is the default).  Other values, such as "independent", suppress
+   this part of the text.
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 50]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+A.2.1.  Current Values: "*trust200902"
+
+   The name for these values refers to the IETF Trust's "Legal
+   Provisions Relating to IETF Documents", sometimes simply called the
+   "TLP", which went into effect on February 15, 2009 [TLP2.0].  Updates
+   to this document were published on September 12, 2009 [TLP3.0] and on
+   December 28, 2009 [TLP4.0], modifying the license for code components
+   (see <http://trustee.ietf.org/license-info/> for further
+   information).  The actual text is located in Section 6 ("Text to Be
+   Included in IETF Documents") of these documents.
+
+   Formatters will automatically produce the "correct" text, depending
+   on the document's date information (see above):
+
+   +----------+--------------------------------+
+   | TLP      | starting with publication date |
+   +----------+--------------------------------+
+   | [TLP3.0] | 2009-11-01                     |
+   | [TLP4.0] | 2010-04-01                     |
+   +----------+--------------------------------+
+
+      The TLP was again updated in March 2015 ([TLP5.0]), but the
+      changes made in that version do not affect the boilerplate text.
+
+A.2.1.1.  trust200902
+
+   This value should be used unless one of the more specific
+   "*trust200902" values is a better fit.  It produces the text in
+   Sections 6.a and 6.b of the TLP.
+
+A.2.1.2.  noModificationTrust200902
+
+   This produces additional text from Section 6.c.i of the TLP:
+
+      This document may not be modified, and derivative works of it may
+      not be created, except to format it for publication as an RFC or
+      to translate it into languages other than English.
+
+      *Note:* this clause is incompatible with RFCs that are published
+      on the Standards Track.
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 51]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+A.2.1.3.  noDerivativesTrust200902
+
+   This produces the additional text from Section 6.c.ii of the TLP:
+
+      This document may not be modified, and derivative works of it may
+      not be created, and it may not be published except as an
+      Internet-Draft.
+
+      *Note:* this clause is incompatible with RFCs.
+
+A.2.1.4.  pre5378Trust200902
+
+   This produces the additional text from Section 6.c.iii of the TLP,
+   frequently called the "pre-5378 escape clause" (referring to changes
+   introduced in [RFC5378]):
+
+      This document may contain material from IETF Documents or IETF
+      Contributions published or made publicly available before November
+      10, 2008.  The person(s) controlling the copyright in some of this
+      material may not have granted the IETF Trust the right to allow
+      modifications of such material outside the IETF Standards Process.
+      Without obtaining an adequate license from the person(s)
+      controlling the copyright in such materials, this document may not
+      be modified outside the IETF Standards Process, and derivative
+      works of it may not be created outside the IETF Standards Process,
+      except to format it for publication as an RFC or to translate it
+      into languages other than English.
+
+   See Section 4 of
+   <http://trustee.ietf.org/docs/IETF-Copyright-FAQ.pdf>
+   for further information about when to use this value.
+
+      *Note:* this text appears under "Copyright Notice", unless the
+      document was published before November 2009, in which case it
+      appears under "Status of This Memo".
+
+A.2.2.  Historic Values
+
+A.2.2.1.  Historic Values: "*trust200811"
+
+   The attribute values "trust200811", "noModificationTrust200811", and
+   "noDerivativesTrust200811" are similar to their "trust200902"
+   counterparts, except that they use text specified in [TLP1.0].
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 52]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+A.2.2.2.  Historic Values: "*3978"
+
+   The attribute values "full3978", "noModification3978", and
+   "noDerivatives3978" are similar to their counterparts above, except
+   that they use text specified in Section 5 of [RFC3978].
+
+A.2.2.3.  Historic Values: "*3667"
+
+   The attribute values "full3667", "noModification3667", and
+   "noDerivatives3667" are similar to their counterparts above, except
+   that they use text specified in Section 5 of [RFC3667].
+
+A.2.2.4.  Historic Values: "*2026"
+
+   The attribute values "full2026" and "noDerivativeWorks2026" are
+   similar to their counterparts above, except that they use text
+   specified in Section 10 of [RFC2026].
+
+   The special value "none" was also used back then; it denied the IETF
+   any rights beyond publication as an Internet-Draft.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 53]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+A.3.  The "submissionType" Attribute
+
+   The RFC Editor publishes documents from different document streams,
+   of which the IETF stream is the most prominent.  Other streams are
+   the independent stream (used for things such as discussion of
+   Internet-related technologies that are not part of the IETF agenda),
+   the IAB stream (Internet Architecture Board) and the IRTF stream
+   (Internet Research Task Force).
+
+   The values for the attribute are "IETF" (the default value),
+   "independent", "IAB", and "IRTF".
+
+   Historically, this attribute did not affect the final appearance of
+   RFCs, except for subtle differences in copyright notices.  Nowadays
+   (as of [RFC5741]), the stream name appears in the first line of the
+   front page, and it also affects the text in the "Status of This Memo"
+   section.
+
+   For current documents, setting the "submissionType" attribute will
+   have the following effect:
+
+   o  For RFCs, the stream name appears in the upper left corner of the
+      first page (in Internet-Drafts, this is either "Network Working
+      Group" or the value of the <workgroup> element).
+
+   o  For RFCs, it affects the whole "Status of This Memo" section (see
+      Section 3.2.2 of [RFC5741]).
+
+   o  For all RFCs and Internet-Drafts, it determines whether the
+      "Copyright Notice" mentions the copyright on Code Components (see
+      Section 6 of the TLP ("Text to Be Included in IETF Documents")).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 54]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+A.4.  The "consensus" Attribute
+
+   For some of the publication streams (see Appendix A.3), the "Status
+   of This Memo" section depends on whether there was a consensus to
+   publish (again, see Section 3.2.2 of [RFC5741]).
+
+   The "consensus" attribute ("yes"/"no", defaulting to "yes") can be
+   used to supply this information.  The effect for the various
+   streams is:
+
+   o  "independent" and "IAB": none.
+
+   o  "IETF": mention that there was an IETF consensus.
+
+   o  "IRTF": mention that there was a research group consensus (where
+      the name of the research group is extracted from the <workgroup>
+      element).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 55]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+Appendix B.  Changes from RFC 2629 ("v1")
+
+B.1.  Removed Elements
+
+   The <appendix> element has been removed; to generate an appendix,
+   place a <section> inside <back>.
+
+B.2.  Changed Defaults
+
+   Many attributes have lost their "default" value; this is to avoid
+   having document semantics differ based on whether a DTD was specified
+   and evaluated.  Processors will handle absent values the way the
+   default value was specified before.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 56]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+B.3.  Changed Elements
+
+   <artwork>: Has a set of new attributes: "name", "type", "src",
+   "align", "alt", "width", and "height".  (Section 2.5)
+
+   <author>: The <organization> element is now optional.  The "role"
+   attribute was added.  (Section 2.6)
+
+   <country>: The requirement to use ISO 3166 codes was removed.
+   (Section 2.11)
+
+   <date>: All attributes are now optional.  (Section 2.13)
+
+   <figure>: Has a set of new attributes: "suppress-title", "src",
+   "align", "alt", "width", and "height".  (Section 2.17)
+
+   <iref>: Has a new "primary" attribute.  (Section 2.20)
+
+   <list>: The "style" attribute isn't restricted to a set of enumerated
+   values anymore.  The "hangIndent" and "counter" attributes have been
+   added.  (Section 2.22)
+
+   <reference>: <annotation> allows adding prose to a reference.  The
+   "anchor" attribute has been made mandatory.  (Section 2.30)
+
+   <references>: Can now appear multiple times and can carry a "title"
+   attribute (so that normative and informative references can be
+   split).  (Section 2.31)
+
+   <rfc>: The "ipr" attribute has gained additional values.  The
+   attributes "consensus", "iprExtract", "submissionType", and
+   "xml:lang" have been added.  (Section 2.33)
+
+   <section>: The new "toc" attribute controls whether it will appear in
+   the Table Of Contents.  <iref> can now appear as a direct child
+   element.  (Section 2.34)
+
+   <t>: The "anchor" attribute can now be used as well; however, there
+   are restrictions on how they can be referred to.  (Section 2.38)
+
+B.4.  New Elements
+
+   The following elements have been added: <annotation> (Section 2.3),
+   <c> (Section 2.8), <cref> (Section 2.12), <format> (Section 2.18),
+   <spanx> (Section 2.36), <texttable> (Section 2.39), and <ttcol>
+   (Section 2.41).
+
+
+
+
+
+Reschke                       Informational                    [Page 57]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+Appendix C.  RELAX NG Schema
+
+   namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
+
+   rfc =
+     element rfc {
+       attribute number { text }?,
+       [ a:defaultValue = "" ] attribute obsoletes { text }?,
+       [ a:defaultValue = "" ] attribute updates { text }?,
+       attribute category {
+         "std" | "bcp" | "info" | "exp" | "historic"
+       }?,
+       attribute consensus { "no" | "yes" }?,
+       attribute seriesNo { text }?,
+       attribute ipr {
+         "full2026"
+         | "noDerivativeWorks2026"
+         | "none"
+         | "full3667"
+         | "noModification3667"
+         | "noDerivatives3667"
+         | "full3978"
+         | "noModification3978"
+         | "noDerivatives3978"
+         | "trust200811"
+         | "noModificationTrust200811"
+         | "noDerivativesTrust200811"
+         | "trust200902"
+         | "noModificationTrust200902"
+         | "noDerivativesTrust200902"
+         | "pre5378Trust200902"
+       }?,
+       attribute iprExtract { xsd:IDREF }?,
+       [ a:defaultValue = "IETF" ]
+       attribute submissionType {
+         "IETF" | "IAB" | "IRTF" | "independent"
+       }?,
+       attribute docName { text }?,
+       [ a:defaultValue = "en" ] attribute xml:lang { text }?,
+       front,
+       middle,
+       back?
+     }
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 58]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   front =
+     element front {
+       title,
+       author+,
+       date,
+       area*,
+       workgroup*,
+       keyword*,
+       abstract?,
+       note*
+     }
+
+   title =
+     element title {
+       attribute abbrev { text }?,
+       text
+     }
+
+   author =
+     element author {
+       attribute initials { text }?,
+       attribute surname { text }?,
+       attribute fullname { text }?,
+       attribute role { "editor" }?,
+       organization?,
+       address?
+     }
+
+   organization =
+     element organization {
+       attribute abbrev { text }?,
+       text
+     }
+
+   address =
+     element address { postal?, phone?, facsimile?, email?, uri? }
+
+   postal =
+     element postal { street+, (city | region | code | country)* }
+
+   street = element street { text }
+
+   city = element city { text }
+
+   region = element region { text }
+
+   code = element code { text }
+
+
+
+
+Reschke                       Informational                    [Page 59]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   country = element country { text }
+
+   phone = element phone { text }
+
+   facsimile = element facsimile { text }
+
+   email = element email { text }
+
+   uri = element uri { text }
+
+   date =
+     element date {
+       attribute day { text }?,
+       attribute month { text }?,
+       attribute year { text }?,
+       empty
+     }
+
+   area = element area { text }
+
+   workgroup = element workgroup { text }
+
+   keyword = element keyword { text }
+
+   abstract = element abstract { t+ }
+
+   note =
+     element note {
+       attribute title { text },
+       t+
+     }
+
+   middle = element middle { section+ }
+
+   section =
+     element section {
+       attribute anchor { xsd:ID }?,
+       attribute title { text },
+       [ a:defaultValue = "default" ]
+       attribute toc { "include" | "exclude" | "default" }?,
+       (t | figure | texttable | iref)*,
+       section*
+     }
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 60]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   t =
+     element t {
+       attribute anchor { xsd:ID }?,
+       attribute hangText { text }?,
+       (text
+        | \list
+        | figure
+        | xref
+        | eref
+        | iref
+        | cref
+        | spanx
+        | vspace)*
+     }
+
+   \list =
+     element list {
+       attribute style { text }?,
+       attribute hangIndent { text }?,
+       attribute counter { text }?,
+       t+
+     }
+
+   xref =
+     element xref {
+       attribute target { xsd:IDREF },
+       [ a:defaultValue = "false" ]
+       attribute pageno { "true" | "false" }?,
+       [ a:defaultValue = "default" ]
+       attribute format { "counter" | "title" | "none" | "default" }?,
+       text
+     }
+
+   eref =
+     element eref {
+       attribute target { text },
+       text
+     }
+
+   iref =
+     element iref {
+       attribute item { text },
+       [ a:defaultValue = "" ] attribute subitem { text }?,
+       [ a:defaultValue = "false" ]
+       attribute primary { "true" | "false" }?,
+       empty
+     }
+
+
+
+
+Reschke                       Informational                    [Page 61]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   cref =
+     element cref {
+       attribute anchor { xsd:ID }?,
+       attribute source { text }?,
+       text
+     }
+
+   spanx =
+     element spanx {
+       [ a:defaultValue = "preserve" ]
+       attribute xml:space { "default" | "preserve" }?,
+       [ a:defaultValue = "emph" ] attribute style { text }?,
+       text
+     }
+
+   vspace =
+     element vspace {
+       [ a:defaultValue = "0" ] attribute blankLines { text }?,
+       empty
+     }
+
+   figure =
+     element figure {
+       attribute anchor { xsd:ID }?,
+       [ a:defaultValue = "" ] attribute title { text }?,
+       [ a:defaultValue = "false" ]
+       attribute suppress-title { "true" | "false" }?,
+       attribute src { text }?,
+       [ a:defaultValue = "left" ]
+       attribute align { "left" | "center" | "right" }?,
+       [ a:defaultValue = "" ] attribute alt { text }?,
+       [ a:defaultValue = "" ] attribute width { text }?,
+       [ a:defaultValue = "" ] attribute height { text }?,
+       iref*,
+       preamble?,
+       artwork,
+       postamble?
+     }
+
+   preamble =
+     element preamble { (text | xref | eref | iref | cref | spanx)* }
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 62]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   artwork =
+     element artwork {
+       [ a:defaultValue = "preserve" ]
+       attribute xml:space { "default" | "preserve" }?,
+       [ a:defaultValue = "" ] attribute name { text }?,
+       [ a:defaultValue = "" ] attribute type { text }?,
+       attribute src { text }?,
+       [ a:defaultValue = "left" ]
+       attribute align { "left" | "center" | "right" }?,
+       [ a:defaultValue = "" ] attribute alt { text }?,
+       [ a:defaultValue = "" ] attribute width { text }?,
+       [ a:defaultValue = "" ] attribute height { text }?,
+       text*
+     }
+
+   postamble =
+     element postamble { (text | xref | eref | iref | cref | spanx)* }
+
+   texttable =
+     element texttable {
+       attribute anchor { xsd:ID }?,
+       [ a:defaultValue = "" ] attribute title { text }?,
+       [ a:defaultValue = "false" ]
+       attribute suppress-title { "true" | "false" }?,
+       [ a:defaultValue = "center" ]
+       attribute align { "left" | "center" | "right" }?,
+       [ a:defaultValue = "full" ]
+       attribute style { "all" | "none" | "headers" | "full" }?,
+       preamble?,
+       ttcol+,
+       c*,
+       postamble?
+     }
+
+   ttcol =
+     element ttcol {
+       attribute width { text }?,
+       [ a:defaultValue = "left" ]
+       attribute align { "left" | "center" | "right" }?,
+       text
+     }
+
+   c = element c { (text | xref | eref | iref | cref | spanx)* }
+
+   back = element back { references*, section* }
+
+
+
+
+
+
+Reschke                       Informational                    [Page 63]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   references =
+     element references {
+       [ a:defaultValue = "References" ] attribute title { text }?,
+       reference+
+     }
+
+   reference =
+     element reference {
+       attribute anchor { xsd:ID },
+       attribute target { text }?,
+       front,
+       seriesInfo*,
+       format*,
+       annotation*
+     }
+
+   seriesInfo =
+     element seriesInfo {
+       attribute name { text },
+       attribute value { text },
+       empty
+     }
+
+   format =
+     element format {
+       attribute target { text }?,
+       attribute type { text },
+       attribute octets { text }?,
+       empty
+     }
+
+   annotation =
+     element annotation { (text | xref | eref | iref | cref | spanx)* }
+
+   start = rfc
+
+   (This schema was derived from version 1.3.6 of the xml2rfc DTD
+   ("Document Type Definition") (Section 2.8 of [XML]), available from
+   <http://svn.tools.ietf.org/svn/tools/xml2rfc/vocabulary/v2/03/
+   xml2rfcv2.dtd>.)
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 64]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+C.1.  Checking Validity
+
+   The validity of XML files can be checked with any tool that supports
+   RELAX NG [RNC].  The reference implementation is the Java-based,
+   open-sourced "Jing" [JING].
+
+   To use Jing, download the latest ZIP file from the "downloads" page
+   (currently <https://code.google.com/p/jing-trang/downloads/
+   detail?name=jing-20091111.zip>), extract the archive, copy "jing.jar"
+   from the "bin" folder, and make sure Java is installed.
+
+   To check a file "test.xml" using the RNC file "schema.rnc", run (from
+   a command-line prompt):
+
+   java -jar jing.jar -c schema.rnc test.xml
+
+   In good Unix tradition, no output means the file is valid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 65]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+IAB Members at the Time of Approval
+
+   Jari Arkko (IETF Chair)
+   Mary Barnes
+   Marc Blanchet
+   Ralph Droms
+   Ted Hardie
+   Joe Hildebrand
+   Russ Housley
+   Erik Nordmark
+   Robert Sparks
+   Andrew Sullivan
+   Dave Thaler
+   Brian Trammell
+   Suzanne Woolf
+
+Acknowledgments
+
+   Thanks to everybody who reviewed this document and provided feedback
+   and/or specification text, in particular Brian Carpenter, Elwyn
+   Davies, Tony Hansen, Joe Hildebrand, Paul Hoffman, Henrik Levkowetz,
+   Alice Russo, Tom Taylor, Dave Thaler, Jim Schaad, and Nico Williams.
+
+   We also thank Marshall T. Rose for both the original design and the
+   reference implementation of the "xml2rfc" formatter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 66]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+Index
+
+   A
+      Attributes
+         abbrev  21, 34
+         align  7, 14, 32, 34
+         alt  7, 15
+         anchor  11, 15, 23, 28, 31-32
+         blankLines  35
+         category  25
+         consensus  25
+         counter  18
+         day  12
+         docName  25
+         format  36
+         fullname  9
+         hangIndent  18
+         hangText  31
+         height  7, 15
+         initials  9
+         ipr  26
+         iprExtract  26
+         item  17
+         month  12
+         name  7, 29
+         number  27
+         obsoletes  27
+         octets  16
+         pageno  37
+         primary  17
+         role  9
+         seriesNo  27
+         source  12
+         src  7, 15
+         style  19, 30, 32
+         subitem  17
+         submissionType  27
+         suppress-title  15, 33
+         surname  10
+         target  13, 16, 23, 37
+         title  15, 21, 24, 28, 33
+         toc  28
+         type  8, 16
+         updates  27
+         value  29
+         width  8, 15, 34
+
+
+
+
+
+Reschke                       Informational                    [Page 67]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+         xml:lang  28
+         xml:space  8, 30
+         year  13
+      abbrev attribute
+         in organization element  21
+         in title element  34
+      abstract element  4, 50
+         inside front  16
+      address element  4, 50
+         inside author  9
+      align attribute
+         in artwork element  7
+         in figure element  14
+         in texttable element  32
+         in ttcol element  34
+      alt attribute
+         in artwork element  7
+         in figure element  15
+      anchor attribute
+         in cref element  11
+         in figure element  15
+         in reference element  23
+         in section element  28
+         in t element  31
+         in texttable element  32
+      annotation element  5, 50
+         inside reference  23
+      application/rfc+xml Media Type  40
+      area element  5, 50
+         inside front  16
+      artwork element  6, 50
+         align attribute  7
+         alt attribute  7
+         height attribute  7
+         inside figure  14
+         name attribute  7
+         src attribute  7
+         type attribute  8
+         width attribute  8
+         xml:space attribute  8
+      author element  8, 50
+         fullname attribute  9
+         initials attribute  9
+         inside front  16
+         role attribute  9
+         surname attribute  10
+
+
+
+
+
+Reschke                       Informational                    [Page 68]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   B
+      back element  10, 50
+         inside rfc  25
+      blankLines attribute
+         in vspace element  35
+   C
+      c element  10, 50
+         inside texttable  32
+      category attribute
+         in rfc element  25
+      city element  11, 50
+         inside postal  22
+      code element  11, 50
+         inside postal  22
+      consensus attribute
+         in rfc element  25
+      counter attribute
+         in list element  18
+      country element  11, 50
+         inside postal  22
+      cref element  11, 50
+         anchor attribute  11
+         inside annotation  5
+         inside c  10
+         inside postamble  22
+         inside preamble  23
+         inside t  31
+         source attribute  12
+   D
+      date element  12, 50
+         day attribute  12
+         inside front  16
+         month attribute  12
+         year attribute  13
+      day attribute
+         in date element  12
+      docName attribute
+         in rfc element  25
+   E
+      Elements
+         abstract  4, 16
+         address  4, 9
+         annotation  5, 23
+         area  5, 16
+         artwork  6, 14
+         author  8, 16
+         back  10, 25
+         c  10, 32
+
+
+
+Reschke                       Informational                    [Page 69]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+         city  11, 22
+         code  11, 22
+         country  11, 22
+         cref  5, 10-11, 22-23, 31
+         date  12, 16
+         email  5, 13
+         eref  5, 10, 13, 22-23, 31
+         facsimile  5, 14
+         figure  14, 28, 31
+         format  15, 23
+         front  16, 23, 25
+         iref  5, 10, 14, 17, 22-23, 28, 31
+         keyword  16, 18
+         list  18, 31
+         middle  20, 25
+         note  17, 20
+         organization  9, 21
+         phone  5, 21
+         postal  5, 21
+         postamble  14, 22, 32
+         preamble  14, 22, 32
+         reference  23-24
+         references  10, 24
+         region  22, 24
+         rfc  24
+         section  10, 20, 28
+         seriesInfo  23, 29
+         spanx  5, 10, 22-23, 29, 31
+         street  21, 30
+         t  4, 18, 20, 28, 31
+         texttable  28, 31
+         title  16, 33
+         ttcol  32, 34
+         uri  5, 34
+         vspace  31, 34
+         workgroup  16, 35
+         xref  5, 10, 22, 31, 35
+      email element  13, 50
+         inside address  5
+      eref element  13, 50
+         inside annotation  5
+         inside c  10
+         inside postamble  22
+         inside preamble  23
+         inside t  31
+         target attribute  13
+
+
+
+
+
+Reschke                       Informational                    [Page 70]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   F
+      facsimile element  14, 50
+         inside address  5
+      figure element  14, 50
+         align attribute  14
+         alt attribute  15
+         anchor attribute  15
+         height attribute  15
+         inside section  28
+         inside t  31
+         src attribute  15
+         suppress-title attribute  15
+         title attribute  15
+         width attribute  15
+      format attribute
+         in xref element  36
+      format element  15, 50
+         inside reference  23
+         octets attribute  16
+         target attribute  16
+         type attribute  16
+      front element  16, 50
+         inside reference  23
+         inside rfc  25
+      fullname attribute
+         in author element  9
+   H
+      hangIndent attribute
+         in list element  18
+      hangText attribute
+         in t element  31
+      height attribute
+         in artwork element  7
+         in figure element  15
+   I
+      initials attribute
+         in author element  9
+      ipr attribute
+         "*2026"  48
+         "*3667"  48
+         "*3978"  47
+         "*trust200811"  47
+         "*trust200902"  46
+         "noDerivativesTrust200902"  47
+         "noModificationTrust200902"  46
+         "pre5378Trust200902"  47
+         "trust200902"  46
+         in rfc element  26
+
+
+
+Reschke                       Informational                    [Page 71]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+      iprExtract attribute
+         in rfc element  26
+      iref element  17, 50
+         inside annotation  5
+         inside c  10
+         inside figure  14
+         inside postamble  22
+         inside preamble  23
+         inside section  28
+         inside t  31
+         item attribute  17
+         primary attribute  17
+         subitem attribute  17
+      item attribute
+         in iref element  17
+   K
+      keyword element  18, 50
+         inside front  16
+   L
+      list element  18, 50
+         counter attribute  18
+         hangIndent attribute  18
+         inside t  31
+         style attribute  19
+      list styles
+         empty  19
+         format ...  20
+         hanging  19
+         letters  19
+         numbers  19
+         symbols  19
+   M
+      Media Type
+         application/rfc+xml  40
+      middle element  20, 50
+         inside rfc  25
+      month attribute
+         in date element  12
+   N
+      name attribute
+         in artwork element  7
+         in seriesInfo element  29
+      note element  20, 50
+         inside front  17
+         title attribute  21
+      number attribute
+         in rfc element  27
+
+
+
+
+Reschke                       Informational                    [Page 72]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   O
+      obsoletes attribute
+         in rfc element  27
+      octets attribute
+         in format element  16
+      organization element  21, 50
+         abbrev attribute  21
+         inside author  9
+   P
+      pageno attribute
+         in xref element  37
+      phone element  21, 50
+         inside address  5
+      postal element  21, 50
+         inside address  5
+      postamble element  22, 50
+         inside figure  14
+         inside texttable  32
+      preamble element  22, 50
+         inside figure  14
+         inside texttable  32
+      primary attribute
+         in iref element  17
+   R
+      reference element  23, 50
+         anchor attribute  23
+         inside references  24
+         target attribute  23
+      references element  24, 50
+         inside back  10
+         title attribute  24
+      region element  24, 50
+         inside postal  22
+      rfc element  24, 50
+         category attribute  25
+         consensus attribute  25
+         docName attribute  25
+         ipr attribute  26
+         iprExtract attribute  26
+         number attribute  27
+         obsoletes attribute  27
+         seriesNo attribute  27
+         submissionType attribute  27
+         updates attribute  27
+         xml:lang attribute  28
+      role attribute
+         in author element  9
+
+
+
+
+Reschke                       Informational                    [Page 73]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   S
+      section element  28, 50
+         anchor attribute  28
+         inside back  10
+         inside middle  20
+         inside section  28
+         title attribute  28
+         toc attribute  28
+      seriesInfo element  29, 50
+         inside reference  23
+         name attribute  29
+         value attribute  29
+      seriesNo attribute
+         in rfc element  27
+      source attribute
+         in cref element  12
+      spanx element  29, 50
+         inside annotation  5
+         inside c  10
+         inside postamble  22
+         inside preamble  23
+         inside t  31
+         style attribute  30
+         xml:space attribute  30
+      src attribute
+         in artwork element  7
+         in figure element  15
+      street element  30, 50
+         inside postal  21
+      style attribute
+         in list element  19
+         in spanx element  30
+         in texttable element  32
+      subitem attribute
+         in iref element  17
+      submissionType attribute
+         in rfc element  27
+      suppress-title attribute
+         in figure element  15
+         in texttable element  33
+      surname attribute
+         in author element  10
+
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 74]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   T
+      t element  31, 50
+         anchor attribute  31
+         hangText attribute  31
+         inside abstract  4
+         inside list  18
+         inside note  20
+         inside section  28
+      target attribute
+         in eref element  13
+         in format element  16
+         in reference element  23
+         in xref element  37
+      texttable element  31, 50
+         align attribute  32
+         anchor attribute  32
+         inside section  28
+         style attribute  32
+         suppress-title attribute  33
+         title attribute  33
+      title attribute
+         in figure element  15
+         in note element  21
+         in references element  24
+         in section element  28
+         in texttable element  33
+      title element  33, 50
+         abbrev attribute  34
+         inside front  16
+      toc attribute
+         in section element  28
+      ttcol element  34, 50
+         align attribute  34
+         inside texttable  32
+         width attribute  34
+      type attribute
+         in artwork element  8
+         in format element  16
+   U
+      updates attribute
+         in rfc element  27
+      uri element  34, 50
+         inside address  5
+
+
+
+
+
+
+
+
+Reschke                       Informational                    [Page 75]
+
+RFC 7749           The "xml2rfc" Version 2 Vocabulary      February 2016
+
+
+   V
+      value attribute
+         in seriesInfo element  29
+      vspace element  34, 50
+         blankLines attribute  35
+         inside t  31
+   W
+      width attribute
+         in artwork element  8
+         in figure element  15
+         in ttcol element  34
+      workgroup element  35, 50
+         inside front  16
+   X
+      xml:lang attribute
+         in rfc element  28
+      xml:space attribute
+         in artwork element  8
+         in spanx element  30
+      xref element  35, 50
+         format attribute  36
+         inside annotation  5
+         inside c  10
+         inside postamble  22
+         inside preamble  22
+         inside t  31
+         pageno attribute  37
+         target attribute  37
+      xref formats
+         counter  36
+         default  36
+         none  36
+         title  36
+   Y
+      year attribute
+         in date element  13
+
+Author's Address
+
+   Julian F. Reschke
+   greenbytes GmbH
+   Hafenweg 16
+   Muenster, NW  48155
+   Germany
+
+   Email: julian.reschke@greenbytes.de
+   URI:   http://greenbytes.de/tech/webdav/
+
+
+
+
+Reschke                       Informational                    [Page 76]
+

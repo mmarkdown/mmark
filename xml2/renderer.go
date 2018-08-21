@@ -7,6 +7,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/miekg/markdown/xml"
 	"github.com/mmarkdown/mmark/mast"
 )
 
@@ -77,7 +78,7 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
-	r.outs(w, "<br />")
+	r.outs(w, "<vspace />")
 	r.cr(w)
 }
 
@@ -85,7 +86,7 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 	// *iff* we have a text node as a child *and* that text is 2119, we output bcp14 tags, otherwise just string.
 	text := ast.GetFirstChild(node)
 	if t, ok := text.(*ast.Text); ok {
-		if Is2119(t.Literal) {
+		if xml.Is2119(t.Literal) {
 			// out as-is.
 			r.outOneOf(w, entering, "", "")
 			return
@@ -335,9 +336,9 @@ func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 }
 
 func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
-	r.outs(w, "<em>")
+	r.outs(w, `<spanx style="emph">`)
 	r.out(w, callout.ID)
-	r.outs(w, "</em>")
+	r.outs(w, "</spanx>")
 }
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
@@ -439,7 +440,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node)
 	case *ast.Emph:
-		r.outOneOf(w, entering, `<spanx style="emph">`, "</em>")
+		r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
@@ -544,11 +545,11 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	if r.opts.Flags&XMLFragment != 0 {
 		return
 	}
-	r.outs(`<?xml version="1.0" encoding="utf-8"?>`)
-	r.cr(w)
-	r.outs(`<!DOCTYPE rfc SYSTEM 'rfc7741.dtd' []>`)
+	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
 	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
+	r.cr(w)
+	r.outs(w, `<!DOCTYPE rfc SYSTEM 'rfc7741.dtd' []>`)
 	r.cr(w)
 }
 
