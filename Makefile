@@ -34,7 +34,7 @@ release:
 	@echo ReleaseID: $(RELEASE)
 	@for asset in `ls -A release`; do \
 	    curl -o /dev/null -X POST \
-	      -H "Content-Type: application/binary" \
-	      --data-binary "@$$asset" \
+	      -H "Content-Type: application/gzip" \
+	      --data-binary "@release/$$asset" \
 	      "https://uploads.github.com/repos/$(GITHUB)/$(NAME)/releases/$(RELEASE)/assets?name=$${asset}&access_token=${GITHUB_ACCESS_TOKEN}" ; \
 	done
