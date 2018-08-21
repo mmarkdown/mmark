@@ -25,8 +25,8 @@ the *Mmarkdown* Github org, and help develop Mmark!
 Mmark's syntax and the extra features compared to plain Markdown are detailed in
 [syntax.md](https://mmark.nl/syntax).
 
-Mmark adds the following syntax elements to [gomarkdown/black
-friday](https://github.com/russross/blackfriday/blob/master/README.md):
+Mmark adds the following syntax elements to
+[gomarkdown/markdown](https://github.com/gomarkdown/markdown/blob/master/README.md):
 
 * (Extended) [title block](https://mmark.nl/syntax#title-block)
 * [Special sections](https://mmark.nl/syntax#special-sections)
@@ -64,7 +64,9 @@ Making a draft in text form:
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Outputting HTML5 is done with the `-html` switch. Outputting RFC 7741 is done with `-xml2`.
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7741 is done with `-2`.
+
+Optionally you can [download a binary](https://github.com/mmarkdown/mmark/releases).
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
