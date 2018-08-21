@@ -9,7 +9,7 @@ based on a [new markdown implementation](https://github.com/mmarkdown/markdown)
 and some (small) language changes as well. We think these language changes lead to a more consistent
 user experience and lead to less confusion.
 
-See [changes from v1](#changes-from-version-1) if you're comming from version 1.
+See [changes from v1](#changes-from-version-1) if you're coming from version 1.
 
 Biggest changes:
 
@@ -25,7 +25,7 @@ Biggest changes:
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
 will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
-this oppertunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version
+this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version
 2) and ponder LaTeX support. Also with code upstreamed (to
 [gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
 
@@ -45,7 +45,7 @@ For the rest we build up on <https://github.com/gomarkdown/markdown> and support
 [it supports](https://github.com/gomarkdown/markdown/blob/master/README.md). We enable the following
 extensions by default:
 
-* *Strikethrough*, allow strikethrough text using `~~test~~`.
+* *Strikethrough*, allow strike through text using `~~test~~`.
 * *Autolink*, detect embedded URLs that are not explicitly marked.
 * *Footnotes* Pandoc style footnotes.
 * *HeadingIDs*, specify heading IDs  with `{#id}`.
@@ -57,9 +57,9 @@ extensions by default:
 * *Smartypants*, expand `--` and `---` into ndash and mdashes.
 * *Tables*, parse tables.
 
-Mmark adds numerous enhancements to make it suitable for writing (IETF) Internet Drafts and even
-complete books. It <strike>steals</strike> borrows syntax elements from [pandoc], [kramdown],
-[leanpub], [asciidoc], [PHP markdown extra] and [Scholarly markdown].
+Mmark adds numerous enhancements to make it suitable for writing ([IETF](https://ietf.org)) Internet
+Drafts and even complete books. It <strike>steals</strike> borrows syntax elements from [pandoc],
+[kramdown], [leanpub], [asciidoc], [PHP markdown extra] and [Scholarly markdown].
 
 [kramdown]: https://kramdown.gettalong.org/
 [leanpub]: https://leanpub.com/help/manual
@@ -144,11 +144,13 @@ Block Level Attributes:
 
 ### XML RFC 7749 Output
 
-> This renderer does not exit yet.
+> This renderer is a work in progress.
 
 Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
-    understand.
+    understand. Other than transpiling the title block, *no other attempt* is made to make a v3
+    markdown document compliant with v2 (RFC 7941) output, although this is mostly true for [block
+    level attributes](#block-level-attributes).
 
 BCP 14/RFC 2119 Keywords:
 :   If an RFC 2119 word is found enclosed in `**` it will be rendered normally
@@ -160,6 +162,11 @@ Artwork/Source code:
 Block Level Attributes:
 :   We use the attributes as specified in RFC 7741, e.g. to speficify an empty list style use:
     `{style="empty"}` before the list.
+
+### HTML5 Output
+
+Title Block:
+:   From the title block only the title is used, in the `<title>` tag.
 
 ## Block Elements
 
@@ -192,10 +199,10 @@ An I-D needs to have a Title Block with the following items filled out:
    * value - draft name or RFC number
    * stream - `IETF` (default), `IAB`, `IRTF` or `independent`.
    * status - `standard`, `informational`, `experimental`, `bcp`, `fyi`, or `full-standard`.
-* ipr - usually just set `trust200902`
-* area - usually just `Internet`
-* workgroup - the workgroup the document is created for
-* keyword - array with keywords (optional)
+* ipr - usually just set `trust200902`.
+* area - usually just `Internet`.
+* workgroup - the workgroup the document is created for.
+* keyword - array with keywords (optional).
 * author(s) - define all the authors.
 * date - the date for this I-D/RFC.
 
@@ -291,7 +298,7 @@ thing on the line.
 
 Mmark supports caption below [tables](#tables), [code blocks](#code-blocks) and [block
 quotes](#block-quotes). You can caption each elements with `Table: `, `Figure: ` and `Quote: `
-respectivily. The caption extends to the first *empty* line. Some examples:
+respectively. The caption extends to the first *empty* line. Some examples:
 
 ~~~
 Name    | Age
@@ -356,7 +363,7 @@ Figure: Caption for both figures in v3 (in v2 this is ignored).
 A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
 set classes, an anchor and other types of *extra* information for the next block level element.
 
-The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
+The full syntax is: `{#id .class key="value"}`. Values may be omitted, i.e., just `{.class}` is
 valid.
 
 The following example applies the attributes: `type` and `id` to the blockquote:
