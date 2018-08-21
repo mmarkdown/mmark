@@ -25,9 +25,9 @@ Biggest changes:
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
 will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
-this oppertunity to support RFC 7991 XML, HTML5, RFC 7749 XML (xml2rfc version 2) aqnd ponder LaTeX
-support. Also with code upstreamed (to [gomarkdown](https://github.com/gomarkdown)), we have less
-code to maintain.
+this oppertunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version
+2) and ponder LaTeX support. Also with code upstreamed (to
+[gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
 
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
@@ -150,8 +150,12 @@ Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
     understand.
 
+BCP 14/RFC 2119 Keywords:
+:   If an RFC 2119 word is found enclosed in `**` it will be rendered normally
+    i.e. `**MUST**` becomes `MUST`.
+
 Artwork/Source code:
-:   There is no such distinction so these will be rendered in the same way regardles.
+:   There is no such distinction so these will be rendered in the same way regardless.
 
 Block Level Attributes:
 :   We use the attributes as specified in RFC 7741, e.g. to speficify an empty list style use:
