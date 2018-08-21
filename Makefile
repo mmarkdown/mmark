@@ -1,4 +1,4 @@
-VERSION:=$(shell grep 'var Version =' mmark.go | awk '{ print $$4} ' | tr -d '"' )
+VERSION:=$(shell grep 'var Version =' version.go | awk '{ print $$4} ' | tr -d '"' )
 GITHUB:=mmarkdown
 NAME:=mmark
 

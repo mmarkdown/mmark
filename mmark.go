@@ -17,10 +17,6 @@ import (
 	"github.com/mmarkdown/mmark/xml"
 )
 
-var Version = "1.9.90"
-
-// Usage: mmark <markdown-file>
-
 var (
 	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
 	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
