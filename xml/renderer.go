@@ -447,7 +447,6 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.callout(w, node)
 	case *ast.Emph:
 		r.outOneOf(w, entering, "<em>", "</em>")
-		r.outOneOf(w, entering, "<em>", "</em>")
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
