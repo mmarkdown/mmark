@@ -44,6 +44,7 @@ type Renderer struct {
 
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
 	section        *ast.Heading        // current open section
+	title          bool                // did we output a title block
 }
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -429,6 +430,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		// do nothing
 	case *mast.Title:
 		r.titleBlock(w, node)
+		r.title = true
 	case *mast.Bibliography:
 		r.bibliography(w, node, entering)
 	case *mast.BibliographyItem:
@@ -541,14 +543,15 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 		r.outs(w, "\n</back>\n")
 	}
 
-	if r.opts.Flags&XMLFragment != 0 {
-		return
+	if r.title {
+		io.WriteString(w, "\n</rfc>\n")
 	}
-
-	io.WriteString(w, "\n</rfc>\n")
 }
 
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
+	if r.opts.Flags&XMLFragment != 0 {
+		return
+	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
 	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
