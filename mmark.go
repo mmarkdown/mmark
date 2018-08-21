@@ -17,7 +17,7 @@ import (
 	"github.com/mmarkdown/mmark/xml"
 )
 
-var Version = "2.0.0"
+var Version = "2.0.0-rc0"
 
 // Usage: mmark <markdown-file>
 
