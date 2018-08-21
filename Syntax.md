@@ -147,7 +147,7 @@ Block Level Attributes:
 > This renderer does not exit yet.
 
 Title Block:
-:   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc can
+:   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
     understand.
 
 Artwork/Source code:
