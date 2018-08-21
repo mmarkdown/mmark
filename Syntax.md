@@ -73,8 +73,8 @@ complete books. It <strike>steals</strike> borrows syntax elements from [pandoc]
 
 Mmark adds:
 
-* (Extended) [title block](#title-block)
-* [Special sections](#special-sections)
+* (Extended) [title block](#title-block).
+* [Special sections](#special-sections).
 * [Including other files](#including-files) with the option to specify line ranges, regular
   expressions and/or prefix each line with a string.
 * [Document divisions](#document-divisions).
@@ -85,10 +85,10 @@ Mmark adds:
 * [Block Level Attributes](#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
 * [Indices](#indices) to mark an item (and/or a subitem) to be referenced in the document index.
-* [Citations](#citations) and adding [XML References](#xml-references)
+* [Citations](#citations) and adding [XML References](#xml-references).
 * [In document cross references](#cross-references), short form of referencing a section in the
   document.
-* [Super- and Subscript](#super-and-subscript) (TODO)
+* [Super- and Subscript](#super-and-subscript) (TODO).
 * [Callouts](#callouts) in code and text.
 * [BCP14](#bcp14) (RFC 2119) keyword detection.
 
