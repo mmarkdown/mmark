@@ -21,8 +21,8 @@ var (
 	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
 	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML      = flag.Bool("html", false, "create HTML output")
-	flagCss       = flag.String("css", "", "link to a CSS stylesheet")
-	flagHead      = flag.String("head", "", "link to HTML to be included in head")
+	flagCss       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
+	flagHead      = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
 	flagTwo       = flag.Bool("2", false, "generate RFC 7749 XML")
@@ -31,7 +31,8 @@ var (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS] %s\n", os.Args[0], "FILE...")
+		fmt.Fprintf(flag.CommandLine.Output(), "SYNOPSIS: %s [OPTIONS] %s\n", os.Args[0], "[FILE...]")
+		fmt.Println("\nOPTIONS:")
 		flag.PrintDefaults()
 	}
 

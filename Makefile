@@ -7,6 +7,8 @@ mmark:
 	@echo $(VERSION)
 	go build
 
+mmark.1: mmark.1.md
+	pandoc mmark.1.md -s -t man > mmark.1
 
 .PHONY: build
 build:

@@ -68,8 +68,3 @@ Outputting HTML5 is done with the `-html` switch. Outputting RFC 7741 is done wi
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
-
-## TODO
-
-* xml2rfc v2 (RFC 7741) output as a first class citizen.
-* LaTeX output?
