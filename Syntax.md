@@ -26,7 +26,7 @@ Biggest changes:
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
 will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
 this oppertunity to support RFC 7991 XML, HTML5, RFC 7749 XML (xml2rfc version 2) aqnd ponder LaTeX
-support. Also with code upstreamed (to [gomarkdown](https://github.com/gomarkdown), we have less
+support. Also with code upstreamed (to [gomarkdown](https://github.com/gomarkdown)), we have less
 code to maintain.
 
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
