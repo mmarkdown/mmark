@@ -9,8 +9,8 @@ however, *also* suited for writing complete books and other technical documentat
 [Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo)).
 
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
-[RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce XML2RFC (aforementioned
-RFC 7991) and HTML5 output.
+[RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
+RFC 7991), RFC 7941 (xml2rfc version 2) and HTML5 output.
 
 Example RFCs can be [found in the Github repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
@@ -22,32 +22,34 @@ the *Mmarkdown* Github org, and help develop Mmark!
 
 ## Syntax
 
-Mmark's syntax and the extra feature compared to plain Markdown are detailed in [syntax.md](/syntax).
+Mmark's syntax and the extra features compared to plain Markdown are detailed in
+[syntax.md](https://mmark.nl/syntax).
 
 Mmark adds the following syntax elements to [gomarkdown/black
 friday](https://github.com/russross/blackfriday/blob/master/README.md):
 
-* TOML titleblock
-* Including other files
-* Table, code block and quote captions
-* Table footers
-* Callouts in code blocks
-* Block Attribute Lists
-* Indices
-* Citations
-* Abstract/Preface/Notes sections
-* Asides
-* Main-, middle- and backmatter divisions
-* BCP14 (RFC2119) keyword detection
-* Include raw XML references
-* Subfigures
-* Example lists
-
-TODO(miek): reference these in the syntax doc.
+* (Extended) [title block](https://mmark.nl/syntax#title-block)
+* [Special sections](https://mmark.nl/syntax#special-sections)
+* [Including other files](https://mmark.nl/syntax#including-files) with the option to specify line ranges, regular
+  expressions and/or prefix each line with a string.
+* [Document divisions](https://mmark.nl/syntax#document-divisions).
+* [Captions](https://mmark.nl/syntax#captions) for code, tables and quotes
+* [Asides](https://mmark.nl/syntax#asides).
+* [Figures and Subfigures](https://mmark.nl/syntax#figures-and-subfigures) - this syntax is still under consideration as is
+  "do we really need this?"
+* [Block Level Attributes](https://mmark.nl/syntax#block-level-attributes) that allow to specify attributes, classes and
+  IDs for elements.
+* [Indices](https://mmark.nl/syntax#indices) to mark an item (and/or a subitem) to be referenced in the document index.
+* [Citations](https://mmark.nl/syntax#citations) and adding [XML References](https://mmark.nl/syntax#xml-references)
+* [In document cross references](https://mmark.nl/syntax#cross-references), short form of referencing a section in the
+  document.
+* [Super- and Subscript](https://mmark.nl/syntax#super-and-subscript) (TODO)
+* [Callouts](https://mmark.nl/syntax#callouts) in code and text.
+* [BCP14](https://mmark.nl/syntax#bcp14) (RFC 2119) keyword detection.
 
 ## Usage
 
-To build mmark, check out the code and:
+To build mmark you need to working [Go environment](https://golang.org), then check out the code and:
 
     % go build
     % ./mmark -version
@@ -62,12 +64,12 @@ Making a draft in text form:
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Outputting HTML5 is done with the `-html` switch.
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7741 is done with `-xml2`.
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
 
 ## TODO
 
-* XML2RFC V2 output as a first class citizen
+* xml2rfc v2 (RFC 7741) output as a first class citizen.
 * LaTeX output?

@@ -90,6 +90,7 @@ Mmark adds:
   document.
 * [Super- and Subscript](#super-and-subscript) (TODO)
 * [Callouts](#callouts) in code and text.
+* [BCP14](#bcp14) (RFC 2119) keyword detection.
 
 ### Syntax Gotchas
 
@@ -474,6 +475,12 @@ for them. The default mmark configuration is to detect them after `//` and `#` c
 
 Lone callouts (in code blocks) without them being prefixed with a comment means they are not
 detected by Mmark.
+
+### BCP14
+
+Phrases that are defined in RFC 2119 (i.e. MUST, SHOULD, etc) are detected when being type set as
+strong elements: `**MUST**`, in the RFC 7991 output these will typeset as `<bcp14>MUST</bcp14>`. In
+RFC 7741 output it will just be `MUST`.
 
 # Changes from version 1
 

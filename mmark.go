@@ -17,6 +17,8 @@ import (
 	"github.com/mmarkdown/mmark/xml"
 )
 
+var Version = "2.0.0"
+
 // Usage: mmark <markdown-file>
 
 var (
@@ -28,6 +30,7 @@ var (
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
 	flagTwo       = flag.Bool("2", false, "generate RFC 7749 XML")
+	flagVersion   = flag.Bool("version", false, "show mmark version")
 )
 
 func main() {
@@ -40,6 +43,10 @@ func main() {
 	args := flag.Args()
 	if len(args) == 0 {
 		args = []string{"os.Stdin"}
+	}
+	if *flagVersion {
+		fmt.Println(Version)
+		os.Exit(0)
 	}
 
 	for _, fileName := range args {
