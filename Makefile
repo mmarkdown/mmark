@@ -10,6 +10,11 @@ mmark:
 mmark.1: mmark.1.md
 	pandoc mmark.1.md -s -t man > mmark.1
 
+.PHONY: clean
+clean:
+	rm -rf build release
+	$(MAKE) -C rfc clean
+
 .PHONY: build
 build:
 	@echo $(VERSION)
