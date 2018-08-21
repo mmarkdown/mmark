@@ -544,7 +544,7 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 	}
 
 	if r.title {
-		io.WriteString(w, "\n</rfc>\n")
+		io.WriteString(w, "\n</rfc>")
 	}
 }
 
