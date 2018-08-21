@@ -65,7 +65,7 @@ func main() {
 		}
 
 		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
-			parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark
+			parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark | parser.Autolink
 
 		documentTitle := "" // hack to get document title fromm toml title block and then set it here.
 

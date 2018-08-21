@@ -15,14 +15,24 @@ Biggest changes:
 
 * Including files is now done relative to the file being parsed (i.e. the *sane* way).
 * Block attributes apply to block elements *only*.
+* Callouts
+    * *always* rendered and require double greater/less-than signs, `<<1>>`.
+    * *always* require a comment in the code, i.e. `//<<1>>` will be rendered as a callout, a plain
+    `<<1>>` will not.
+* Example lists (originally copied from Pandoc) have been dropped.
 
 # Why this new version?
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
-looks like it will be easier to add new renderers with this setup. It is also closer to Common Mark.
-So we took this oppertunity to support RFC 7991 XML, (re-)add HTML5 and ponder LaTeX and RFC 7749
-XML (xml2rfc version 2) support. Also more things upstreamed (to
-[gomarkdown](https://github.com/gomarkdown), we have less code to maintain.
+will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
+this oppertunity to support RFC 7991 XML, HTML5, RFC 7749 XML (xml2rfc version 2) aqnd ponder LaTeX
+support. Also with code upstreamed (to [gomarkdown](https://github.com/gomarkdown), we have less
+code to maintain.
+
+Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
+a tool that checks if all referenced labels in the document are actually defined. Another idea could
+be to write a "check-the-code" tool that syntax checks all code in code blocks. Eventually these
+could be build into the `mmark` binary itself.
 
 # Mmark V2 Syntax
 
@@ -35,7 +45,8 @@ For the rest we build up on <https://github.com/gomarkdown/markdown> and support
 [it supports](https://github.com/gomarkdown/markdown/blob/master/README.md). We enable the following
 extensions by default:
 
-* *Strikethrough* allow strikethrough text using `~~test~~`.
+* *Strikethrough*, allow strikethrough text using `~~test~~`.
+* *Autolink*, detect embedded URLs that are not explicitly marked.
 * *Footnotes* Pandoc style footnotes.
 * *HeadingIDs*, specify heading IDs  with `{#id}`.
 * *AutoHeadingIDs*, create the heading ID from the text.
@@ -60,18 +71,25 @@ complete books. It <strike>steals</strike> borrows syntax elements from [pandoc]
 
 ## What does Mmark add?
 
-TODO(miek): this list needs to link to the sections detailing the options.
-
 Mmark adds:
 
-* Extended title block
-* Including other files with the option to specify line ranges and/or prefix each line with a string
-* Document divisions
-* Captions for code, tables and quotes
-* Asides and other unnumbered (special) sections (i.e. Abstract or Preface)
-* Indices
-* Citations
-* Callouts
+* (Extended) [title block](#title-block)
+* [Special sections](#special-sections)
+* [Including other files](#including-files) with the option to specify line ranges, regular
+  expressions and/or prefix each line with a string.
+* [Document divisions](#document-divisions).
+* [Captions](#captions) for code, tables and quotes
+* [Asides](#asides).
+* [Figures and Subfigures](#figures-and-subfigures) - this syntax is still under consideration as is
+  "do we really need this?"
+* [Block Level Attributes](#block-level-attributes) that allow to specify attributes, classes and
+  IDs for elements.
+* [Indices](#indices) to mark an item (and/or a subitem) to be referenced in the document index.
+* [Citations](#citations) and adding [XML References](#xml-references)
+* [In document cross references](#cross-references), short form of referencing a section in the
+  document.
+* [Super- and Subscript](#super-and-subscript) (TODO)
+* [Callouts](#callouts) in code and text.
 
 ### Syntax Gotchas
 
@@ -119,6 +137,10 @@ Source code:
     ~~~
     Will be typesets as source code with the language set to `go`.
 
+Block Level Attributes:
+:   We use the attributes as specified in RFC 7791, e.g. to speficify an empty list style use:
+    `{empty="true"}` before the list.
+
 ### XML RFC 7749 Output
 
 > This renderer does not exit yet.
@@ -129,6 +151,10 @@ Title Block:
 
 Artwork/Source code:
 :   There is no such distinction so these will be rendered in the same way regardles.
+
+Block Level Attributes:
+:   We use the attributes as specified in RFC 7741, e.g. to speficify an empty list style use:
+    `{style="empty"}` before the list.
 
 ## Block Elements
 
@@ -320,9 +346,55 @@ F>
 Figure: Caption for both figures in v3 (in v2 this is ignored).
 ~~~
 
-### Example lists
+### Block Level Attributes
 
-> TODO TODO TODO
+A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
+set classes, an anchor and other types of *extra* information for the next block level element.
+
+The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
+valid.
+
+The following example applies the attributes: `type` and `id` to the blockquote:
+~~~
+{title="The blockquote title" #myid}
+> A blockquote with a title
+~~~
+Gets expanded into:
+~~~
+<blockquote id="myid" title="The blockquote title">
+    <t>A blockquote with a title</t>
+</blockquote>
+~~~
+
+
+## Inline Elements
+
+### Indices
+
+Defining indices allows you to create an index. The define an index use the `(!item)`. Sub items can
+be added as well, with `(!item; subitem)`. To make `item` primary, use another `!`: `(!!item,
+subitem)`. If any index is defined the end of the document contains the list of indices. The
+`-index=false` flag suppresses this generation.
+
+### Citations
+
+Mmark uses the citation syntax from Pandoc: `[@RFC2535]`, the citation can either be informative
+(default) or normative, this can be indicated by using the `?` or `!` modifier: `[@!RFC2535]` create
+a normative reference for RFC 2535. To suppress a citation use `[@-RFC1000]`. It will still add the
+citation to the references, but does not show up in the document as a citation.
+
+The first seen modifier determines the type (suppressed, normative or informative).
+Multiple citation can separated with a semicolon: `[@RFC1034; @RFC1035]`.
+
+If you reference an RFC or I-D the reference will be added automatically (no need to muck about
+with an `<reference>` block.
+
+For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
+If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
+citation index.
+
+A reference section is created by default, but you can suppress it by using the command line flag
+`-reference=false`.
 
 ### XML References
 
@@ -351,58 +423,6 @@ Note that for citing I-Ds and RFCs you *don't* need to include any XML, as Mmark
 automatically from their online location: or technically more correct: the xml2rfc post processor
 will do this.
 
-### Block Level Attributes
-
-A "Block Level Attribute" is a list of HTML attributes between braces: `{...}`. It allows you to
-set classes, an anchor and other types of *extra* information for the next block level element.
-
-The full syntax is: `{#id .class key="value"}`. Values may be omitted, i,e., just `{.class}` is
-valid.
-
-The following example applies the attributes: `type` and `id` to the blockquote:
-~~~
-{title="The blockquote title" #myid}
-> A blockquote with a title
-~~~
-Gets expanded into:
-~~~
-<blockquote id="myid" title="The blockquote title">
-    <t>A blockquote with a title</t>
-</blockquote>
-~~~
-
-
-## Inline Elements
-
-
-
-### Indices
-
-Defining indices allows you to create an index. The define an index use the `(!item)`. Sub items can
-be added as well, with `(!item; subitem)`. To make `item` primary, use another `!`: `(!!item,
-subitem)`. If any index is defined the end of the document contains the list of indices. The
-`-index=false` flag suppresses this generation.
-
-### Citations
-
-Mmark uses the citation syntax from Pandoc: `[@RFC2535]`, the citation can either be informative
-(default) or normative, this can be indicated by using the `?` or `!` modifier: `[@!RFC2535]` create
-a normative reference for RFC 2535. To suppress a citation use `[@-RFC1000]`. It will still add the
-citation to the references, but does not show up in the document as a citation.
-
-The first seen modifier determines the type (suppressed, normative or informative).
-Multiple citation can separated with a semicolon: `[@RFC1034; @RFC1035]`.
-
-If you reference an RFC or I-D the reference will be added automatically (no need to muck about
-with an `<reference>` block.
-
-For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
-If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
-citation index.
-
-A reference section is create by default, but you can suppress it by using the command line flag
-`-reference=false`.
-
 ### Cross References
 
 Cross references can use the syntax `[](#id)`, but usually the need for the title within the
@@ -430,11 +450,6 @@ H~2~O is a liquid. 2^10^ is 1024.
 Inside a super- or subscript you must escape spaces. Thus, if you want the letter P with 'a cat' in
 subscripts, use `P~a\ cat~`, not `P~a cat~`.
 
-## Links and Images
-
-Normal markdown synax.
-**SVG TODO and maybe new syntax**
-
 ### Callouts
 
 Callouts are way to reference code from paragraphs following that code. Mmark uses the following
@@ -456,13 +471,9 @@ example pristine in the document.
 
 Note that callouts *in code blocks* are only detected if the renderer has been configured to look
 for them. The default mmark configuration is to detect them after `//` and `#` comment starters.
-See the `-comment` option for to change this.
 
-Lone callouts without them being prefixed with a comment means they are not detected by Mmark.
-
-### Inline math
-
-Any text in between `$` and `$` will be assumed to be .. TODO
+Lone callouts (in code blocks) without them being prefixed with a comment means they are not
+detected by Mmark.
 
 # Changes from version 1
 
@@ -473,13 +484,13 @@ These are the changes from Mmark version 1:
    * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
    * **TODO** Reference text is allowed `[@ref p. 23]`.
 * Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
-* Code block call outs are now a renderer setting, not a [Block Level
+* Code block callouts are now a renderer setting, not a [Block Level
   Attribute](#block-level-attributes). Callout in code are *only* detected if they are used after
   a comment.
 * Including files with a prefix is now specified in the address specification:
   `{{myfile}}[prefix="C: "]` will use `C: ` as the prefix. No more mucking about with block
   attribute lists that are hard to discover.
-* **TODO** Extended table syntax; if this ever comes back it needs to more robust implementation.
+* There no extended table syntax; if this ever comes back it needs to more robust implementation.
 * Title Block need to be sandwiched between `%%%`, the prefix `%` does not work anymore.
 
 Syntax that is *not* supported anymore:
@@ -488,6 +499,8 @@ Syntax that is *not* supported anymore:
 * The different list syntaxes have been dropped, use a [Block Level
   Attribute](#block-level-attributes) to tweak the output.
 * Tasks lists.
+* Example lists.
 * Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
   flag `renderer.SkipHTML`.
 * Parts
+* Extended table syntax.
