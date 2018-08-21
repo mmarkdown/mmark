@@ -1,4 +1,4 @@
-package xml
+package xml2
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
-// Flags control optional behavior of XML3 renderer.
+// Flags control optional behavior of XML2 renderer.
 type Flags int
 
 // HTML renderer configuration options.
@@ -18,9 +18,9 @@ const (
 	FlagsNone   Flags = iota
 	XMLFragment       // Don't generate a complete XML document
 	SkipHTML          // Skip preformatted HTML blocks - skips comments
-	SkipImages        // Skip embedded images
+	SkipImages        // Skip embedded images, set to true for XML2
 
-	CommonFlags Flags = FlagsNone
+	CommonFlags Flags = SkipImages
 )
 
 type RendererOptions struct {
@@ -38,7 +38,7 @@ type RendererOptions struct {
 	Comments [][]byte
 }
 
-// Renderer implements Renderer interface for IETF XMLv3 output. See RFC 7991.
+// Renderer implements Renderer interface for IETF XMLv2 output. See RFC 7941.
 type Renderer struct {
 	opts RendererOptions
 
@@ -86,12 +86,13 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 	text := ast.GetFirstChild(node)
 	if t, ok := text.(*ast.Text); ok {
 		if Is2119(t.Literal) {
-			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
+			// out as-is.
+			r.outOneOf(w, entering, "", "")
 			return
 		}
 	}
 
-	r.outOneOf(w, entering, "<strong>", "</strong>")
+	r.outOneOf(w, entering, `<spanx style="strong">`, "</spanx>")
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
@@ -394,9 +395,9 @@ func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 }
 
 func (r *Renderer) code(w io.Writer, node *ast.Code) {
-	r.outs(w, "<tt>")
+	r.outs(w, `<spanx style="verb">`)
 	html.EscapeHTML(w, node.Literal)
-	r.outs(w, "</tt>")
+	r.outs(w, "</spanx>")
 }
 
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
@@ -438,7 +439,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node)
 	case *ast.Emph:
-		r.outOneOf(w, entering, "<em>", "</em>")
+		r.outOneOf(w, entering, `<spanx style="emph">`, "</em>")
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
@@ -468,18 +469,18 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.outOneOf(w, entering, "<figure>", "</figure>")
 	case *ast.Table:
-		tag := tagWithAttributes("<table", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</table>")
+		tag := tagWithAttributes("<texttable", html.BlockAttrs(node))
+		r.outOneOfCr(w, entering, tag, "</texttable>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
 	case *ast.TableHeader:
-		r.outOneOfCr(w, entering, "<thead>", "</thead>")
+		r.outOneOfCr(w, entering, "<ttcol>", "</ttcol>")
 	case *ast.TableBody:
 		r.tableBody(w, node, entering)
 	case *ast.TableRow:
-		r.outOneOfCr(w, entering, "<tr>", "</tr>")
+		r.outOneOfCr(w, entering, "<c>", "</c>")
 	case *ast.TableFooter:
-		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
+		r.outOneOfCr(w, entering, "<c>", "</c>")
 	case *ast.BlockQuote:
 		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")
@@ -495,7 +496,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Link:
 		r.link(w, node, entering)
 	case *ast.Math:
-		r.outOneOf(w, entering, "<tt>", "</tt>")
+		r.outOneOf(w, entering, `<spanx style="verb">`, "</spanx>")
 	case *ast.Image:
 		if r.opts.Flags&SkipImages != 0 {
 			return ast.SkipChildren
@@ -543,7 +544,9 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	if r.opts.Flags&XMLFragment != 0 {
 		return
 	}
-	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
+	r.outs(`<?xml version="1.0" encoding="utf-8"?>`)
+	r.cr(w)
+	r.outs(`<!DOCTYPE rfc SYSTEM 'rfc7741.dtd' []>`)
 	r.cr(w)
 	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
 	r.cr(w)
