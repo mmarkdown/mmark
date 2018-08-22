@@ -251,23 +251,24 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 		return
 	}
 
-	openTag := "<li>"
+	// attributes! both html, xml and xml2
+	openTag := "<list>"
 	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
-		openTag = "<dd>"
+		//openTag = "<dd>"
 	}
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		openTag = "<dt>"
+		//openTag = "<dt>"
 	}
 	r.outs(w, openTag)
 }
 
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
-	closeTag := "</li>"
+	closeTag := "</list>"
 	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
-		closeTag = "</dd>"
+		//closeTag = "</dd>"
 	}
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		closeTag = "</dt>"
+		//closeTag = "</dt>"
 	}
 	r.outs(w, closeTag)
 	r.cr(w)
@@ -286,19 +287,14 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
 	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
 
-	name := "artwork"
-	if codeBlock.Info != nil {
-		name = "sourcecode"
-	}
-
 	r.cr(w)
-	r.outTag(w, "<"+name, attrs)
+	r.outTag(w, "<artwork", attrs)
 	if r.opts.Comments != nil {
 		r.EscapeHTMLCallouts(w, codeBlock.Literal)
 	} else {
 		html.EscapeHTML(w, codeBlock.Literal)
 	}
-	r.outs(w, "</"+name+">")
+	r.outs(w, "</artwork>")
 	r.cr(w)
 }
 

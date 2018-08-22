@@ -9,7 +9,7 @@ import (
 type Bibliography struct {
 	ast.Container
 
-	HeadingID string // This might hold heading ID, if present
+	Type ast.CitationTypes
 }
 
 // BibliographyItem contains a single bibliography item.

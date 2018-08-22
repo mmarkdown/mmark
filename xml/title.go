@@ -26,7 +26,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	)
 	attrs = append(attrs, attributes(
 		[]string{"updates", "obsoletes"},
-		[]string{intSliceToString(d.Updates), intSliceToString(d.Obsoletes)},
+		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes)},
 	)...)
 	r.outTag(w, "<rfc", attrs)
 	r.cr(w)
@@ -41,21 +41,17 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.titleSeriesInfo(w, d.SeriesInfo)
 
 	for _, author := range d.Author {
-		r.titleAuthor(w, author)
+		r.TitleAuthor(w, author)
 	}
 
-	r.titleDate(w, d.Date)
+	r.TitleDate(w, d.Date)
 
 	r.outTagContent(w, "<area", nil, d.Area)
 
 	r.outTagContent(w, "<workgroup", nil, d.Workgroup)
 
-	for _, k := range d.Keyword {
-		if k == "" {
-			continue
-		}
-		r.outTagContent(w, "<keyword", nil, k)
-	}
+	r.TitleKeyword(w, d.Keyword)
+
 	// abstract - handled by paragraph
 	// note - handled by paragraph
 	// boilerplate - not supported.
@@ -63,8 +59,8 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	return
 }
 
-// titleAuthor outputs the author.
-func (r *Renderer) titleAuthor(w io.Writer, a mast.Author) {
+// TitleAuthor outputs the author.
+func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 
 	attrs := attributes(
 		[]string{"role", "initials", "surname", "fullname"},
@@ -114,8 +110,8 @@ func (r *Renderer) titleAuthor(w io.Writer, a mast.Author) {
 	r.cr(w)
 }
 
-// titleDate outputs the date from the TOML title block.
-func (r *Renderer) titleDate(w io.Writer, d time.Time) {
+// TitleDate outputs the date from the TOML title block.
+func (r *Renderer) TitleDate(w io.Writer, d time.Time) {
 	var attr = []string{}
 
 	if x := d.Year(); x > 0 {
@@ -131,6 +127,16 @@ func (r *Renderer) titleDate(w io.Writer, d time.Time) {
 	r.outs(w, "</date>\n")
 }
 
+// TitleKeyword outputs the keywords from the TOML title block.
+func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
+	for _, k := range keyword {
+		if k == "" {
+			continue
+		}
+		r.outTagContent(w, "<keyword", nil, k)
+	}
+}
+
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
 func (r *Renderer) titleSeriesInfo(w io.Writer, s mast.SeriesInfo) {
 	attr := attributes(
@@ -142,7 +148,8 @@ func (r *Renderer) titleSeriesInfo(w io.Writer, s mast.SeriesInfo) {
 	r.outs(w, "</seriesInfo>\n")
 }
 
-func intSliceToString(is []int) string {
+// IntSliceToString converts and int slice to a string.
+func IntSliceToString(is []int) string {
 	if len(is) == 0 {
 		return ""
 	}

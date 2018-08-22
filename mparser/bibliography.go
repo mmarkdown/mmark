@@ -52,14 +52,14 @@ func CitationToBibliography(p *parser.Parser, doc ast.Node) (normative ast.Node,
 		switch r.Type {
 		case ast.CitationTypeInformative:
 			if informative == nil {
-				informative = &mast.Bibliography{}
+				informative = &mast.Bibliography{Type: ast.CitationTypeInformative}
 			}
 			ast.AppendChild(informative, r)
 		case ast.CitationTypeSuppressed:
 			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
-				normative = &mast.Bibliography{}
+				normative = &mast.Bibliography{Type: ast.CitationTypeNormative}
 			}
 			ast.AppendChild(normative, r)
 		}

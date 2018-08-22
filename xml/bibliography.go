@@ -6,6 +6,7 @@ import (
 	"io"
 	"regexp"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
 )
 
@@ -15,14 +16,21 @@ var (
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
-	if entering {
-		r.sectionClose(w)
-		r.section = nil
-		r.outs(w, "<references>\n")
+	if !entering {
+		r.outs(w, "</references>\n")
 		return
 	}
 
-	r.outs(w, "</references>\n")
+	r.sectionClose(w)
+	r.section = nil
+
+	switch node.Type {
+	case ast.CitationTypeInformative:
+		r.outs(w, `<references><name>Informative References</name>`)
+	case ast.CitationTypeNormative:
+		r.outs(w, `<references><name>Normative References</name>`)
+	}
+	r.cr(w)
 }
 
 func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {

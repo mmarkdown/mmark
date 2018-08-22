@@ -8,12 +8,12 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/miekg/markdown/xml2"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
 )
 
-func TestMmark(t *testing.T) {
-	// open all *.md files and test them
+func TestMmarkXML(t *testing.T) {
 	dir := "testdata"
 	testFiles, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -28,39 +28,60 @@ func TestMmark(t *testing.T) {
 			continue
 		}
 		base := f.Name()[:len(f.Name())-3]
+		opts := xml.RendererOptions{
+			Flags: xml.CommonFlags | xml.XMLFragment,
+		}
+		renderer := xml.NewRenderer(opts)
 
-		doTest(t, base)
+		doTest(t, dir, base, renderer)
 	}
 }
 
-var ext = parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
-	parser.OrderedListStart | parser.Attributes | parser.Mmark
+func TestMmarkXML2(t *testing.T) {
+	dir := "testdata/2"
+	testFiles, err := ioutil.ReadDir(dir)
+	if err != nil {
+		t.Fatalf("could not read %s: %q", dir, err)
+	}
+	for _, f := range testFiles {
+		if f.IsDir() {
+			continue
+		}
 
-func doTest(t *testing.T, basename string) {
-	filename := filepath.Join("testdata", basename+".md")
+		if filepath.Ext(f.Name()) != ".md" {
+			continue
+		}
+		base := f.Name()[:len(f.Name())-3]
+		opts := xml2.RendererOptions{
+			Flags: xml2.CommonFlags | xml2.XMLFragment,
+		}
+		renderer := xml2.NewRenderer(opts)
+
+		doTest(t, dir, base, renderer)
+	}
+}
+
+func doTest(t *testing.T, dir, basename string, renderer markdown.Renderer) {
+	filename := filepath.Join(dir, basename+".md")
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Errorf("couldn't open '%s', error: %v\n", filename, err)
 		return
 	}
 
-	filename = filepath.Join("testdata", basename+".xml")
+	filename = filepath.Join(dir, basename+".xml")
 	expected, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Errorf("couldn't open '%s', error: %v\n", filename, err)
 	}
 	expected = bytes.TrimSpace(expected)
 
-	p := parser.NewWithExtensions(ext)
+	p := parser.NewWithExtensions(Extensions)
 	init := mparser.NewInitial(filename)
 	p.Opts = parser.ParserOptions{
 		ParserHook:    mparser.TitleHook,
 		ReadIncludeFn: init.ReadInclude,
 	}
-	opts := xml.RendererOptions{
-		Flags: xml.CommonFlags | xml.XMLFragment,
-	}
-	renderer := xml.NewRenderer(opts)
 
 	actual := markdown.ToHTML(input, p, renderer)
 	actual = bytes.TrimSpace(actual)

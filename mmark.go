@@ -69,12 +69,9 @@ func main() {
 			}
 		}
 
-		ext := parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
-			parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark | parser.Autolink
-
 		documentTitle := "" // hack to get document title fromm toml title block and then set it here.
 
-		p := parser.NewWithExtensions(ext)
+		p := parser.NewWithExtensions(Extensions)
 		p.Opts = parser.ParserOptions{
 			ParserHook: func(data []byte) (ast.Node, []byte, int) {
 				node, data, consumed := mparser.Hook(data)
@@ -160,3 +157,7 @@ func main() {
 		fmt.Println(string(x))
 	}
 }
+
+// Extensions is exported to we can use it in tests.
+var Extensions = parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
+	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark | parser.Autolink
