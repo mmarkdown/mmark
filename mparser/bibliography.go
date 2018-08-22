@@ -69,6 +69,22 @@ func CitationToBibliography(p *parser.Parser, doc ast.Node) (normative ast.Node,
 	return normative, informative
 }
 
+// NodeBackMatter is the place where we should inject the bibliography
+func NodeBackMatter(doc ast.Node) ast.Node {
+	var matter ast.Node
+
+	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
+		if mat, ok := node.(*ast.DocumentMatter); ok {
+			if mat.Matter == ast.DocumentMatterBack {
+				matter = mat
+				return ast.Terminate
+			}
+		}
+		return ast.GoToNext
+	})
+	return matter
+}
+
 // Parse '<reference anchor='CBR03' target=''>' and return the string after anchor= is the ID for the reference.
 func anchorFromReference(data []byte) []byte {
 	if !bytes.HasPrefix(data, []byte("<reference ")) {

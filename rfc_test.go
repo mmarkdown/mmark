@@ -14,7 +14,7 @@ import (
 	"github.com/mmarkdown/mmark/xml"
 )
 
-// TestRFC parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
+// testRFC parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
 func testRFC(t *testing.T) { // currently broken because of xml2rfc --debug foo
 	dir := "rfc"
 	testFiles := []string{

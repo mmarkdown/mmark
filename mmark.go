@@ -85,14 +85,15 @@ func main() {
 
 		doc := markdown.Parse(d, p)
 		if *flagReference {
-			// TODO(miek): citations needs to added *before* the backmatter
-			// search for that.
-			norm, inform := mparser.CitationToBibliography(p, doc)
-			if norm != nil {
-				ast.AppendChild(doc, norm)
-			}
-			if inform != nil {
-				ast.AppendChild(doc, inform)
+			where := mparser.NodeBackMatter(doc)
+			if where != nil {
+				norm, inform := mparser.CitationToBibliography(p, doc)
+				if norm != nil {
+					ast.AppendChild(where, norm)
+				}
+				if inform != nil {
+					ast.AppendChild(where, inform)
+				}
 			}
 		}
 		if *flagIndex {

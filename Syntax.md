@@ -103,6 +103,8 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
 * If you *don't* use [Block Level Attributes](#block-level-attributes) a document written in Mmark
   should translate to valid HTML5, RFC7991 XML and RFC7741 XML. Block Level Attributes add out
   specific modifiers to the markdown document making it more tailored to a single output format.
+* A bibliography is *only added* if a `{backmatter}` has been specified, because we need to add just
+  before that point.
 
 ### RFC 7991 XML Output
 
