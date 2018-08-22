@@ -50,8 +50,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 }
 
 func makeRFCInclude(url, reference string) string {
-	// <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
-	return fmt.Sprintf("<?rfc include href=\"%s/%s\"?>", url, reference)
+	return fmt.Sprintf("<?rfc include=\"%s/%s\"?>", url, reference)
 }
 
 var toolsIetfOrg = "https://xml2rfc.tools.ietf.org/public/rfc/bibxml"

@@ -59,18 +59,11 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	}
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
 		if heading.IsSpecial && xml.IsAbstract(heading.Literal) {
-			// No <name> when abstract, should not output anything
 			return
 		}
-		r.outs(w, "<name>")
+
 		html.EscapeHTML(w, text.Literal)
-		r.outs(w, "</name>")
-		return
-	}
-	if _, parentIsBibliography := text.Parent.(*mast.Bibliography); parentIsBibliography {
-		r.outs(w, "<name>")
-		html.EscapeHTML(w, text.Literal)
-		r.outs(w, "</name>")
+		r.outs(w, `">`)
 		return
 	}
 
@@ -124,17 +117,22 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 }
 
 func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
-	var attrs []string
+	r.cr(w)
+
 	tag := "<section"
 	if heading.IsSpecial {
 		tag = "<note"
 		if xml.IsAbstract(heading.Literal) {
-			tag = "<abstract"
+			tag = "<abstract>"
+			r.outs(w, tag)
+			return
 		}
 	}
 
-	r.cr(w)
-	r.outTag(w, tag, attrs)
+	// If we want to support block level attributes here, it will clash with the
+	// title= attribute that is outed in text() - and thus later.
+	r.outs(w, tag)
+	r.outs(w, ` title="`)
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
@@ -279,7 +277,7 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
 	closeTag := "</t>"
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		closeTag = `"/>`
+		closeTag = `">`
 	}
 	r.outs(w, closeTag)
 	r.cr(w)
@@ -556,7 +554,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	r.cr(w)
 	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
 	r.cr(w)
-	r.outs(w, `<!DOCTYPE rfc SYSTEM 'rfc7741.dtd' []>`)
+	r.outs(w, `<!DOCTYPE rfc SYSTEM 'rfc2629.dtd' []>`)
 	r.cr(w)
 }
 
