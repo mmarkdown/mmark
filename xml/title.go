@@ -11,6 +11,19 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
+// TODO(miek): double check if this is how it works.
+
+// StatusToCategory translate the status to a category.
+var StatusToCategory = map[string]string{
+	"standard":      "std",
+	"informational": "info",
+	"experimental":  "exp",
+	"bcp":           "bcp",
+	"fyi":           "fyi",
+	"full-standard": "std",
+	// historic??
+}
+
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	// Order is fixed in RFC 7991.
 
@@ -21,8 +34,8 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	// rfc tag
 	attrs := Attributes(
-		[]string{"version", "ipr", "submissionType", "xml:lang", "consensus", "xmlns:xi"},
-		[]string{"3", d.Ipr, "IETF", "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
+		[]string{"version", "ipr", "submissionType", "category", "xml:lang", "consensus", "xmlns:xi"},
+		[]string{"3", d.Ipr, "IETF", StatusToCategory[d.SeriesInfo.Status], "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
 	)
 	attrs = append(attrs, Attributes(
 		[]string{"updates", "obsoletes"},

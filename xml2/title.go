@@ -15,16 +15,6 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	if d == nil {
 		return
 	}
-	// TODO(miek): double check if this is how it works.
-	statusToCategory := map[string]string{
-		"standard":      "std",
-		"informational": "info",
-		"experimental":  "exp",
-		"bcp":           "bcp",
-		"fyi":           "fyi",
-		"full-standard": "std",
-		// historic??
-	}
 	consensusToTerm := map[bool]string{
 		false: "no",
 		true:  "yes",
@@ -32,7 +22,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	attrs := xml.Attributes(
 		[]string{"ipr", "submissionType", "category", "xml:lang", "consensus"},
-		[]string{d.Ipr, d.SeriesInfo.Stream, statusToCategory[d.SeriesInfo.Status], "en", consensusToTerm[d.Consensus]},
+		[]string{d.Ipr, d.SeriesInfo.Stream, xml.StatusToCategory[d.SeriesInfo.Status], "en", consensusToTerm[d.Consensus]},
 	)
 	attrs = append(attrs, xml.Attributes(
 		[]string{"updates", "obsoletes"},
