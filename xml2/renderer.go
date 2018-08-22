@@ -53,7 +53,6 @@ func NewRenderer(opts RendererOptions) *Renderer { return &Renderer{opts: opts} 
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	if _, parentIsLink := text.Parent.(*ast.Link); parentIsLink {
-		//html.EscLink(w, text.Literal)
 		r.out(w, text.Literal)
 		return
 	}
@@ -68,6 +67,10 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	}
 
 	html.EscapeHTML(w, text.Literal)
+
+	if _, parentIsCaption := text.Parent.(*ast.Caption); parentIsCaption {
+		r.outs(w, `">`)
+	}
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
@@ -430,6 +433,25 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	r.cr(w)
 }
 
+func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
+	if !entering {
+		r.outs(w, "</figure>")
+		return
+	}
+
+	r.outs(w, "<figure")
+	r.outs(w, ` title="`)
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
+				return r.RenderNode(w, node, entering)
+			})
+
+			ast.RemoveFromTree(caption)
+		}
+	}
+}
+
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
 		status, didHandle := r.opts.RenderNodeHook(w, node, entering)
@@ -484,9 +506,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CodeBlock:
 		r.codeBlock(w, node)
 	case *ast.Caption:
-		r.outOneOf(w, entering, "<name>", "</name>")
+		// caption is pulled forward in captionFigure, don't output anything here.
 	case *ast.CaptionFigure:
-		r.outOneOf(w, entering, "<figure>", "</figure>")
+		r.captionFigure(w, node, entering)
 	case *ast.Table:
 		tag := tagWithAttributes("<texttable", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</texttable>")
