@@ -16,6 +16,7 @@ var words2119 = [][]byte{
 	[]byte("OPTIONAL"),
 }
 
+// Is2119 checks if word is a RFC 2119 word.
 func Is2119(word []byte) bool {
 	for _, bcp := range words2119 {
 		if bytes.Compare(word, bcp) == 0 {

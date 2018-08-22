@@ -77,6 +77,7 @@ func doTest(t *testing.T, dir, basename string, renderer markdown.Renderer) {
 	expected = bytes.TrimSpace(expected)
 
 	p := parser.NewWithExtensions(Extensions)
+
 	init := mparser.NewInitial(filename)
 	p.Opts = parser.ParserOptions{
 		ParserHook:    mparser.TitleHook,

@@ -22,7 +22,7 @@ var (
 	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
 	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML      = flag.Bool("html", false, "create HTML output")
-	flagCss       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
+	flagCSS       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
 	flagHead      = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
@@ -69,7 +69,7 @@ func main() {
 			}
 		}
 
-		documentTitle := "" // hack to get document title fromm toml title block and then set it here.
+		documentTitle := "" // hack to get document title from toml title block and then set it here.
 
 		p := parser.NewWithExtensions(Extensions)
 		p.Opts = parser.ParserOptions{
@@ -117,7 +117,7 @@ func main() {
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
 			}
-			opts.CSS = *flagCss
+			opts.CSS = *flagCSS
 			if *flagHead != "" {
 				head, err := ioutil.ReadFile(*flagHead)
 				if err != nil {

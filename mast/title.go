@@ -43,7 +43,7 @@ type TitleData struct {
 	Author    []Author
 }
 
-// SeriesInfo, see https://tools.ietf.org/html/rfc7991#section-2.47
+// SeriesInfo holds details on the Internet-Draft or RFC, see https://tools.ietf.org/html/rfc7991#section-2.47
 type SeriesInfo struct {
 	Name   string // name of the document, values are "RFC", "Internet-Draft", and "DOI"
 	Value  string // either draft name, or number

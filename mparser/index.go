@@ -10,7 +10,7 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
-// IndexToDocIndices crawls the entire doc searching for indices, it will then return
+// IndexToDocucmentIndex crawls the entire doc searching for indices, it will then return
 // an mast.DocumentIndex that contains a tree:
 //
 // IndexLetter

@@ -11,6 +11,8 @@ import (
 	"github.com/mmarkdown/mmark/mast/reference"
 )
 
+// CitationToBibliography walks the AST and gets all the citations on HTML blocks and groups them into
+// normative and informative references.
 func CitationToBibliography(p *parser.Parser, doc ast.Node) (normative ast.Node, informative ast.Node) {
 	seen := map[string]*mast.BibliographyItem{}
 	raw := map[string][]byte{}

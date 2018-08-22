@@ -7,8 +7,7 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
-type RenderNodeFunc func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool)
-
+// RenderHook is used to render mmark specific AST nodes.
 func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node := node.(type) {
 	case *mast.Bibliography:
