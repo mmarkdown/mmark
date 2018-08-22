@@ -34,6 +34,7 @@ tar:
 	tar -zcf release/mmark_$(VERSION)_darwin_amd64.tgz -C build/darwin/amd64 mmark
 	tar -zcf release/mmark_$(VERSION)_windows_amd64.tgz -C build/windows/amd64 mmark.exe
 
+
 .PHONY: release
 release:
 	@echo Releasing: $(VERSION)
