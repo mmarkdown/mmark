@@ -212,15 +212,17 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	r.cr(w)
 
 	openTag := "<list"
+	style := `style="symbols"`
 	if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
+		style = `style="numbers"`
 		if nodeData.Start > 0 {
 			attrs = append(attrs, fmt.Sprintf(`start="%d"`, nodeData.Start))
 		}
-		//openTag = "<ol"
 	}
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
-		//openTag = "<dl"
+		style = `style="hanging"`
 	}
+	attrs = append(attrs, style)
 	attrs = append(attrs, html.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
@@ -266,21 +268,18 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 
 	openTag := "<t>"
 	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
-		//openTag = "<dd>"
+		openTag = "<vspace />"
 	}
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		//openTag = "<dt>"
+		openTag = "<t hangText=\""
 	}
 	r.outs(w, openTag)
 }
 
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
 	closeTag := "</t>"
-	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
-		//closeTag = "</dd>"
-	}
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		//closeTag = "</dt>"
+		closeTag = `"/>`
 	}
 	r.outs(w, closeTag)
 	r.cr(w)
