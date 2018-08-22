@@ -168,11 +168,28 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 }
 
 func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
+	if p, ok := para.Parent.(*ast.ListItem); ok {
+		// Skip outputting <t> in lists.
+		// Fake multiple paragraphs by inserting a hard break.
+		if len(p.GetChildren()) > 1 {
+			first := ast.GetFirstChild(para.Parent)
+			if first != para {
+				r.hardBreak(w, &ast.Hardbreak{})
+			}
+		}
+		return
+	}
+
 	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
 func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
+	if _, ok := para.Parent.(*ast.ListItem); ok {
+		// Skip outputting </t> in lists.
+		return
+	}
+
 	r.outs(w, "</t>")
 	r.cr(w)
 }
@@ -194,15 +211,15 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	}
 	r.cr(w)
 
-	openTag := "<ul"
+	openTag := "<list"
 	if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
 		if nodeData.Start > 0 {
 			attrs = append(attrs, fmt.Sprintf(`start="%d"`, nodeData.Start))
 		}
-		openTag = "<ol"
+		//openTag = "<ol"
 	}
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
-		openTag = "<dl"
+		//openTag = "<dl"
 	}
 	attrs = append(attrs, html.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
@@ -210,19 +227,15 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 }
 
 func (r *Renderer) listExit(w io.Writer, list *ast.List) {
-	closeTag := "</ul>"
+	closeTag := "</list>"
 	if list.ListFlags&ast.ListTypeOrdered != 0 {
-		closeTag = "</ol>"
+		//closeTag = "</ol>"
 	}
 	if list.ListFlags&ast.ListTypeDefinition != 0 {
-		closeTag = "</dl>"
+		//closeTag = "</dl>"
 	}
 	r.outs(w, closeTag)
 
-	//cr(w)
-	//if node.parent.Type != Item {
-	//	cr(w)
-	//}
 	parent := list.Parent
 	switch parent.(type) {
 	case *ast.ListItem:
