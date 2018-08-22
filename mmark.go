@@ -85,6 +85,8 @@ func main() {
 
 		doc := markdown.Parse(d, p)
 		if *flagReference {
+			// TODO(miek): citations needs to added *before* the backmatter
+			// search for that.
 			norm, inform := mparser.CitationToBibliography(p, doc)
 			if norm != nil {
 				ast.AppendChild(doc, norm)
@@ -137,7 +139,6 @@ func main() {
 				Comments: [][]byte{[]byte("//"), []byte("#")},
 			}
 			if *flagFragment {
-				println("SETTING", xml2.CommonFlags)
 				opts.Flags |= xml2.XMLFragment
 			}
 

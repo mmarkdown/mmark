@@ -2,6 +2,7 @@ package xml2
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"strings"
 
@@ -65,6 +66,25 @@ func (r *Renderer) sectionClose(w io.Writer) {
 	}
 	r.outs(w, tag)
 	r.cr(w)
+}
+
+func (r *Renderer) ensureUniqueHeadingID(id string) string {
+	for count, found := r.headingIDs[id]; found; count, found = r.headingIDs[id] {
+		tmp := fmt.Sprintf("%s-%d", id, count+1)
+
+		if _, tmpFound := r.headingIDs[tmp]; !tmpFound {
+			r.headingIDs[id] = count + 1
+			id = tmp
+		} else {
+			id = id + "-1"
+		}
+	}
+
+	if _, found := r.headingIDs[id]; !found {
+		r.headingIDs[id] = 0
+	}
+
+	return id
 }
 
 func appendLanguageAttr(attrs []string, info []byte) []string {

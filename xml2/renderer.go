@@ -46,10 +46,15 @@ type Renderer struct {
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
 	section        *ast.Heading        // current open section
 	title          bool                // did we output a title block
+
+	// Track heading IDs to prevent ID collision in a single generation.
+	headingIDs map[string]int
 }
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
-func NewRenderer(opts RendererOptions) *Renderer { return &Renderer{opts: opts} }
+func NewRenderer(opts RendererOptions) *Renderer {
+	return &Renderer{opts: opts, headingIDs: make(map[string]int)}
+}
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	if _, parentIsLink := text.Parent.(*ast.Link); parentIsLink {
@@ -132,10 +137,22 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 		}
 	}
 
+	var attrs []string
+	if heading.HeadingID != "" {
+		id := r.ensureUniqueHeadingID(heading.HeadingID)
+		attrID := `anchor="` + id + `"`
+		attrs = append(attrs, attrID)
+	}
+
+	attr := ""
+	if len(attrs) > 0 {
+		attr += " " + strings.Join(attrs, " ")
+	}
+
 	// If we want to support block level attributes here, it will clash with the
 	// title= attribute that is outed in text() - and thus later.
 	r.outs(w, tag)
-	r.outs(w, ` title="`)
+	r.outs(w, attr+` title="`)
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
@@ -181,7 +198,7 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 		return
 	}
 
-	tag := tagWithAttributes("<t", html.BlockAttrs(para))
+	tag := tagWithAttributes("<t", xml.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
@@ -224,7 +241,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 		style = `style="hanging"`
 	}
 	attrs = append(attrs, style)
-	attrs = append(attrs, html.BlockAttrs(nodeData)...)
+	attrs = append(attrs, xml.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -300,7 +317,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
+	attrs = append(attrs, xml.BlockAttrs(codeBlock)...)
 
 	r.cr(w)
 	_, inFigure := codeBlock.Parent.(*ast.CaptionFigure)
@@ -510,7 +527,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
-		tag := tagWithAttributes("<texttable", html.BlockAttrs(node))
+		tag := tagWithAttributes("<texttable", xml.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</texttable>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
@@ -523,10 +540,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<c>", "</c>")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
+		tag := tagWithAttributes("<blockquote", xml.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")
 	case *ast.Aside:
-		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
+		tag := tagWithAttributes("<aside", xml.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)

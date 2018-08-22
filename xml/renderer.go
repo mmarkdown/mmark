@@ -45,10 +45,15 @@ type Renderer struct {
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
 	section        *ast.Heading        // current open section
 	title          bool                // did we output a title block
+
+	// Track heading IDs to prevent ID collision in a single generation.
+	headingIDs map[string]int
 }
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
-func NewRenderer(opts RendererOptions) *Renderer { return &Renderer{opts: opts} }
+func NewRenderer(opts RendererOptions) *Renderer {
+	return &Renderer{opts: opts, headingIDs: make(map[string]int)}
+}
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
 	if _, parentIsLink := text.Parent.(*ast.Link); parentIsLink {
@@ -95,8 +100,7 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
-	r.sectionClose(w)
-	r.section = nil
+	r.sectionClose(w, nil)
 
 	switch node.Matter {
 	case ast.DocumentMatterFront:
@@ -124,6 +128,13 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	var attrs []string
 	tag := "<section"
+
+	if heading.HeadingID != "" {
+		id := r.ensureUniqueHeadingID(heading.HeadingID)
+		attrID := `anchor="` + id + `"`
+		attrs = append(attrs, attrID)
+	}
+
 	if heading.IsSpecial {
 		tag = "<note"
 		if IsAbstract(heading.Literal) {
@@ -145,8 +156,8 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		return
 	}
 
-	r.sectionClose(w)
-	r.section = node
+	r.sectionClose(w, node)
+
 	r.headingEnter(w, node)
 }
 
@@ -171,7 +182,7 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 			return
 		}
 	}
-	tag := tagWithAttributes("<t", html.BlockAttrs(para))
+	tag := tagWithAttributes("<t", BlockAttrs(para))
 	r.outs(w, tag)
 }
 
@@ -212,7 +223,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
-	attrs = append(attrs, html.BlockAttrs(nodeData)...)
+	attrs = append(attrs, BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -292,7 +303,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
+	attrs = append(attrs, BlockAttrs(codeBlock)...)
 
 	name := "artwork"
 	if codeBlock.Info != nil {
@@ -478,7 +489,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.outOneOf(w, entering, "<figure>", "</figure>")
 	case *ast.Table:
-		tag := tagWithAttributes("<table", html.BlockAttrs(node))
+		tag := tagWithAttributes("<table", BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</table>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
@@ -491,10 +502,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
+		tag := tagWithAttributes("<blockquote", BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")
 	case *ast.Aside:
-		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
+		tag := tagWithAttributes("<aside", BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)
@@ -532,8 +543,7 @@ func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
 
 // RenderFooter writes HTML document footer.
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
-	r.sectionClose(w)
-	r.section = nil
+	r.sectionClose(w, nil)
 
 	switch r.documentMatter {
 	case ast.DocumentMatterFront:
