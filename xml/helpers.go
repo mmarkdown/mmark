@@ -59,7 +59,7 @@ func (r *Renderer) sectionClose(w io.Writer) {
 	tag := "</section>"
 	if r.section.IsSpecial {
 		tag = "</note>"
-		if isAbstract(r.section.Literal) {
+		if IsAbstract(r.section.Literal) {
 			tag = "</abstract>"
 		}
 	}
@@ -67,22 +67,25 @@ func (r *Renderer) sectionClose(w io.Writer) {
 	r.cr(w)
 }
 
-func attributes(keys, values []string) (s []string) {
+// Attributes returns the key values in a stringslice where key="value".
+func Attributes(keys, values []string) (s []string) {
 	for i, k := range keys {
 		if values[i] == "" { // skip entire k=v is value is empty
 			continue
 		}
-		v := escapeHTMLString(values[i])
+		v := EscapeHTMLString(values[i])
 		s = append(s, fmt.Sprintf(`%s="%s"`, k, v))
 	}
 	return s
 }
 
-func isAbstract(word []byte) bool {
+// IsAbstract returns if word is equal to abstract.
+func IsAbstract(word []byte) bool {
 	return strings.EqualFold(string(word), "abstract")
 }
 
-func escapeHTMLString(s string) string {
+// EscapeHTMLString escapes the string s.
+func EscapeHTMLString(s string) string {
 	buf := &bytes.Buffer{}
 	html.EscapeHTML(buf, []byte(s))
 	return buf.String()

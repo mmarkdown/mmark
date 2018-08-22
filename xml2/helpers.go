@@ -2,11 +2,11 @@ package xml2
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"strings"
 
 	"github.com/gomarkdown/markdown/html"
+	"github.com/mmarkdown/mmark/xml"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
@@ -59,33 +59,12 @@ func (r *Renderer) sectionClose(w io.Writer) {
 	tag := "</section>"
 	if r.section.IsSpecial {
 		tag = "</note>"
-		if isAbstract(r.section.Literal) {
+		if xml.IsAbstract(r.section.Literal) {
 			tag = "</abstract>"
 		}
 	}
 	r.outs(w, tag)
 	r.cr(w)
-}
-
-func attributes(keys, values []string) (s []string) {
-	for i, k := range keys {
-		if values[i] == "" { // skip entire k=v is value is empty
-			continue
-		}
-		v := escapeHTMLString(values[i])
-		s = append(s, fmt.Sprintf(`%s="%s"`, k, v))
-	}
-	return s
-}
-
-func isAbstract(word []byte) bool {
-	return strings.EqualFold(string(word), "abstract")
-}
-
-func escapeHTMLString(s string) string {
-	buf := &bytes.Buffer{}
-	html.EscapeHTML(buf, []byte(s))
-	return buf.String()
 }
 
 func appendLanguageAttr(attrs []string, info []byte) []string {

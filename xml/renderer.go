@@ -57,7 +57,7 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 		return
 	}
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
-		if heading.IsSpecial && isAbstract(heading.Literal) {
+		if heading.IsSpecial && IsAbstract(heading.Literal) {
 			// No <name> when abstract, should not output anything
 			return
 		}
@@ -126,7 +126,7 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	tag := "<section"
 	if heading.IsSpecial {
 		tag = "<note"
-		if isAbstract(heading.Literal) {
+		if IsAbstract(heading.Literal) {
 			tag = "<abstract"
 		}
 	}

@@ -20,11 +20,11 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	}
 
 	// rfc tag
-	attrs := attributes(
+	attrs := Attributes(
 		[]string{"version", "ipr", "submissionType", "xml:lang", "consensus", "xmlns:xi"},
 		[]string{"3", d.Ipr, "IETF", "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
 	)
-	attrs = append(attrs, attributes(
+	attrs = append(attrs, Attributes(
 		[]string{"updates", "obsoletes"},
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes)},
 	)...)
@@ -33,7 +33,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
 
-	attrs = attributes([]string{"abbrev"}, []string{d.Abbrev})
+	attrs = Attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
 	r.outs(w, d.Title)
 	r.outs(w, "</title>")
@@ -62,14 +62,14 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 // TitleAuthor outputs the author.
 func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 
-	attrs := attributes(
+	attrs := Attributes(
 		[]string{"role", "initials", "surname", "fullname"},
 		[]string{a.Role, a.Initials, a.Surname, a.Fullname},
 	)
 
 	r.outTag(w, "<author", attrs)
 
-	r.outTagContent(w, "<organization", attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}), a.Organization)
+	r.outTagContent(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}), a.Organization)
 
 	r.outs(w, "<address>")
 	r.outs(w, "<postal>")
@@ -139,7 +139,7 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
 func (r *Renderer) titleSeriesInfo(w io.Writer, s mast.SeriesInfo) {
-	attr := attributes(
+	attr := Attributes(
 		[]string{"value", "stream", "status", "name"},
 		[]string{s.Value, s.Stream, s.Status, s.Name},
 	)

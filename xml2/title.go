@@ -17,11 +17,11 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		return
 	}
 
-	attrs := attributes(
+	attrs := xml.Attributes(
 		[]string{"ipr", "submissionType", "category", "xml:lang", "consensus"},
 		[]string{d.Ipr, d.SeriesInfo.Stream, d.SeriesInfo.Status, "en", fmt.Sprintf("%t", d.Consensus)},
 	)
-	attrs = append(attrs, attributes(
+	attrs = append(attrs, xml.Attributes(
 		[]string{"updates", "obsoletes"},
 		[]string{xml.IntSliceToString(d.Updates), xml.IntSliceToString(d.Obsoletes)},
 	)...)
@@ -41,7 +41,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
 
-	attrs = attributes([]string{"abbrev"}, []string{d.Abbrev})
+	attrs = xml.Attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
 	r.outs(w, d.Title)
 	r.outs(w, "</title>")
