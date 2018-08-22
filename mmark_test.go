@@ -8,9 +8,9 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/markdown/xml2"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
+	"github.com/mmarkdown/mmark/xml2"
 )
 
 func TestMmarkXML(t *testing.T) {
