@@ -19,15 +19,15 @@ import (
 )
 
 var (
-	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
-	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
-	flagHTML      = flag.Bool("html", false, "create HTML output")
-	flagCSS       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
-	flagHead      = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
-	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
-	flagReference = flag.Bool("reference", true, "generate a references section at the end of the document")
-	flagTwo       = flag.Bool("2", false, "generate RFC 7749 XML")
-	flagVersion   = flag.Bool("version", false, "show mmark version")
+	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
+	flagFragment = flag.Bool("fragment", false, "don't create a full document")
+	flagHTML     = flag.Bool("html", false, "create HTML output")
+	flagCSS      = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
+	flagHead     = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
+	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
+	flagBib      = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
+	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
+	flagVersion  = flag.Bool("version", false, "show mmark version")
 )
 
 func main() {
@@ -84,7 +84,7 @@ func main() {
 		}
 
 		doc := markdown.Parse(d, p)
-		if *flagReference {
+		if *flagBib {
 			where := mparser.NodeBackMatter(doc)
 			if where != nil {
 				norm, inform := mparser.CitationToBibliography(p, doc)

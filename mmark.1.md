@@ -44,8 +44,8 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 **-index**
 :    generate an index at the end of the document (default true)
 
-**-reference**
-:    generate a references section at the end of the document (default true)
+**-bibliography**
+:    generate a bibliographtysection after the back matter (default true)
 
 **-version**
 :    show mmark version
