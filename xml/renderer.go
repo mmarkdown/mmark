@@ -166,11 +166,21 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 }
 
 func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
+	if p, ok := para.Parent.(*ast.ListItem); ok {
+		if p.ListFlags&ast.ListTypeTerm != 0 {
+			return
+		}
+	}
 	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
 func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
+	if p, ok := para.Parent.(*ast.ListItem); ok {
+		if p.ListFlags&ast.ListTypeTerm != 0 {
+			return
+		}
+	}
 	r.outs(w, "</t>")
 	r.cr(w)
 }
