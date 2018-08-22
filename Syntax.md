@@ -519,8 +519,7 @@ Syntax that is *not* supported anymore:
 * HTML abbreviations.
 * The different list syntaxes have been dropped, use a [Block Level
   Attribute](#block-level-attributes) to tweak the output.
-* Tasks lists.
-* Example lists.
+* Tasks lists and example lists.
 * Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
   flag `renderer.SkipHTML`.
 * Parts
