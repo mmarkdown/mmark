@@ -1,7 +1,6 @@
 package xml2
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -16,10 +15,24 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	if d == nil {
 		return
 	}
+	// TODO(miek): double check if this is how it works.
+	statusToCategory := map[string]string{
+		"standard":      "std",
+		"informational": "info",
+		"experimental":  "exp",
+		"bcp":           "bcp",
+		"fyi":           "fyi",
+		"full-standard": "std",
+		// historic??
+	}
+	consensusToTerm := map[bool]string{
+		false: "no",
+		true:  "yes",
+	}
 
 	attrs := xml.Attributes(
 		[]string{"ipr", "submissionType", "category", "xml:lang", "consensus"},
-		[]string{d.Ipr, d.SeriesInfo.Stream, d.SeriesInfo.Status, "en", fmt.Sprintf("%t", d.Consensus)},
+		[]string{d.Ipr, d.SeriesInfo.Stream, statusToCategory[d.SeriesInfo.Status], "en", consensusToTerm[d.Consensus]},
 	)
 	attrs = append(attrs, xml.Attributes(
 		[]string{"updates", "obsoletes"},
@@ -38,6 +51,13 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	r.outTag(w, "<rfc", attrs)
 	r.cr(w)
+
+	r.outs(w, `<?rfc toc="yes"?>`)
+	r.outs(w, `<?rfc symrefs="yes"?>`)
+	r.outs(w, `<?rfc sortrefs="yes"?>`)
+	r.outs(w, `<?rfc compact="yes"?>`)
+	r.outs(w, `<?rfc subcompact="no"?>`)
+	r.outs(w, `<?rfc comments="no"?>`)
 
 	r.matter(w, &ast.DocumentMatter{Matter: ast.DocumentMatterFront})
 

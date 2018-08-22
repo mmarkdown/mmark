@@ -297,13 +297,23 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
 
 	r.cr(w)
-	r.outTag(w, "<artwork", attrs)
+	_, inFigure := codeBlock.Parent.(*ast.CaptionFigure)
+	if inFigure {
+		r.outTag(w, "<artwork", attrs)
+	} else {
+		r.outTag(w, "<figure><artwork", attrs)
+	}
+
 	if r.opts.Comments != nil {
 		r.EscapeHTMLCallouts(w, codeBlock.Literal)
 	} else {
 		html.EscapeHTML(w, codeBlock.Literal)
 	}
-	r.outs(w, "</artwork>")
+	if inFigure {
+		r.outs(w, "</artwork>")
+	} else {
+		r.outs(w, "</artwork></figure>")
+	}
 	r.cr(w)
 }
 
