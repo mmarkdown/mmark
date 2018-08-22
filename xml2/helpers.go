@@ -6,6 +6,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/mmarkdown/mmark/xml"
 )
@@ -52,20 +53,41 @@ func (r *Renderer) outTagContent(w io.Writer, name string, attrs []string, conte
 	io.WriteString(w, "</"+name[1:]+">\n")
 }
 
-func (r *Renderer) sectionClose(w io.Writer) {
+func (r *Renderer) sectionClose(w io.Writer, new *ast.Heading) {
+	defer func() {
+		r.section = new
+	}()
+
 	if r.section == nil {
 		return
 	}
 
-	tag := "</section>"
 	if r.section.IsSpecial {
-		tag = "</note>"
+		tag := "</note>"
 		if xml.IsAbstract(r.section.Literal) {
 			tag = "</abstract>"
 		}
+		r.outs(w, tag)
+		r.cr(w)
+		return
 	}
-	r.outs(w, tag)
-	r.cr(w)
+
+	tag := "</section>"
+	curLevel := r.section.Level
+	newLevel := 1 // close them all
+	if new != nil {
+		newLevel = new.Level
+	}
+
+	// subheading in a heading
+	if newLevel > curLevel {
+		return
+	}
+
+	for i := newLevel; i <= curLevel; i++ {
+		r.outs(w, tag)
+		r.cr(w)
+	}
 }
 
 func (r *Renderer) ensureUniqueHeadingID(id string) string {

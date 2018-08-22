@@ -98,8 +98,7 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
-	r.sectionClose(w)
-	r.section = nil
+	r.sectionClose(w, nil)
 
 	switch node.Matter {
 	case ast.DocumentMatterFront:
@@ -165,8 +164,8 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		return
 	}
 
-	r.sectionClose(w)
-	r.section = node
+	r.sectionClose(w, node)
+
 	r.headingEnter(w, node)
 }
 
@@ -581,8 +580,7 @@ func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
 
 // RenderFooter writes HTML document footer.
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
-	r.sectionClose(w)
-	r.section = nil
+	r.sectionClose(w, nil)
 
 	switch r.documentMatter {
 	case ast.DocumentMatterFront:

@@ -21,8 +21,7 @@ func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering b
 		return
 	}
 
-	r.sectionClose(w)
-	r.section = nil
+	r.sectionClose(w, nil)
 
 	switch node.Type {
 	case ast.CitationTypeInformative:
