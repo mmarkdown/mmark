@@ -15,10 +15,10 @@ type Flags int
 
 // HTML renderer configuration options.
 const (
-	FlagsNone   Flags = iota
-	XMLFragment       // Don't generate a complete XML document
-	SkipHTML          // Skip preformatted HTML blocks - skips comments
-	SkipImages        // Skip embedded images
+	FlagsNone   Flags = 0
+	XMLFragment Flags = 1 << iota // Don't generate a complete XML document
+	SkipHTML                      // Skip preformatted HTML blocks - skips comments
+	SkipImages                    // Skip embedded images
 
 	CommonFlags Flags = FlagsNone
 )

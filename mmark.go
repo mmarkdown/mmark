@@ -137,6 +137,7 @@ func main() {
 				Comments: [][]byte{[]byte("//"), []byte("#")},
 			}
 			if *flagFragment {
+				println("SETTING", xml2.CommonFlags)
 				opts.Flags |= xml2.XMLFragment
 			}
 

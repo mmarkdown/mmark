@@ -16,10 +16,10 @@ type Flags int
 
 // HTML renderer configuration options.
 const (
-	FlagsNone   Flags = iota
-	XMLFragment       // Don't generate a complete XML document
-	SkipHTML          // Skip preformatted HTML blocks - skips comments
-	SkipImages        // Skip embedded images, set to true for XML2
+	FlagsNone   Flags = 0
+	XMLFragment Flags = 1 << iota // Don't generate a complete XML document
+	SkipHTML                      // Skip preformatted HTML blocks - skips comments
+	SkipImages                    // Skip embedded images, set to true for XML2
 
 	CommonFlags Flags = SkipImages
 )
@@ -251,8 +251,7 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 		return
 	}
 
-	// attributes! both html, xml and xml2
-	openTag := "<list>"
+	openTag := "<t>"
 	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
 		//openTag = "<dd>"
 	}
@@ -263,7 +262,7 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 }
 
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
-	closeTag := "</list>"
+	closeTag := "</t>"
 	if listItem.ListFlags&ast.ListTypeDefinition != 0 {
 		//closeTag = "</dd>"
 	}
