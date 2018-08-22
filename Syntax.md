@@ -149,8 +149,6 @@ Block Level Attributes:
 
 ### XML RFC 7749 Output
 
-> This renderer is a work in progress.
-
 Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
     understand. Other than transpiling the title block, *no other attempt* is made to make a v3
