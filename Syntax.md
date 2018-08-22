@@ -100,6 +100,9 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
   will be detected as being part of the quote.
 * Including files in lists requires a empty line to be present in the list item; otherwise Mmark
   will only assume inline elements and not parse the includes (which are block level elements).
+* If you *don't* use [Block Level Attributes](#block-level-attributes) a document written in Mmark
+  should translate to valid HTML5, RFC7991 XML and RFC7741 XML. Block Level Attributes add out
+  specific modifiers to the markdown document making it more tailored to a single output format.
 
 ### RFC 7991 XML Output
 
