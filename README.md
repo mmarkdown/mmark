@@ -64,7 +64,7 @@ Making a draft in text form:
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Outputting HTML5 is done with the `-html` switch. Outputting RFC 7741 is done with `-2`.
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`.
 
 Optionally you can [download a binary](https://github.com/mmarkdown/mmark/releases).
 

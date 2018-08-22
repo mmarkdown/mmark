@@ -17,7 +17,7 @@ mmark – generate XML or HTML from mmark markdown
 
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7941 (xml2rfc version 2) and HTML5 output.
+RFC 7991), RFC 7749 (xml2rfc version 2) and HTML5 output.
 
 The syntax is detailed at <https://mmark.nl/syntax>.
 
@@ -52,4 +52,4 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 
 # ALSO SEE
 
-RFC 7791 and RFC 7741. The main site for Mmark is <https://mmark.nl> 
+RFC 7791 and RFC 7749. The main site for Mmark is <https://mmark.nl> 

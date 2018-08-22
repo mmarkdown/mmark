@@ -101,7 +101,7 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
 * Including files in lists requires a empty line to be present in the list item; otherwise Mmark
   will only assume inline elements and not parse the includes (which are block level elements).
 * If you *don't* use [Block Level Attributes](#block-level-attributes) a document written in Mmark
-  should translate to valid HTML5, RFC7991 XML and RFC7741 XML. Block Level Attributes add out
+  should translate to valid HTML5, RFC7991 XML and RFC7749 XML. Block Level Attributes add out
   specific modifiers to the markdown document making it more tailored to a single output format.
 * A bibliography is *only added* if a `{backmatter}` has been specified, because we need to add just
   before that point.
@@ -163,7 +163,7 @@ Artwork/Source code:
 :   There is no such distinction so these will be rendered in the same way regardless.
 
 Block Level Attributes:
-:   We use the attributes as specified in RFC 7741, e.g. to speficify an empty list style use:
+:   We use the attributes as specified in RFC 7749, e.g. to speficify an empty list style use:
     `{style="empty"}` before the list.
 
 ### HTML5 Output
@@ -494,7 +494,7 @@ detected by Mmark.
 
 Phrases that are defined in RFC 2119 (i.e. MUST, SHOULD, etc) are detected when being type set as
 strong elements: `**MUST**`, in the RFC 7991 output these will typeset as `<bcp14>MUST</bcp14>`. In
-RFC 7741 output it will just be `MUST`.
+RFC 7749 output it will just be `MUST`.
 
 # Changes from version 1
 

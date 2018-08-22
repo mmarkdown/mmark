@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
-	// Order is fixed in RFC 7741.
+	// Order is fixed in RFC 7749.
 
 	d := t.TitleData
 	if d == nil {
