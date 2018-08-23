@@ -52,6 +52,8 @@ type Renderer struct {
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
+	html.IDTag = "anchor"
+
 	return &Renderer{opts: opts, headingIDs: make(map[string]int)}
 }
 
@@ -182,7 +184,7 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 			return
 		}
 	}
-	tag := tagWithAttributes("<t", BlockAttrs(para))
+	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
@@ -223,7 +225,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
-	attrs = append(attrs, BlockAttrs(nodeData)...)
+	attrs = append(attrs, html.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -303,7 +305,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, BlockAttrs(codeBlock)...)
+	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
 
 	name := "artwork"
 	if codeBlock.Info != nil {
@@ -489,7 +491,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.outOneOf(w, entering, "<figure>", "</figure>")
 	case *ast.Table:
-		tag := tagWithAttributes("<table", BlockAttrs(node))
+		tag := tagWithAttributes("<table", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</table>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
@@ -502,10 +504,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", BlockAttrs(node))
+		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")
 	case *ast.Aside:
-		tag := tagWithAttributes("<aside", BlockAttrs(node))
+		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)

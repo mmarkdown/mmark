@@ -53,6 +53,7 @@ type Renderer struct {
 
 // New creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
+	html.IDTag = "anchor"
 	return &Renderer{opts: opts, headingIDs: make(map[string]int)}
 }
 
@@ -197,7 +198,7 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 		return
 	}
 
-	tag := tagWithAttributes("<t", xml.BlockAttrs(para))
+	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
@@ -240,7 +241,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 		style = `style="hanging"`
 	}
 	attrs = append(attrs, style)
-	attrs = append(attrs, xml.BlockAttrs(nodeData)...)
+	attrs = append(attrs, html.BlockAttrs(nodeData)...)
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -321,7 +322,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, xml.BlockAttrs(codeBlock)...)
+	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
 
 	r.cr(w)
 	_, inFigure := codeBlock.Parent.(*ast.CaptionFigure)
@@ -462,6 +463,7 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 
 	r.outs(w, "<figure")
 	r.outs(w, ` title="`)
+	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {
 		if caption, ok := child.(*ast.Caption); ok {
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
@@ -531,7 +533,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
-		tag := tagWithAttributes("<texttable", xml.BlockAttrs(node))
+		tag := tagWithAttributes("<texttable", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</texttable>")
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
@@ -544,10 +546,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<c>", "</c>")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", xml.BlockAttrs(node))
+		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")
 	case *ast.Aside:
-		tag := tagWithAttributes("<aside", xml.BlockAttrs(node))
+		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)
