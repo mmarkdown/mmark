@@ -539,6 +539,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.codeBlock(w, node)
 	case *ast.Caption:
 		// caption is pulled forward in captionFigure, don't output anything here.
+		r.outOneOf(w, entering, "<postamble>", "</postamble>")
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:

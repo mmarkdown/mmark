@@ -435,6 +435,25 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	r.cr(w)
 }
 
+func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
+	if !entering {
+		r.outs(w, "</figure>")
+		return
+	}
+
+	r.outs(w, "<figure>")
+	// Now render the caption and then *remove* it from the tree.
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
+				return r.RenderNode(w, node, entering)
+			})
+
+			ast.RemoveFromTree(caption)
+		}
+	}
+}
+
 // RenderNode renders a markdown node to XML.
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
@@ -492,7 +511,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Caption:
 		r.outOneOf(w, entering, "<name>", "</name>")
 	case *ast.CaptionFigure:
-		r.outOneOf(w, entering, "<figure>", "</figure>")
+		r.captionFigure(w, node, entering)
 	case *ast.Table:
 		tag := tagWithAttributes("<table", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</table>")
