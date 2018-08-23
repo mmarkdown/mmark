@@ -353,16 +353,16 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 
 func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering bool) {
 	if !entering {
-		r.outOneOf(w, tableCell.IsHeader, "</th>", "</td>")
+		r.outOneOf(w, tableCell.IsHeader, "</ttcol>", "</c>")
 		r.cr(w)
 		return
 	}
 
 	// entering
 	var attrs []string
-	openTag := "<td"
+	openTag := "<c"
 	if tableCell.IsHeader {
-		openTag = "<th"
+		openTag = "<ttcol"
 	}
 	align := tableCell.Align.String()
 	if align != "" {
@@ -375,7 +375,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 }
 
 func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
-	r.outOneOfCr(w, entering, "<tbody>", "</tbody>")
+	r.outOneOfCr(w, entering, "", "")
 }
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
@@ -462,6 +462,14 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
+	// If the captionFigure has a table as child element *don't* output the figure tags,
+	// because 7991 is weird.
+	for _, child := range captionFigure.GetChildren() {
+		if _, ok := child.(*ast.Table); ok {
+			return
+		}
+	}
+
 	if !entering {
 		r.outs(w, "</figure>")
 		return
@@ -479,6 +487,43 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 			})
 
 			ast.RemoveFromTree(caption)
+		}
+	}
+}
+
+func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
+	if !entering {
+		r.outs(w, "</texttable>")
+		return
+	}
+
+	attrs := html.BlockAttrs(tab)
+	// TODO(miek): this definitely needs some helper function(s).
+	s := ""
+	if len(attrs) > 0 {
+		s += " " + strings.Join(attrs, " ")
+	}
+
+	r.outs(w, "<texttable")
+	r.outs(w, s)
+	// Now render the caption if our parent is a ast.CaptionFigure
+	// and then *remove* it from the tree.
+	captionFigure, ok := tab.Parent.(*ast.CaptionFigure)
+	if !ok {
+		r.outs(w, `>`)
+		return
+	}
+
+	r.outs(w, ` title="`)
+
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
+				return r.RenderNode(w, node, entering)
+			})
+
+			ast.RemoveFromTree(caption)
+			break
 		}
 	}
 }
@@ -543,18 +588,17 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
-		tag := tagWithAttributes("<texttable", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</texttable>")
+		r.table(w, node, entering)
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
 	case *ast.TableHeader:
-		r.outOneOfCr(w, entering, "<ttcol>", "</ttcol>")
+		r.outOneOf(w, entering, "", "")
 	case *ast.TableBody:
 		r.tableBody(w, node, entering)
 	case *ast.TableRow:
-		r.outOneOfCr(w, entering, "<c>", "</c>")
+		r.outOneOf(w, entering, "", "")
 	case *ast.TableFooter:
-		r.outOneOfCr(w, entering, "<c>", "</c>")
+		r.outOneOf(w, entering, "", "")
 	case *ast.BlockQuote:
 		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</blockquote>")

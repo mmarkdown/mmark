@@ -438,15 +438,10 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
 	// If the captionFigure has a table as child element *don't* output the figure tags,
 	// because 7991 is weird.
-	isTable := false
 	for _, child := range captionFigure.GetChildren() {
 		if _, ok := child.(*ast.Table); ok {
-			isTable = ok
-			break
+			return
 		}
-	}
-	if isTable {
-		return
 	}
 
 	if !entering {
@@ -463,6 +458,7 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 			})
 
 			ast.RemoveFromTree(caption)
+			break
 		}
 	}
 }
@@ -489,6 +485,7 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 			})
 
 			ast.RemoveFromTree(caption)
+			break
 		}
 	}
 }
@@ -548,7 +545,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CodeBlock:
 		r.codeBlock(w, node)
 	case *ast.Caption:
-		r.outOneOf(w, entering, "<name>", "</name>")
+		// We do some funky node re-ordering for the caption so it is rendered in the correct
+		// spot. For some reason -- even when we call ast.RemoveFromTree -- we still end up
+		// here, rendering a caption. I have no idea (yet) why this is. The only good thing is
+		// that in these cases there are no children of the caption. So we check that and refuse
+		// to render anything.
+		if len(node.GetChildren()) > 0 {
+			r.outOneOf(w, entering, "<name>", "</name>")
+		}
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
