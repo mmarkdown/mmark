@@ -21,6 +21,7 @@ import (
 // Initial is the initial file we are working on, empty for stdin and adjusted is we we have an absolute or relative file.
 type Initial string
 
+// NewInitial returns an initialized Initial.
 func NewInitial(s string) Initial {
 	if path.IsAbs(s) {
 		return Initial(path.Dir(s))

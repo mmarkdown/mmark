@@ -66,14 +66,12 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 
 	init := mparser.NewInitial(filename)
 
-	documentTitle := "" // hack to get document title from toml title block and then set it here.
-
 	p := parser.NewWithExtensions(Extensions)
 	p.Opts = parser.ParserOptions{
 		ParserHook: func(data []byte) (ast.Node, []byte, int) {
 			node, data, consumed := mparser.Hook(data)
 			if t, ok := node.(*mast.Title); ok {
-				documentTitle = t.TitleData.Title
+				_ = t.TitleData.Title
 			}
 			return node, data, consumed
 		},
@@ -88,14 +86,14 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 
 	switch renderer.(type) {
 	case *xml.Renderer:
-		out, err := runXml2Rfc([]string{"--v3"}, rfcdata)
+		out, err := runXML2RFC([]string{"--v3"}, rfcdata)
 		if err != nil {
 			t.Errorf("failed to parse XML3 output for %q: %s\n%s", filename, err, out)
 		} else {
 			t.Logf("successfully parsed %s for XML3 output:\n%s", filename, out)
 		}
 	case *xml2.Renderer:
-		out, err := runXml2Rfc(nil, rfcdata)
+		out, err := runXML2RFC(nil, rfcdata)
 		if err != nil {
 			t.Errorf("failed to parse XML2 output for %q: %s\n%s", filename, err, out)
 		} else {
@@ -104,7 +102,7 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 	}
 }
 
-func runXml2Rfc(options []string, rfc []byte) ([]byte, error) {
+func runXML2RFC(options []string, rfc []byte) ([]byte, error) {
 	ioutil.WriteFile("x.xml", rfc, 0600)
 	defer os.Remove("x.xml")
 	defer os.Remove("x.txt") // if we are lucky.

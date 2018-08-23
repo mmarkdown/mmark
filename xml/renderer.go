@@ -23,6 +23,8 @@ const (
 	CommonFlags Flags = FlagsNone
 )
 
+// RendererOptions is a collection of supplementary parameters tweaking
+// the behavior of various parts of XML renderer.
 type RendererOptions struct {
 	// Callouts are supported and detected by setting this option to the callout prefix.
 	Callout string
@@ -50,7 +52,7 @@ type Renderer struct {
 	headingIDs map[string]int
 }
 
-// New creates and configures an Renderer object, which satisfies the Renderer interface.
+// NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
 	html.IDTag = "anchor"
 
@@ -433,6 +435,7 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	r.cr(w)
 }
 
+// RenderNode renders a markdown node to XML.
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
 		status, didHandle := r.opts.RenderNodeHook(w, node, entering)

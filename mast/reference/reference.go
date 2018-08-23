@@ -1,4 +1,4 @@
-// The elements of a <reference> block.
+// Package reference defines the elements of a <reference> block.
 package reference
 
 // Author is the reference author.
@@ -22,13 +22,13 @@ type Front struct {
 	Date   Date   `xml:"date"`
 }
 
-// Format is the reference format.
+// Format is the reference <format>.
 type Format struct {
 	Type   string `xml:"type,attr,omitempty"`
 	Target string `xml:"target,attr"`
 }
 
-// XML is the entire <reference> structure.
+// Reference is the entire <reference> structure.
 type Reference struct {
 	Anchor string `xml:"anchor,attr"`
 	Front  Front  `xml:"front"`

@@ -114,6 +114,7 @@ func anchorFromReference(data []byte) []byte {
 	return data[beg+1 : i]
 }
 
+// ReferenceHook is the hook used to parse reference nodes.
 func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 	if !bytes.HasPrefix(data, []byte("<reference ")) {
 		return nil, nil, 0
