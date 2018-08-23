@@ -10,7 +10,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/miekg/markdown/xml2"
+	"github.com/mmarkdown/markdown/xml2"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"

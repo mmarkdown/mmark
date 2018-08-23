@@ -7,7 +7,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
-	"github.com/miekg/markdown/xml"
+	"github.com/mmarkdown/markdown/xml"
 	"github.com/mmarkdown/mmark/mast"
 )
 
