@@ -240,8 +240,12 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		style = `style="hanging"`
 	}
-	attrs = append(attrs, style)
+
 	attrs = append(attrs, html.BlockAttrs(nodeData)...)
+	// if there is a block level attribute with style, we shouldn't use the default.
+	if !xml.AttributesContains("style", attrs) {
+		attrs = append(attrs, style)
+	}
 	r.outTag(w, openTag, attrs)
 	r.cr(w)
 }
@@ -460,6 +464,8 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		r.outs(w, "</figure>")
 		return
 	}
+
+	// anchor attribute needs to be put in the figure, not the artwork.
 
 	r.outs(w, "<figure")
 	r.outs(w, ` title="`)

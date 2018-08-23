@@ -24,9 +24,6 @@ func testRFC(t *testing.T) { // currently broken because of xml2rfc --debug foo
 	}
 
 	for _, f := range testFiles {
-		if filepath.Ext(f) != ".md" {
-			continue
-		}
 		base := f[:len(f)-3]
 
 		opts := xml.RendererOptions{

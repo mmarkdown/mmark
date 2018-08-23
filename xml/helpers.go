@@ -108,18 +108,6 @@ func (r *Renderer) ensureUniqueHeadingID(id string) string {
 	return id
 }
 
-// Attributes returns the key values in a stringslice where key="value".
-func Attributes(keys, values []string) (s []string) {
-	for i, k := range keys {
-		if values[i] == "" { // skip entire k=v is value is empty
-			continue
-		}
-		v := EscapeHTMLString(values[i])
-		s = append(s, fmt.Sprintf(`%s="%s"`, k, v))
-	}
-	return s
-}
-
 // IsAbstract returns if word is equal to abstract.
 func IsAbstract(word []byte) bool {
 	return strings.EqualFold(string(word), "abstract")
@@ -142,4 +130,27 @@ func appendLanguageAttr(attrs []string, info []byte) []string {
 	}
 	s := `type="` + string(info[:endOfLang]) + `"`
 	return append(attrs, s)
+}
+
+// Attributes returns the key values in a stringslice where each is type set as key="value".
+func Attributes(keys, values []string) (s []string) {
+	for i, k := range keys {
+		if values[i] == "" { // skip entire k=v is value is empty
+			continue
+		}
+		v := EscapeHTMLString(values[i])
+		s = append(s, fmt.Sprintf(`%s="%s"`, k, v))
+	}
+	return s
+}
+
+// AttributesContains checks if the attribute list contains key.
+func AttributesContains(key string, attr []string) bool {
+	check := key + `="`
+	for _, a := range attr {
+		if strings.HasPrefix(a, check) {
+			return true
+		}
+	}
+	return false
 }
