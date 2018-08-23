@@ -15,6 +15,10 @@ clean:
 	rm -rf build release
 	$(MAKE) -C rfc clean
 
+.PHONY: git-commit
+git-commit:
+	git ci -am"Version $(VERSION)"
+
 .PHONY: build
 build:
 	@echo $(VERSION)
