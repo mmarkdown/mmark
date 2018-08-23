@@ -147,6 +147,9 @@ Block Level Attributes:
 :   We use the attributes as specified in RFC 7791, e.g. to speficify an empty list style use:
     `{empty="true"}` before the list.
 
+Asides:
+:   These are only allowed in the front section of the document.
+
 ### XML RFC 7749 Output
 
 Title Block:

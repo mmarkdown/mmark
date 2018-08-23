@@ -436,6 +436,19 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
+	// If the captionFigure has a table as child element *don't* output the figure tags,
+	// because 7991 is weird.
+	isTable := false
+	for _, child := range captionFigure.GetChildren() {
+		if _, ok := child.(*ast.Table); ok {
+			isTable = ok
+			break
+		}
+	}
+	if isTable {
+		return
+	}
+
 	if !entering {
 		r.outs(w, "</figure>")
 		return
@@ -443,6 +456,32 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 
 	r.outs(w, "<figure>")
 	// Now render the caption and then *remove* it from the tree.
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
+				return r.RenderNode(w, node, entering)
+			})
+
+			ast.RemoveFromTree(caption)
+		}
+	}
+}
+
+func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
+	if !entering {
+		r.outs(w, "</table>")
+		return
+	}
+
+	tag := tagWithAttributes("<table", html.BlockAttrs(tab))
+	r.outs(w, tag)
+
+	// Now render the caption if our parent is a ast.CaptionFigure
+	// and then *remove* it from the tree.
+	captionFigure, ok := tab.Parent.(*ast.CaptionFigure)
+	if !ok {
+		return
+	}
 	for _, child := range captionFigure.GetChildren() {
 		if caption, ok := child.(*ast.Caption); ok {
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
@@ -513,8 +552,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
-		tag := tagWithAttributes("<table", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</table>")
+		r.table(w, node, entering)
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
 	case *ast.TableHeader:

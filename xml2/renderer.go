@@ -538,8 +538,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.CodeBlock:
 		r.codeBlock(w, node)
 	case *ast.Caption:
-		// caption is pulled forward in captionFigure, don't output anything here.
-		r.outOneOf(w, entering, "<postamble>", "</postamble>")
+		// no tags because we are used in attributes, i.e. title=
+		r.outOneOf(w, entering, "", "")
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:

@@ -49,9 +49,10 @@ Mmark adds the following syntax elements to
 
 ## Usage
 
-To build mmark you need to working [Go environment](https://golang.org), then check out the code and:
+You can [download a binary](https://github.com/mmarkdown/mmark/releases) or optionally build mmark
+your self. You'll need a working [Go environment](https://golang.org), then check out the code and:
 
-    % go build
+    % go get && go build
     % ./mmark -version
     2.0.0
 
@@ -66,7 +67,6 @@ Making a draft in text form:
 
 Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`.
 
-Optionally you can [download a binary](https://github.com/mmarkdown/mmark/releases).
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
