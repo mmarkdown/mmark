@@ -6,7 +6,6 @@ import (
 	"sort"
 
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mast"
 )
 
@@ -21,7 +20,7 @@ import (
 //     - IndexLink
 //
 // Which can then be rendered by the renderer.
-func IndexToDocumentIndex(p *parser.Parser, doc ast.Node) *mast.DocumentIndex {
+func IndexToDocumentIndex(doc ast.Node) *mast.DocumentIndex {
 	main := map[string]*mast.IndexItem{}
 	subitem := map[string][]*mast.IndexSubItem{} // gather these so we can add them in one swoop at the end
 

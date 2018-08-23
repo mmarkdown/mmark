@@ -85,21 +85,10 @@ func main() {
 
 		doc := markdown.Parse(d, p)
 		if *flagBib {
-			where := mparser.NodeBackMatter(doc)
-			if where != nil {
-				norm, inform := mparser.CitationToBibliography(p, doc)
-				if norm != nil {
-					ast.AppendChild(where, norm)
-				}
-				if inform != nil {
-					ast.AppendChild(where, inform)
-				}
-			}
+			addBibliography(doc)
 		}
 		if *flagIndex {
-			if idx := mparser.IndexToDocumentIndex(p, doc); idx != nil {
-				ast.AppendChild(doc, idx)
-			}
+			addIndex(doc)
 		}
 
 		if *flagAst {
@@ -159,6 +148,32 @@ func main() {
 		x := markdown.Render(doc, renderer)
 		fmt.Println(string(x))
 	}
+}
+
+func addBibliography(doc ast.Node) bool {
+	where := mparser.NodeBackMatter(doc)
+	if where == nil {
+		return false
+	}
+
+	norm, inform := mparser.CitationToBibliography(doc)
+	if norm != nil {
+		ast.AppendChild(where, norm)
+	}
+	if inform != nil {
+		ast.AppendChild(where, inform)
+	}
+	return (norm != nil) || (inform != nil)
+}
+
+func addIndex(doc ast.Node) bool {
+	idx := mparser.IndexToDocumentIndex(doc)
+	if idx == nil {
+		return false
+	}
+
+	ast.AppendChild(doc, idx)
+	return true
 }
 
 // Extensions is exported to we can use it in tests.

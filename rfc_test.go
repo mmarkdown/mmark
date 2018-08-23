@@ -8,19 +8,21 @@ import (
 	"testing"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/miekg/markdown/xml2"
+	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/xml"
 )
 
-// testRFC parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
-func testRFC(t *testing.T) { // currently broken because of xml2rfc --debug foo
+// TestRFC3 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
+func TestRFC3(t *testing.T) { // currently broken because of xml2rfc --debug foo
 	dir := "rfc"
 	testFiles := []string{
 		"2100.md",
 		"3514.md",
-		// "7511.md",
+		"7511.md",
 	}
 
 	for _, f := range testFiles {
@@ -31,6 +33,20 @@ func testRFC(t *testing.T) { // currently broken because of xml2rfc --debug foo
 		}
 		renderer := xml.NewRenderer(opts)
 		doRenderTest(t, dir, base, renderer)
+	}
+}
+
+// TestRFC2 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
+func TestRFC2(t *testing.T) { // currently broken because of xml2rfc --debug foo
+	dir := "rfc"
+	testFiles := []string{
+		"2100.md",
+		"3514.md",
+		"7511.md",
+	}
+
+	for _, f := range testFiles {
+		base := f[:len(f)-3]
 
 		opts2 := xml2.RendererOptions{
 			Flags: xml2.CommonFlags | xml2.XMLFragment,
@@ -48,24 +64,42 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 		return
 	}
 
-	p := parser.NewWithExtensions(Extensions)
 	init := mparser.NewInitial(filename)
+
+	documentTitle := "" // hack to get document title from toml title block and then set it here.
+
+	p := parser.NewWithExtensions(Extensions)
 	p.Opts = parser.ParserOptions{
-		ParserHook:    mparser.TitleHook,
+		ParserHook: func(data []byte) (ast.Node, []byte, int) {
+			node, data, consumed := mparser.Hook(data)
+			if t, ok := node.(*mast.Title); ok {
+				documentTitle = t.TitleData.Title
+			}
+			return node, data, consumed
+		},
 		ReadIncludeFn: init.ReadInclude,
 	}
 
-	rfcdata := markdown.ToHTML(input, p, renderer)
+	doc := markdown.Parse(input, p)
+	addBibliography(doc)
+	addIndex(doc)
+
+	rfcdata := markdown.Render(doc, renderer)
+
 	switch renderer.(type) {
 	case *xml.Renderer:
 		out, err := runXml2Rfc([]string{"--v3"}, rfcdata)
 		if err != nil {
 			t.Errorf("failed to parse XML3 output for %q: %s\n%s", filename, err, out)
+		} else {
+			t.Logf("successfully parsed %s for XML3 output:\n%s", filename, out)
 		}
 	case *xml2.Renderer:
 		out, err := runXml2Rfc(nil, rfcdata)
 		if err != nil {
 			t.Errorf("failed to parse XML2 output for %q: %s\n%s", filename, err, out)
+		} else {
+			t.Logf("successfully parsed %s for XML2 output:\n%s", filename, out)
 		}
 	}
 }
