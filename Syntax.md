@@ -102,7 +102,7 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
   will only assume inline elements and not parse the includes (which are block level elements).
 * If you *don't* use [Block Level Attributes](#block-level-attributes) a document written in Mmark
   should translate to valid HTML5, RFC7991 XML and RFC7749 XML. Block Level Attributes add out
-  specific modifiers to the markdown document making it more tailored to a single output format.
+  specific modifiers to the markdown document making it more tailored for a single output format.
 * A bibliography is *only added* if a `{backmatter}` has been specified, because we need to add just
   before that point.
 
@@ -151,9 +151,8 @@ Block Level Attributes:
 
 Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
-    understand. Other than transpiling the title block, *no other attempt* is made to make a v3
-    markdown document compliant with v2 (RFC 7941) output, although this is mostly true for [block
-    level attributes](#block-level-attributes).
+    understand. An Mmark document will generate valid RFC 7991 and 7741 XML, unless [block
+    level attributes](#block-level-attributes) are used that are speficic to each format.
 
 BCP 14/RFC 2119 Keywords:
 :   If an RFC 2119 word is found enclosed in `**` it will be rendered normally
@@ -260,7 +259,7 @@ And address can be `N,M`, where `N` and `M` are line numbers. If `M` is not spec
 is taken that we should include the entire file starting from `N`.
 
 Or you can use regular expression with: `/N/,/M/`, where `N` and `M` are regular expressions that
-include from where to where to include the file.
+specify from where to where to include lines from file.
 
 Each of these can have an optional `prefix=""` specifier.
 
@@ -369,14 +368,14 @@ set classes, an anchor and other types of *extra* information for the next block
 The full syntax is: `{#id .class key="value"}`. Values may be omitted, i.e., just `{.class}` is
 valid.
 
-The following example applies the attributes: `type` and `id` to the blockquote:
+The following example applies the attributes: `title` and `anchor` to the blockquote:
 ~~~
-{title="The blockquote title" #myid}
+{title="The blockquote" #myid}
 > A blockquote with a title
 ~~~
 Gets expanded into:
 ~~~
-<blockquote id="myid" title="The blockquote title">
+<blockquote anchor="myid" title="The blockquote">
     <t>A blockquote with a title</t>
 </blockquote>
 ~~~
@@ -387,7 +386,7 @@ Gets expanded into:
 ### Indices
 
 Defining indices allows you to create an index. The define an index use the `(!item)`. Sub items can
-be added as well, with `(!item; subitem)`. To make `item` primary, use another `!`: `(!!item,
+be added as well, with `(!item, subitem)`. To make `item` primary, use another `!`: `(!!item,
 subitem)`. If any index is defined the end of the document contains the list of indices. The
 `-index=false` flag suppresses this generation.
 
@@ -408,8 +407,8 @@ For I-Ds you may want to add a draft sequence number, which can be done as such:
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index.
 
-A reference section is created by default, but you can suppress it by using the command line flag
-`-reference=false`.
+A bibliography section is created by default, but you can suppress it by using the command line flag
+`-bibliography=false`.
 
 ### XML References
 
