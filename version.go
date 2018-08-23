@@ -1,4 +1,4 @@
 package main
 
 // Version of mmark.
-var Version = "1.9.95"
+var Version = "1.9.96"
