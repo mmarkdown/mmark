@@ -584,7 +584,12 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.codeBlock(w, node)
 	case *ast.Caption:
 		// no tags because we are used in attributes, i.e. title=
-		r.outOneOf(w, entering, "", "")
+		// See comment in xml/renderer.go. The same is true here, *but*, because we don't
+		// output any tags, the problem does not show up. As a matter of consistency we apply
+		// the same (dumb) precaution.
+		if len(node.GetChildren()) > 0 {
+			r.outOneOf(w, entering, "", "")
+		}
 	case *ast.CaptionFigure:
 		r.captionFigure(w, node, entering)
 	case *ast.Table:
