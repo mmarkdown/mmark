@@ -1,3 +1,5 @@
+// +build xml2rfc
+
 package main
 
 import (
