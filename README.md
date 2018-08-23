@@ -4,6 +4,9 @@ date: 2018-07-22T14:05:51+01:00
 aliases: [/about/]
 ---
 
+[![Build Status](https://img.shields.io/travis/mmarkdown/mmark/master.svg?label=
+build)](https://travis-ci.org/mmarkdown/mmark)
+
 Mmark is a powerful markdown processor written in Go, geared towards writing IETF documents. It is,
 however, *also* suited for writing complete books and other technical documentation, like the
 [Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo)).
