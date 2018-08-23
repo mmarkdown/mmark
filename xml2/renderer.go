@@ -271,13 +271,18 @@ func (r *Renderer) listExit(w io.Writer, list *ast.List) {
 }
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
-	// need to be wrapped in a paragraph.
+	// need to be wrapped in a paragraph, except when we're already in a list.
+	_, parentIsList := list.Parent.(*ast.ListItem)
 	if entering {
-		r.paragraphEnter(w, &ast.Paragraph{})
+		if !parentIsList {
+			r.paragraphEnter(w, &ast.Paragraph{})
+		}
 		r.listEnter(w, list)
 	} else {
 		r.listExit(w, list)
-		r.paragraphExit(w, &ast.Paragraph{})
+		if !parentIsList {
+			r.paragraphExit(w, &ast.Paragraph{})
+		}
 	}
 }
 
