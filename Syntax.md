@@ -55,6 +55,7 @@ extensions by default:
 * *OrderedListStart*, notice start element of ordered list.
 * *Attributes*, allow block level attributes.
 * *Smartypants*, expand `--` and `---` into ndash and mdashes.
+* *SuperSubscript*, parse super and subscript.
 * *Tables*, parse tables.
 
 Mmark adds numerous enhancements to make it suitable for writing ([IETF](https://ietf.org)) Internet
@@ -88,7 +89,7 @@ Mmark adds:
 * [Citations](#citations) and adding [XML References](#xml-references).
 * [In document cross references](#cross-references), short form of referencing a section in the
   document.
-* [Super- and Subscript](#super-and-subscript) (TODO).
+* [Super- and Subscript](#super-and-subscript)
 * [Callouts](#callouts) in code and text.
 * [BCP14](#bcp14) (RFC 2119) keyword detection.
 
@@ -455,8 +456,6 @@ See Section (#header).
 ~~~
 
 ### Super- and Subscript
-
-> TODO TODO TODO
 
 For superscript use `^` and for subscripts use `~`. For example:
 

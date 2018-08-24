@@ -177,5 +177,7 @@ func addIndex(doc ast.Node) bool {
 }
 
 // Extensions is exported to we can use it in tests.
-var Extensions = parser.CommonExtensions | parser.HeadingIDs | parser.AutoHeadingIDs | parser.Footnotes |
-	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark | parser.Autolink
+var Extensions = parser.Tables | parser.FencedCode | parser.Autolink | parser.Strikethrough |
+	parser.SpaceHeadings | parser.HeadingIDs | parser.BackslashLineBreak | parser.SuperSubscript |
+	parser.DefinitionLists | parser.MathJax | parser.AutoHeadingIDs | parser.Footnotes |
+	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark

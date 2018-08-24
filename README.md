@@ -45,7 +45,7 @@ Mmark adds the following syntax elements to
 * [Citations](https://mmark.nl/syntax#citations) and adding [XML References](https://mmark.nl/syntax#xml-references)
 * [In document cross references](https://mmark.nl/syntax#cross-references), short form of referencing a section in the
   document.
-* [Super- and Subscript](https://mmark.nl/syntax#super-and-subscript) (TODO)
+* [Super- and Subscript](https://mmark.nl/syntax#super-and-subscript).
 * [Callouts](https://mmark.nl/syntax#callouts) in code and text.
 * [BCP14](https://mmark.nl/syntax#bcp14) (RFC 2119) keyword detection.
 
