@@ -523,7 +523,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
-		r.outOneOf(w, entering, "<del>", "</del>")
+		r.outOneOf(w, entering, "~", "~")
 	case *ast.Citation:
 		r.citation(w, node, entering)
 	case *ast.DocumentMatter:
