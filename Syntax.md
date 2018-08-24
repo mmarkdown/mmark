@@ -19,6 +19,7 @@ Biggest changes:
     * *always* rendered and require double greater/less-than signs, `<<1>>`.
     * *always* require a comment in the code, i.e. `//<<1>>` will be rendered as a callout, a plain
     `<<1>>` will not.
+* Block Tables have been dropped.
 * Example lists (originally copied from Pandoc) have been dropped.
 
 # Why this new version?
