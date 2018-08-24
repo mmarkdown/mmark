@@ -528,6 +528,31 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 	}
 }
 
+func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
+	if !entering {
+		return
+	}
+
+	// Fake a list. TODO(miek): list in list checks, see? Make fake parent??
+	list := &ast.List{}
+	list.Attribute = block.Attribute
+	if list.Attribute == nil {
+		list.Attribute = &ast.Attribute{Attrs: make(map[string][]byte)}
+	}
+	list.Attribute.Attrs["style"] = []byte("empty")
+
+	listItem := &ast.ListItem{}
+	listItem.SetChildren(block.GetChildren())
+
+	ast.AppendChild(list, listItem)
+
+	ast.WalkFunc(list, func(node ast.Node, entering bool) ast.WalkStatus {
+		return r.RenderNode(w, node, entering)
+	})
+
+	block.SetChildren(nil)
+}
+
 // RenderNode renders a markdown node to XML.
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
 	if r.opts.RenderNodeHook != nil {
@@ -605,8 +630,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOf(w, entering, "", "")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</blockquote>")
+		r.blockQuote(w, node, entering)
 	case *ast.Aside:
 		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
