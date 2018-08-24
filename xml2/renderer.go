@@ -466,6 +466,9 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		if _, ok := child.(*ast.Table); ok {
 			return
 		}
+		if _, ok := child.(*ast.BlockQuote); ok {
+			return
+		}
 	}
 
 	if !entering {
@@ -540,15 +543,22 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 	list.Attribute.Attrs["style"] = []byte("empty")
 
 	listItem := &ast.ListItem{}
-	listItem.SetChildren(block.GetChildren())
-
+	mast.MoveChildren(listItem, block)
 	ast.AppendChild(list, listItem)
 
+	captionFigure, _ := block.Parent.(*ast.CaptionFigure)
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			listItem := &ast.ListItem{}
+			mast.MoveChildren(listItem, caption)
+			ast.AppendChild(list, listItem)
+
+			ast.RemoveFromTree(caption)
+		}
+	}
 	ast.WalkFunc(list, func(node ast.Node, entering bool) ast.WalkStatus {
 		return r.RenderNode(w, node, entering)
 	})
-
-	ast.RemoveFromTree(block)
 }
 
 // RenderNode renders a markdown node to XML.
