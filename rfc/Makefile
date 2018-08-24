@@ -1,18 +1,18 @@
 MMARK :=../mmark
-TXT := $(patsubst %.md,%.md.txt,$(wildcard *.md))
-XML := $(patsubst %.md,%.md.xml,$(wildcard *.md))
+TXT := $(patsubst %.md,%.txt,$(wildcard *.md))
+XML := $(patsubst %.md,%.xml,$(wildcard *.md))
 
 txt: $(TXT)
 
-%.md.txt: %.md
-	$(MMARK) $< > $<.xml
-	xml2rfc --text --v3 $<.xml && rm $<.xml
+%.txt: %.md
+	$(MMARK) $< > $(basename $<).xml
+	xml2rfc --text --v3 $(basename $<).xml && rm $(basename $<).xml
 
 xml: $(XML)
 
-%.md.xml: %.md
-	$(MMARK) $< > $<.xml
+%.xml: %.md
+	$(MMARK) $< > $(basename $<).xml
 
 .PHONY: clean
 clean:
-	rm -f *.md.txt *md.xml
+	rm -f *.txt *.xml
