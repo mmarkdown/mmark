@@ -326,6 +326,8 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
+	mast.DeleteAttribute(codeBlock, "id")
+
 	var attrs []string
 	attrs = appendLanguageAttr(attrs, codeBlock.Info)
 	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
@@ -476,9 +478,13 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		return
 	}
 
-	// anchor attribute needs to be put in the figure, not the artwork.
-
+	attrs := html.BlockAttrs(captionFigure)
+	s := ""
+	if len(attrs) > 0 {
+		s += " " + strings.Join(attrs, " ")
+	}
 	r.outs(w, "<figure")
+	r.outs(w, s)
 	r.outs(w, ` title="`)
 	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {
