@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/mmarkdown/mmark/mast"
 )
 
@@ -83,7 +84,7 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 	r.outTag(w, "<author", attrs)
 
 	r.outTag(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}))
-	r.outs(w, a.Organization)
+	html.EscapeHTML(w, []byte(a.Organization))
 	r.outs(w, "</organization>")
 
 	r.outs(w, "<address>")

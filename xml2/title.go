@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/xml"
 )
@@ -53,7 +54,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	attrs = xml.Attributes([]string{"abbrev"}, []string{d.Abbrev})
 	r.outTag(w, "<title", attrs)
-	r.outs(w, d.Title)
+	html.EscapeHTML(w, []byte(d.Title))
 	r.outs(w, "</title>")
 
 	// use a fake xml rendering to hook into the generation of these title elements
@@ -67,11 +68,11 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	faker.TitleDate(w, d.Date)
 
 	r.outs(w, "<area>")
-	r.outs(w, d.Area)
+	html.EscapeHTML(w, []byte(d.Area))
 	r.outs(w, "</area>")
 
 	r.outs(w, "<workgroup>")
-	r.outs(w, d.Workgroup)
+	html.EscapeHTML(w, []byte(d.Workgroup))
 	r.outs(w, "</workgroup>")
 
 	faker.TitleKeyword(w, d.Keyword)
