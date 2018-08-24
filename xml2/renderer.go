@@ -377,7 +377,7 @@ func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 	if r.opts.Flags&SkipHTML == 0 {
-		r.out(w, span.Literal)
+		html.EscapeHTML(w, span.Literal)
 	}
 }
 
