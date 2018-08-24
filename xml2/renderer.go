@@ -462,8 +462,6 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
-	// If the captionFigure has a table as child element *don't* output the figure tags,
-	// because 7991 is weird.
 	for _, child := range captionFigure.GetChildren() {
 		if _, ok := child.(*ast.Table); ok {
 			return
@@ -655,17 +653,17 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.MathBlock:
 		r.mathBlock(w, node)
 	case *ast.Subscript:
-		r.outOneOf(w, true, "~", "~")
+		r.outOneOf(w, true, "_(", ")")
 		if entering {
 			html.Escape(w, node.Literal)
 		}
-		r.outOneOf(w, false, "~", "~")
+		r.outOneOf(w, false, "_(", ")")
 	case *ast.Superscript:
-		r.outOneOf(w, true, "^", "^")
+		r.outOneOf(w, true, "^(", ")")
 		if entering {
 			html.Escape(w, node.Literal)
 		}
-		r.outOneOf(w, false, "^", "^")
+		r.outOneOf(w, false, "^(", ")")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
