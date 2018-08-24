@@ -550,7 +550,7 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return r.RenderNode(w, node, entering)
 	})
 
-	block.SetChildren(nil)
+	ast.RemoveFromTree(block)
 }
 
 // RenderNode renders a markdown node to XML.
