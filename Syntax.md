@@ -146,7 +146,7 @@ Source code:
     Will be typesets as source code with the language set to `go`.
 
 Block Level Attributes:
-:   We use the attributes as specified in RFC 7791, e.g. to speficify an empty list style use:
+:   We use the attributes as specified in RFC 7991, e.g. to speficify an empty list style use:
     `{empty="true"}` before the list.
 
 Asides:
@@ -156,7 +156,7 @@ Asides:
 
 Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
-    understand. An Mmark document will generate valid RFC 7991 and 7741 XML, unless [block
+    understand. An Mmark document will generate valid RFC 7991 and 7749 XML, unless [block
     level attributes](#block-level-attributes) are used that are speficic to each format.
 
 BCP 14/RFC 2119 Keywords:
