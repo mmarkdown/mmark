@@ -436,10 +436,13 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
-	// If the captionFigure has a table as child element *don't* output the figure tags,
-	// because 7991 is weird.
+	// If the captionFigure has a table as child element *don't* output the figure tags, because 7991 is weird.
+	// If we have a quoted blockquote it is also wrapped in a figure, which we don't want.
 	for _, child := range captionFigure.GetChildren() {
 		if _, ok := child.(*ast.Table); ok {
+			return
+		}
+		if _, ok := child.(*ast.BlockQuote); ok {
 			return
 		}
 	}
@@ -483,6 +486,49 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
 				return r.RenderNode(w, node, entering)
 			})
+
+			ast.RemoveFromTree(caption)
+			break
+		}
+	}
+}
+
+func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
+	if !entering {
+		r.outs(w, "</blockquote>")
+		return
+	}
+
+	attrs := html.BlockAttrs(block)
+	s := ""
+	if len(attrs) > 0 {
+		s += " " + strings.Join(attrs, " ")
+	}
+	r.outs(w, "<blockquote")
+	r.outs(w, s)
+	defer r.outs(w, ">")
+
+	// Now render the caption if our parent is a ast.CaptionFigure
+	// and then *remove* it from the tree.
+	captionFigure, ok := block.Parent.(*ast.CaptionFigure)
+	if !ok {
+		return
+	}
+	for _, child := range captionFigure.GetChildren() {
+		if caption, ok := child.(*ast.Caption); ok {
+			// So we can't render this as-is, because we're putting is in a attribute
+			// so we should loose the tags. Hence we render each child separate. This may
+			// still create tags, which is wrong, but up to the user.
+
+			if len(caption.GetChildren()) > 0 {
+				r.outs(w, ` quotedFrom="`)
+			}
+			for _, child1 := range caption.GetChildren() {
+				ast.WalkFunc(child1, func(node ast.Node, entering bool) ast.WalkStatus {
+					return r.RenderNode(w, node, entering)
+				})
+			}
+			r.outs(w, `"`) // closes quotedFrom
 
 			ast.RemoveFromTree(caption)
 			break
@@ -568,8 +614,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
 	case *ast.BlockQuote:
-		tag := tagWithAttributes("<blockquote", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</blockquote>")
+		r.blockQuote(w, node, entering)
 	case *ast.Aside:
 		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
 		r.outOneOfCr(w, entering, tag, "</aside>")
