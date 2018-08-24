@@ -20,13 +20,25 @@ func MoveChildren(a, b ast.Node) {
 // Some attribute helper functions.
 
 func attributeFromNode(node ast.Node) *ast.Attribute {
-	if l := node.AsLeaf(); l != nil && l.Attribute != nil {
-		return l.Attribute
-	}
 	if c := node.AsContainer(); c != nil && c.Attribute != nil {
 		return c.Attribute
 	}
+	if l := node.AsLeaf(); l != nil && l.Attribute != nil {
+		return l.Attribute
+	}
 	return nil
+}
+
+// AttributeInit will initialize an *Attribute on node if there wasn't one.
+func AttributeInit(node ast.Node) {
+	if l := node.AsLeaf(); l != nil && l.Attribute == nil {
+		l.Attribute = &ast.Attribute{Attrs: make(map[string][]byte)}
+		return
+	}
+	if c := node.AsContainer(); c != nil && c.Attribute == nil {
+		c.Attribute = &ast.Attribute{Attrs: make(map[string][]byte)}
+		return
+	}
 }
 
 // DeleteAttribute delete the attribute under key from a.
@@ -62,7 +74,7 @@ func SetAttribute(node ast.Node, key string, value []byte) {
 	}
 }
 
-// Attribute return the attribute value under key.
+// Attribute returns the attribute value under key.
 func Attribute(node ast.Node, key string) []byte {
 	a := attributeFromNode(node)
 	if a == nil {

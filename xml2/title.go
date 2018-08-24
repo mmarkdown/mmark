@@ -66,9 +66,13 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	faker.TitleDate(w, d.Date)
 
-	r.outTagContent(w, "<area", nil, d.Area)
+	r.outs(w, "<area>")
+	r.outs(w, d.Area)
+	r.outs(w, "</area>")
 
-	r.outTagContent(w, "<workgroup", nil, d.Workgroup)
+	r.outs(w, "<workgroup>")
+	r.outs(w, d.Workgroup)
+	r.outs(w, "</workgroup>")
 
 	faker.TitleKeyword(w, d.Keyword)
 

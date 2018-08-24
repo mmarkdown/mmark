@@ -8,11 +8,19 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/mmarkdown/mmark/mast"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
 func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s) }
 func (r *Renderer) cr(w io.Writer)             { r.outs(w, "\n") }
+
+func (r *Renderer) outAttr(w io.Writer, attrs []string) {
+	if len(attrs) > 0 {
+		io.WriteString(w, " ")
+		io.WriteString(w, strings.Join(attrs, " "))
+	}
+}
 
 func (r *Renderer) outTag(w io.Writer, name string, attrs []string) {
 	s := name
@@ -40,14 +48,8 @@ func (r *Renderer) outOneOfCr(w io.Writer, outFirst bool, first string, second s
 	}
 }
 
-// outTagContents output the opening tag with possible attributes, then the content
-// and then the closing tag.
-func (r *Renderer) outTagContent(w io.Writer, name string, attrs []string, content string) {
-	s := name
-	if len(attrs) > 0 {
-		s += " " + strings.Join(attrs, " ")
-	}
-	io.WriteString(w, s+">")
+func (r *Renderer) outTagContent(w io.Writer, name string, content string) {
+	io.WriteString(w, name+">")
 	html.EscapeHTML(w, []byte(content))
 	io.WriteString(w, "</"+name[1:]+">\n")
 }
@@ -120,16 +122,15 @@ func EscapeHTMLString(s string) string {
 	return buf.String()
 }
 
-func appendLanguageAttr(attrs []string, info []byte) []string {
+func appendLanguageAttr(node ast.Node, info []byte) {
 	if len(info) == 0 {
-		return attrs
+		return
 	}
 	endOfLang := bytes.IndexAny(info, "\t ")
 	if endOfLang < 0 {
 		endOfLang = len(info)
 	}
-	s := `type="` + string(info[:endOfLang]) + `"`
-	return append(attrs, s)
+	mast.SetAttribute(node, "type", info[:endOfLang])
 }
 
 // Attributes returns the key values in a stringslice where each is type set as key="value".

@@ -3,6 +3,7 @@ package xml
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -130,13 +131,12 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 }
 
 func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
-	var attrs []string
 	tag := "<section"
 
+	mast.AttributeInit(heading)
 	if heading.HeadingID != "" {
 		id := r.ensureUniqueHeadingID(heading.HeadingID)
-		attrID := `anchor="` + id + `"`
-		attrs = append(attrs, attrID)
+		mast.SetAttribute(heading, "id", []byte(id))
 	}
 
 	if heading.IsSpecial {
@@ -147,7 +147,7 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	}
 
 	r.cr(w)
-	r.outTag(w, tag, attrs)
+	r.outTag(w, tag, html.BlockAttrs(heading))
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
@@ -209,8 +209,6 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 }
 
 func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
-	var attrs []string
-
 	if nodeData.IsFootnotesList {
 		r.outs(w, "\n<div class=\"footnotes\">\n\n")
 		r.cr(w)
@@ -218,17 +216,17 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	r.cr(w)
 
 	openTag := "<ul"
+	mast.AttributeInit(nodeData)
 	if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
 		if nodeData.Start > 0 {
-			attrs = append(attrs, fmt.Sprintf(`start="%d"`, nodeData.Start))
+			mast.SetAttribute(nodeData, "start", []byte(strconv.Itoa(nodeData.Start)))
 		}
 		openTag = "<ol"
 	}
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
-	attrs = append(attrs, html.BlockAttrs(nodeData)...)
-	r.outTag(w, openTag, attrs)
+	r.outTag(w, openTag, html.BlockAttrs(nodeData))
 	r.cr(w)
 }
 
@@ -305,9 +303,9 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
-	var attrs []string
-	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
+
+	mast.AttributeInit(codeBlock)
+	appendLanguageAttr(codeBlock, codeBlock.Info)
 
 	name := "artwork"
 	if codeBlock.Info != nil {
@@ -315,7 +313,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	}
 
 	r.cr(w)
-	r.outTag(w, "<"+name, attrs)
+	r.outTag(w, "<"+name, html.BlockAttrs(codeBlock))
 	if r.opts.Comments != nil {
 		r.EscapeHTMLCallouts(w, codeBlock.Literal)
 	} else {
@@ -333,19 +331,19 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	}
 
 	// entering
-	var attrs []string
+	mast.AttributeInit(tableCell)
 	openTag := "<td"
 	if tableCell.IsHeader {
 		openTag = "<th"
 	}
 	align := tableCell.Align.String()
 	if align != "" {
-		attrs = append(attrs, fmt.Sprintf(`align="%s"`, align))
+		mast.SetAttribute(tableCell, "align", []byte(align))
 	}
 	if ast.GetPrevNode(tableCell) == nil {
 		r.cr(w)
 	}
-	r.outTag(w, openTag, attrs)
+	r.outTag(w, openTag, html.BlockAttrs(tableCell))
 }
 
 func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
@@ -499,13 +497,8 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return
 	}
 
-	attrs := html.BlockAttrs(block)
-	s := ""
-	if len(attrs) > 0 {
-		s += " " + strings.Join(attrs, " ")
-	}
 	r.outs(w, "<blockquote")
-	r.outs(w, s)
+	r.outAttr(w, html.BlockAttrs(block))
 	defer r.outs(w, ">")
 
 	// Now render the caption if our parent is a ast.CaptionFigure

@@ -59,9 +59,9 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	r.TitleDate(w, d.Date)
 
-	r.outTagContent(w, "<area", nil, d.Area)
+	r.outTagContent(w, "<area", d.Area)
 
-	r.outTagContent(w, "<workgroup", nil, d.Workgroup)
+	r.outTagContent(w, "<workgroup", d.Workgroup)
 
 	r.TitleKeyword(w, d.Keyword)
 
@@ -82,41 +82,43 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 
 	r.outTag(w, "<author", attrs)
 
-	r.outTagContent(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}), a.Organization)
+	r.outTag(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}))
+	r.outs(w, a.Organization)
+	r.outs(w, "</author>")
 
 	r.outs(w, "<address>")
 	r.outs(w, "<postal>")
 
-	r.outTagContent(w, "<street", nil, a.Address.Postal.Street)
+	r.outTagContent(w, "<street", a.Address.Postal.Street)
 	for _, street := range a.Address.Postal.Streets {
-		r.outTagContent(w, "<street", nil, street)
+		r.outTagContent(w, "<street", street)
 	}
 
-	r.outTagContent(w, "<city", nil, a.Address.Postal.City)
+	r.outTagContent(w, "<city", a.Address.Postal.City)
 	for _, city := range a.Address.Postal.Cities {
-		r.outTagContent(w, "<city", nil, city)
+		r.outTagContent(w, "<city", city)
 	}
 
-	r.outTagContent(w, "<code", nil, a.Address.Postal.Code)
+	r.outTagContent(w, "<code", a.Address.Postal.Code)
 	for _, code := range a.Address.Postal.Codes {
-		r.outTagContent(w, "<code", nil, code)
+		r.outTagContent(w, "<code", code)
 	}
 
-	r.outTagContent(w, "<country", nil, a.Address.Postal.Country)
+	r.outTagContent(w, "<country", a.Address.Postal.Country)
 	for _, country := range a.Address.Postal.Countries {
-		r.outTagContent(w, "<country", nil, country)
+		r.outTagContent(w, "<country", country)
 	}
 
-	r.outTagContent(w, "<region", nil, a.Address.Postal.Region)
+	r.outTagContent(w, "<region", a.Address.Postal.Region)
 	for _, region := range a.Address.Postal.Regions {
-		r.outTagContent(w, "<region", nil, region)
+		r.outTagContent(w, "<region", region)
 	}
 
 	r.outs(w, "</postal>")
 
-	r.outTagContent(w, "<phone", nil, a.Address.Phone)
-	r.outTagContent(w, "<email", nil, a.Address.Email)
-	r.outTagContent(w, "<uri", nil, a.Address.URI)
+	r.outTagContent(w, "<phone", a.Address.Phone)
+	r.outTagContent(w, "<email", a.Address.Email)
+	r.outTagContent(w, "<uri", a.Address.URI)
 
 	r.outs(w, "</address>")
 	r.outs(w, "</author>")
@@ -146,7 +148,7 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 		if k == "" {
 			continue
 		}
-		r.outTagContent(w, "<keyword", nil, k)
+		r.outTagContent(w, "<keyword", k)
 	}
 }
 

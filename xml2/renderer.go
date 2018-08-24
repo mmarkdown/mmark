@@ -3,6 +3,7 @@ package xml2
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -139,22 +140,17 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 		}
 	}
 
-	var attrs []string
+	mast.AttributeInit(heading)
 	if heading.HeadingID != "" {
 		id := r.ensureUniqueHeadingID(heading.HeadingID)
-		attrID := `anchor="` + id + `"`
-		attrs = append(attrs, attrID)
-	}
-
-	attr := ""
-	if len(attrs) > 0 {
-		attr += " " + strings.Join(attrs, " ")
+		mast.SetAttribute(heading, "id", []byte(id))
 	}
 
 	// If we want to support block level attributes here, it will clash with the
 	// title= attribute that is outed in text() - and thus later.
 	r.outs(w, tag)
-	r.outs(w, attr+` title="`)
+	r.outAttr(w, html.BlockAttrs(heading))
+	r.outs(w, ` title="`)
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
@@ -223,8 +219,6 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 }
 
 func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
-	var attrs []string
-
 	if nodeData.IsFootnotesList {
 		r.outs(w, "\n<div class=\"footnotes\">\n\n")
 		r.cr(w)
@@ -232,23 +226,25 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	r.cr(w)
 
 	openTag := "<list"
-	style := `style="symbols"`
-	if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
-		style = `style="numbers"`
-		if nodeData.Start > 0 {
-			attrs = append(attrs, fmt.Sprintf(`start="%d"`, nodeData.Start))
+
+	// if there is a block level attribute with style, we shouldn't use ours.
+	if mast.Attribute(nodeData, "style") == nil {
+
+		mast.AttributeInit(nodeData)
+
+		mast.SetAttribute(nodeData, "style", []byte("symbols"))
+		if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
+			mast.SetAttribute(nodeData, "style", []byte("numbers"))
+			if nodeData.Start > 0 {
+				mast.SetAttribute(nodeData, "start", []byte(strconv.Itoa(nodeData.Start)))
+			}
+		}
+		if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
+			mast.SetAttribute(nodeData, "style", []byte("hanging"))
 		}
 	}
-	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
-		style = `style="hanging"`
-	}
 
-	attrs = append(attrs, html.BlockAttrs(nodeData)...)
-	// if there is a block level attribute with style, we shouldn't use the default.
-	if !xml.AttributesContains("style", attrs) {
-		attrs = append(attrs, style)
-	}
-	r.outTag(w, openTag, attrs)
+	r.outTag(w, openTag, html.BlockAttrs(nodeData))
 	r.cr(w)
 }
 
@@ -328,16 +324,15 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	mast.DeleteAttribute(codeBlock, "id")
 
-	var attrs []string
-	attrs = appendLanguageAttr(attrs, codeBlock.Info)
-	attrs = append(attrs, html.BlockAttrs(codeBlock)...)
+	mast.AttributeInit(codeBlock)
+	appendLanguageAttr(codeBlock, codeBlock.Info)
 
 	r.cr(w)
 	_, inFigure := codeBlock.Parent.(*ast.CaptionFigure)
 	if inFigure {
-		r.outTag(w, "<artwork", attrs)
+		r.outTag(w, "<artwork", html.BlockAttrs(codeBlock))
 	} else {
-		r.outTag(w, "<figure><artwork", attrs)
+		r.outTag(w, "<figure><artwork", html.BlockAttrs(codeBlock))
 	}
 
 	if r.opts.Comments != nil {
@@ -361,19 +356,19 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	}
 
 	// entering
-	var attrs []string
+	mast.AttributeInit(tableCell)
 	openTag := "<c"
 	if tableCell.IsHeader {
 		openTag = "<ttcol"
 	}
 	align := tableCell.Align.String()
 	if align != "" {
-		attrs = append(attrs, fmt.Sprintf(`align="%s"`, align))
+		mast.SetAttribute(tableCell, "align", []byte(align))
 	}
 	if ast.GetPrevNode(tableCell) == nil {
 		r.cr(w)
 	}
-	r.outTag(w, openTag, attrs)
+	r.outTag(w, openTag, html.BlockAttrs(tableCell))
 }
 
 func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
@@ -478,13 +473,8 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		return
 	}
 
-	attrs := html.BlockAttrs(captionFigure)
-	s := ""
-	if len(attrs) > 0 {
-		s += " " + strings.Join(attrs, " ")
-	}
 	r.outs(w, "<figure")
-	r.outs(w, s)
+	r.outAttr(w, html.BlockAttrs(captionFigure))
 	r.outs(w, ` title="`)
 	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {
@@ -504,15 +494,8 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 		return
 	}
 
-	attrs := html.BlockAttrs(tab)
-	// TODO(miek): this definitely needs some helper function(s).
-	s := ""
-	if len(attrs) > 0 {
-		s += " " + strings.Join(attrs, " ")
-	}
-
 	r.outs(w, "<texttable")
-	r.outs(w, s)
+	r.outAttr(w, html.BlockAttrs(tab))
 	// Now render the caption if our parent is a ast.CaptionFigure
 	// and then *remove* it from the tree.
 	captionFigure, ok := tab.Parent.(*ast.CaptionFigure)
