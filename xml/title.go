@@ -84,7 +84,7 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 
 	r.outTag(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}))
 	r.outs(w, a.Organization)
-	r.outs(w, "</author>")
+	r.outs(w, "</organization>")
 
 	r.outs(w, "<address>")
 	r.outs(w, "<postal>")
