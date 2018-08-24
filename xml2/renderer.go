@@ -654,6 +654,18 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.code(w, node)
 	case *ast.MathBlock:
 		r.mathBlock(w, node)
+	case *ast.Subscript:
+		r.outOneOf(w, true, "~", "~")
+		if entering {
+			html.Escape(w, node.Literal)
+		}
+		r.outOneOf(w, false, "~", "~")
+	case *ast.Superscript:
+		r.outOneOf(w, true, "^", "^")
+		if entering {
+			html.Escape(w, node.Literal)
+		}
+		r.outOneOf(w, false, "^", "^")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
