@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -255,7 +254,7 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 		if nodeData.ListFlags&ast.ListTypeOrdered != 0 {
 			mast.SetAttribute(nodeData, "style", []byte("numbers"))
 			if nodeData.Start > 0 {
-				mast.SetAttribute(nodeData, "start", []byte(strconv.Itoa(nodeData.Start)))
+				log.Printf("Attribute \"start\" not supported for list style=\"numbers\"")
 			}
 		}
 		if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
@@ -480,13 +479,13 @@ func (r *Renderer) code(w io.Writer, node *ast.Code) {
 }
 
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
-	r.outs(w, `<artwork type="math">`+"\n")
+	r.outs(w, `<figure><artwork type="math">`+"\n")
 	if r.opts.Comments != nil {
 		xml.EscapeHTMLCallouts(w, mathBlock.Literal, r.opts.Comments)
 	} else {
 		html.EscapeHTML(w, mathBlock.Literal)
 	}
-	r.outs(w, `</artwork>`)
+	r.outs(w, `</artwork></figure>`)
 	r.cr(w)
 }
 
