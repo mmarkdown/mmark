@@ -66,21 +66,13 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 		r.out(w, text.Literal)
 		return
 	}
+
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
 		if heading.IsSpecial && IsAbstract(heading.Literal) {
 			// No <name> when abstract, should not output anything
+			// This works because abstract does not contain any markdown, i.e. <em>Abstract</em> would still output the emphesis.
 			return
 		}
-		r.outs(w, "<name>")
-		html.EscapeHTML(w, text.Literal)
-		r.outs(w, "</name>")
-		return
-	}
-	if _, parentIsBibliography := text.Parent.(*mast.Bibliography); parentIsBibliography {
-		r.outs(w, "<name>")
-		html.EscapeHTML(w, text.Literal)
-		r.outs(w, "</name>")
-		return
 	}
 
 	html.EscapeHTML(w, text.Literal)
@@ -148,9 +140,19 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 
 	r.cr(w)
 	r.outTag(w, tag, html.BlockAttrs(heading))
+
+	if heading.IsSpecial && IsAbstract(heading.Literal) {
+		return
+	}
+	r.outs(w, "<name>")
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
+	if heading.IsSpecial && IsAbstract(heading.Literal) {
+		r.cr(w)
+		return
+	}
+	r.outs(w, "</name>")
 	r.cr(w)
 }
 
