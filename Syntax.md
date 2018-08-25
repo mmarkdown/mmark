@@ -107,6 +107,8 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
   specific modifiers to the markdown document making it more tailored for a single output format.
 * A bibliography is *only added* if a `{backmatter}` has been specified, because we need to add just
   before that point.
+* Intra-work emphasis is enabled so a string like `SSH_MSG_KEXECDH_REPLY` is interpreted as
+  `SSH<em>MSG</em>...`. You need to escape the underscores: `SSH\_MSG...`.
 
 ### RFC 7991 XML Output
 
