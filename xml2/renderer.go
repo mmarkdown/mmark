@@ -667,8 +667,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.BlockQuote:
 		r.blockQuote(w, node, entering)
 	case *ast.Aside:
-		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</aside>")
+		// ignore and text render the child text as-is.
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)
 	case *ast.Index:
