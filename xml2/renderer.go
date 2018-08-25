@@ -3,6 +3,7 @@ package xml2
 import (
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 
@@ -220,8 +221,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.IsFootnotesList {
-		r.outs(w, "\n<div class=\"footnotes\">\n\n")
-		r.cr(w)
+		return
 	}
 	r.cr(w)
 
@@ -249,6 +249,9 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 }
 
 func (r *Renderer) listExit(w io.Writer, list *ast.List) {
+	if list.IsFootnotesList {
+		return
+	}
 	closeTag := "</list>"
 	if list.ListFlags&ast.ListTypeOrdered != 0 {
 		//closeTag = "</ol>"
@@ -266,10 +269,6 @@ func (r *Renderer) listExit(w io.Writer, list *ast.List) {
 		}
 	case *ast.Document, *ast.BlockQuote, *ast.Aside:
 		r.cr(w)
-	}
-
-	if list.IsFootnotesList {
-		r.outs(w, "\n</div>\n")
 	}
 }
 
@@ -290,7 +289,7 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 }
 
 func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
-	if listItem.RefLink != nil {
+	if listItem.RefLink != nil { // footnotes
 		return
 	}
 
@@ -305,6 +304,10 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 }
 
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
+	if listItem.RefLink != nil {
+		return
+	}
+
 	closeTag := "</t>"
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
 		closeTag = `">`
@@ -408,17 +411,27 @@ func (r *Renderer) index(w io.Writer, index *ast.Index) {
 		html.EscapeHTML(w, index.Subitem)
 		r.outs(w, "\"")
 	}
-	r.outs(w, "></iref>")
+	r.outs(w, "/>")
 }
 
 func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
+	if link.Footnote != nil {
+		log.Printf("Skipping footnote")
+		return
+	}
+	if !entering {
+		r.outs(w, `</eref>`)
+		return
+	}
 	r.outs(w, "<eref")
 	r.outs(w, " target=\"")
 	html.EscapeHTML(w, link.Destination)
-	r.outs(w, `"></iref>`) // link.Content/Literal can be used here.
+	r.outs(w, `">`)
 }
 
 func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
+	// Discard images for now
+	return
 	if entering {
 		r.imageEnter(w, node)
 	} else {
@@ -641,7 +654,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Link:
 		r.link(w, node, entering)
 	case *ast.Math:
-		r.outOneOf(w, entering, `<spanx style="verb">`, "</spanx>")
+		r.outOneOf(w, true, `<spanx style="verb">`, "</spanx>")
+		html.EscapeHTML(w, node.Literal)
+		r.outOneOf(w, false, `<spanx style="verb">`, "</spanx>")
 	case *ast.Image:
 		if r.opts.Flags&SkipImages != 0 {
 			return ast.SkipChildren

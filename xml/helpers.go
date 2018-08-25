@@ -73,6 +73,7 @@ func (r *Renderer) sectionClose(w io.Writer, new *ast.Heading) {
 		return
 	}
 
+	// TODO(miek): Probably better to actually count the number of OPEN sections instead of the level of them.
 	tag := "</section>"
 	curLevel := r.section.Level
 	newLevel := 1 // close them all

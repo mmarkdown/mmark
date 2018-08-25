@@ -1,2 +1,2 @@
-<t>Well <iref item="well" subitem="water"></iref></t>
-<t>Well2 <iref item="well2" primary="true" subitem="gel"></iref></t>
+<t>Well <iref item="well" subitem="water"/></t>
+<t>Well2 <iref item="well2" primary="true" subitem="gel"/></t>
