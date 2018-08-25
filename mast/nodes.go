@@ -89,3 +89,30 @@ func Attribute(node ast.Node, key string) []byte {
 
 	return a.Attrs[key]
 }
+
+// AttributeFilter runs the attribute on node through filter and only allows elements for which filter returns true.
+func AttributeFilter(node ast.Node, filter func(key string) bool) {
+	a := attributeFromNode(node)
+	if a == nil {
+		return
+	}
+	if !filter("id") {
+		a.ID = nil
+	}
+	if !filter("class") {
+		a.Classes = nil
+	}
+	for k, _ := range a.Attrs {
+		if !filter(k) {
+			delete(a.Attrs, k)
+		}
+	}
+}
+
+// FilterFunc checks if s is an allowed key in an attribute.
+// If s is:
+// "id" the ID should be checked
+// "class" the classes should be allowed or disallowed
+// any other string means checking the individual attributes.
+// it returns true for elements that are allows, false otherwise.
+type FilterFunc func(s string) bool

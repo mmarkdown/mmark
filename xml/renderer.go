@@ -49,16 +49,28 @@ type Renderer struct {
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
 	section        *ast.Heading        // current open section
 	title          bool                // did we output a title block
+	filter         mast.FilterFunc     // filter for attributes.
 
 	// Track heading IDs to prevent ID collision in a single generation.
 	headingIDs map[string]int
 }
 
+var filterFunc mast.FilterFunc = func(s string) bool {
+	switch s {
+	case "id": // will translate to anchor so OK.
+		return true
+	case "class": // there are no classes
+		return false
+	case "style": // style has been deprecated in 7991
+		return false
+	}
+	return true
+}
+
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
 	html.IDTag = "anchor"
-
-	return &Renderer{opts: opts, headingIDs: make(map[string]int)}
+	return &Renderer{opts: opts, headingIDs: make(map[string]int), filter: filterFunc}
 }
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
@@ -547,12 +559,16 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 
 // RenderNode renders a markdown node to XML.
 func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.WalkStatus {
+
+	mast.AttributeFilter(node, r.filter)
+
 	if r.opts.RenderNodeHook != nil {
 		status, didHandle := r.opts.RenderNodeHook(w, node, entering)
 		if didHandle {
 			return status
 		}
 	}
+
 	switch node := node.(type) {
 	case *ast.Document:
 		// do nothing
