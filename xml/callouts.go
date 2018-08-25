@@ -11,11 +11,11 @@ import (
 
 // EscapeHTMLCallouts writes html-escaped d to w. It escapes &, <, > and " characters, *but*
 // expands callouts <<N>> with the callout HTML, i.e. by calling rendering it as <N>.
-func (r *Renderer) EscapeHTMLCallouts(w io.Writer, d []byte) {
+func EscapeHTMLCallouts(w io.Writer, d []byte, comments [][]byte) {
 	ld := len(d)
 Parse:
 	for i := 0; i < ld; i++ {
-		for _, comment := range r.opts.Comments {
+		for _, comment := range comments {
 			if !bytes.HasPrefix(d[i:], comment) {
 				break
 			}

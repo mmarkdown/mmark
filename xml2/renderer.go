@@ -358,7 +358,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	}
 
 	if r.opts.Comments != nil {
-		r.EscapeHTMLCallouts(w, codeBlock.Literal)
+		xml.EscapeHTMLCallouts(w, codeBlock.Literal, r.opts.Comments)
 	} else {
 		html.EscapeHTML(w, codeBlock.Literal)
 	}
@@ -482,7 +482,7 @@ func (r *Renderer) code(w io.Writer, node *ast.Code) {
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	r.outs(w, `<artwork type="math">`+"\n")
 	if r.opts.Comments != nil {
-		r.EscapeHTMLCallouts(w, mathBlock.Literal)
+		xml.EscapeHTMLCallouts(w, mathBlock.Literal, r.opts.Comments)
 	} else {
 		html.EscapeHTML(w, mathBlock.Literal)
 	}
