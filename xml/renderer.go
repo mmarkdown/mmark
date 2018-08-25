@@ -64,6 +64,12 @@ var filterFunc mast.FilterFunc = func(s string) bool {
 	case "style": // style has been deprecated in 7991
 		return false
 	}
+
+	// l33t data- HTML5 attributes
+	if strings.HasPrefix(s, "data-") {
+		return false
+	}
+
 	return true
 }
 

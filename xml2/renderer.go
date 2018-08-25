@@ -65,6 +65,12 @@ var filterFunc mast.FilterFunc = func(s string) bool {
 	case "empty": // newer attributes from RFC 7991
 		return false
 	}
+
+	// l33t data- HTML5 attributes
+	if strings.HasPrefix(s, "data-") {
+		return false
+	}
+
 	return true
 }
 
@@ -561,16 +567,18 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 	mast.MoveChildren(listItem, block)
 	ast.AppendChild(list, listItem)
 
-	captionFigure, _ := block.Parent.(*ast.CaptionFigure)
-	for _, child := range captionFigure.GetChildren() {
-		if caption, ok := child.(*ast.Caption); ok {
-			listItem := &ast.ListItem{}
-			mast.MoveChildren(listItem, caption)
-			ast.AppendChild(list, listItem)
+	if captionFigure, ok := block.Parent.(*ast.CaptionFigure); ok {
+		for _, child := range captionFigure.GetChildren() {
+			if caption, ok := child.(*ast.Caption); ok {
+				listItem := &ast.ListItem{}
+				mast.MoveChildren(listItem, caption)
+				ast.AppendChild(list, listItem)
 
-			ast.RemoveFromTree(caption)
+				ast.RemoveFromTree(caption)
+			}
 		}
 	}
+
 	ast.WalkFunc(list, func(node ast.Node, entering bool) ast.WalkStatus {
 		return r.RenderNode(w, node, entering)
 	})

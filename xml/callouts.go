@@ -24,7 +24,7 @@ Parse:
 			if i+lc < ld {
 				if id, consumed := parser.IsCallout(d[i+lc:]); consumed > 0 {
 					// We have seen a callout
-					io.WriteString(w, fmt.Sprintf("<%d>", id))
+					io.WriteString(w, fmt.Sprintf("&lt;%s&gt;", id))
 					i += consumed + lc - 1
 					continue Parse
 				}
