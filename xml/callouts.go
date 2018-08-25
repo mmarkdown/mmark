@@ -2,16 +2,15 @@ package xml
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
 
 // EscapeHTMLCallouts writes html-escaped d to w. It escapes &, <, > and " characters, *but*
-// expands callouts <<N>> with the callout HTML, i.e. by calling r.callout() with a newly created
-// ast.Callout node.
+// expands callouts <<N>> with the callout HTML, i.e. by calling rendering it as <N>.
 func (r *Renderer) EscapeHTMLCallouts(w io.Writer, d []byte) {
 	ld := len(d)
 Parse:
@@ -25,8 +24,7 @@ Parse:
 			if i+lc < ld {
 				if id, consumed := parser.IsCallout(d[i+lc:]); consumed > 0 {
 					// We have seen a callout
-					callout := &ast.Callout{ID: id}
-					r.callout(w, callout)
+					io.WriteString(w, fmt.Sprintf("<%d>", id))
 					i += consumed + lc - 1
 					continue Parse
 				}
