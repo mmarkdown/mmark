@@ -76,3 +76,19 @@ Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done wi
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
+
+## Example RFC
+
+The rfc/ directory contains a couple of example RFCs that can be build via the v2 or v3 tool chain.
+The build the text files, just run:
+
+~~~ sh
+cd rfc
+make txt
+~~~
+
+For v2 (i.e. the current (2018) way a making RFC), just run:
+~~~ sh
+cd rfc
+make TWO="yes" txt
+~~~
