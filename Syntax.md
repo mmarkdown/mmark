@@ -151,7 +151,8 @@ Block Level Attributes:
 :   We use the attributes as specified in RFC 7991, e.g. to speficify an empty list style use:
     `{empty="true"}` before the list. The renderer for this output format filters unknown attributes
     away. The current list is to allow IDs (translated into 'anchor'), remove any `class=` and `style=`
-    attributes. Anything else is allowed by default.
+    attributes, so `{style="empty" empty="true"}`, will make a document both RFC 7991 and RFC 7749
+    compliant.
 
 Asides:
 :   These are only allowed in the front section of the document.
@@ -173,7 +174,8 @@ Artwork/Source code:
 
 Block Level Attributes:
 :   We use the attributes as specified in RFC 7749, e.g. to speficify an empty list style use:
-    `{style="empty"}` before the list.
+    `{style="empty"}` before the list. Any attributes that are not allowed are filtered out, so
+    `{style="empty" empty="true"}`, will make a document both RFC 7749 and RFC 7991 compliant.
 
 ### HTML5 Output
 
