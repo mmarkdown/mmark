@@ -72,6 +72,11 @@ func main() {
 		documentTitle := "" // hack to get document title from toml title block and then set it here.
 
 		p := parser.NewWithExtensions(Extensions)
+		parserFlags := parser.FlagsNone
+		if !*flagHTML {
+			// both xml formats don't deal with footnotes well.
+			parserFlags |= parser.SkipFootnoteList
+		}
 		p.Opts = parser.ParserOptions{
 			ParserHook: func(data []byte) (ast.Node, []byte, int) {
 				node, data, consumed := mparser.Hook(data)
@@ -81,6 +86,7 @@ func main() {
 				return node, data, consumed
 			},
 			ReadIncludeFn: init.ReadInclude,
+			Flags:         parserFlags,
 		}
 
 		doc := markdown.Parse(d, p)
