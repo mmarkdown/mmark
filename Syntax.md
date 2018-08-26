@@ -21,6 +21,8 @@ Biggest changes:
     `<<1>>` will not.
 * Block Tables have been dropped.
 * Example lists (originally copied from Pandoc) have been dropped.
+* Plain citations, i.e. `@RFC5412`, when the reference was previously seen don't work anymore,
+  always use the full syntax `[@RFC5412]`.
 
 # Why this new version?
 
