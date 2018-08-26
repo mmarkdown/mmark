@@ -62,13 +62,17 @@ To output XML2RFC v3 xml just give it a markdown file and:
 
     % ./mmark rfc/3514.md
 
-Making a draft in text form:
+Making a draft in text form (v3 output)
 
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`.
+Making a draft in text form (v2 output)
 
+    % ./mmark -2 rfc/3514.md > x.xml
+    % xml2rfc --text x.xml
+
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`.
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
