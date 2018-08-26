@@ -2,6 +2,7 @@
 title: "Syntax"
 date: 2018-07-22T14:05:51+01:00
 aliases: [/syntax/]
+toc: true
 ---
 
 This is version 2 of [Mmark](https://github.com/mmarkdown/mmark):
@@ -317,7 +318,7 @@ automatically starts the front matter for you *if* the document has a title bloc
 divisions can be done with `{frontmatter}`, `{mainmatter}` and `{backmatter}`. This must be the only
 thing on the line.
 
-## Captions
+### Captions
 
 Mmark supports caption below [tables](#tables), [code blocks](#code-blocks) and [block
 quotes](#block-quotes). You can caption each elements with `Table: `, `Figure: ` and `Quote: `
