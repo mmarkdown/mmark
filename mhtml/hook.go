@@ -10,6 +10,12 @@ import (
 // RenderHook is used to render mmark specific AST nodes.
 func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node := node.(type) {
+	case *ast.Footnotes:
+		if !entering {
+			io.WriteString(w, "</h1>\n")
+			return ast.GoToNext, true
+		}
+		io.WriteString(w, `<h1 id="footnotes">Footnotes`)
 	case *mast.Bibliography:
 		if !entering {
 			io.WriteString(w, "\n</div>\n")

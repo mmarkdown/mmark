@@ -104,7 +104,7 @@ func main() {
 				// TODO(miek): make this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
-				Flags:          html.CommonFlags,
+				Flags:          html.CommonFlags | html.FootnoteNoHRTag,
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage

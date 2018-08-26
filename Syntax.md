@@ -58,7 +58,7 @@ extensions by default:
 * *OrderedListStart*, notice start element of ordered list.
 * *Attributes*, allow block level attributes.
 * *Smartypants*, expand `--` and `---` into ndash and mdashes.
-* *SuperSubscript*, parse super and subscript.
+* *SuperSubscript*, parse super and subscript: H~2~O is water and 2^10^ is 1024.
 * *Tables*, parse tables.
 
 Mmark adds numerous enhancements to make it suitable for writing ([IETF](https://ietf.org)) Internet
