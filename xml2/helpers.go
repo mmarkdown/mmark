@@ -114,3 +114,17 @@ func appendLanguageAttr(node ast.Node, info []byte) {
 	}
 	mast.SetAttribute(node, "type", info[:endOfLang])
 }
+
+// isHangText returns true if the grandparent is a definition list term.
+func isHangText(node ast.Node) bool {
+	grandparent := node.GetParent().GetParent()
+	if grandparent == nil {
+		return false
+	}
+	if grandparent != nil {
+		if li, ok := grandparent.(*ast.ListItem); ok {
+			return li.ListFlags&ast.ListTypeTerm != 0
+		}
+	}
+	return false
+}

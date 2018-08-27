@@ -191,13 +191,13 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 	if !entering {
 		return
 	}
+
 	for i, c := range node.Destination {
 		if node.Type[i] == ast.CitationTypeSuppressed {
 			continue
 		}
 
-		attr := []string{fmt.Sprintf(`target="%s"`, c)}
-		r.outTag(w, "<xref", attr)
+		r.outTag(w, "<xref", []string{fmt.Sprintf(`target="%s"`, c)})
 		r.outs(w, "</xref>")
 	}
 }
@@ -409,6 +409,11 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 }
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
+	if isHangText(cr) {
+		w.Write(cr.Destination)
+		return
+	}
+
 	if entering {
 		r.outTag(w, "<xref", []string{"target=\"" + string(cr.Destination) + "\""})
 		return
@@ -437,10 +442,17 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		log.Printf("Skipping footnote")
 		return
 	}
+
 	if !entering {
 		r.outs(w, `</eref>`)
 		return
 	}
+
+	if isHangText(link) {
+		w.Write(link.Destination)
+		return
+	}
+
 	r.outs(w, "<eref")
 	r.outs(w, " target=\"")
 	html.EscapeHTML(w, link.Destination)
@@ -473,6 +485,11 @@ func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 }
 
 func (r *Renderer) code(w io.Writer, node *ast.Code) {
+	if isHangText(node) {
+		html.EscapeHTML(w, node.Literal)
+		return
+	}
+
 	r.outs(w, `<spanx style="verb">`)
 	html.EscapeHTML(w, node.Literal)
 	r.outs(w, "</spanx>")
@@ -616,7 +633,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node)
 	case *ast.Emph:
-		r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
+		if isHangText(node) {
+			html.EscapeHTML(w, node.Literal)
+		} else {
+			r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
+		}
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
