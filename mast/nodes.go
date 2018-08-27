@@ -84,10 +84,24 @@ func Attribute(node ast.Node, key string) []byte {
 	case "id":
 		return a.ID
 	case "class":
-		// TODO
+		// use AttributeClass.
 	}
 
 	return a.Attrs[key]
+}
+
+// AttributeClass returns true is class key is set.
+func AttributeClass(node ast.Node, key string) bool {
+	a := attributeFromNode(node)
+	if a == nil {
+		return nil
+	}
+	for _, c := range a.Classes {
+		if string(c) == key {
+			return true
+		}
+	}
+	return false
 }
 
 // AttributeFilter runs the attribute on node through filter and only allows elements for which filter returns true.

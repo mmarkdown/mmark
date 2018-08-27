@@ -145,7 +145,7 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	tag := "<section"
 
 	mast.AttributeInit(heading)
-	if heading.HeadingID != "" {
+	if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" {
 		id := r.ensureUniqueHeadingID(heading.HeadingID)
 		mast.SetAttribute(heading, "id", []byte(id))
 	}
