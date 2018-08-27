@@ -410,7 +410,9 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
 	if isHangText(cr) {
-		w.Write(cr.Destination)
+		if entering {
+			w.Write(cr.Destination)
+		}
 		return
 	}
 
@@ -634,7 +636,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.callout(w, node)
 	case *ast.Emph:
 		if isHangText(node) {
-			html.EscapeHTML(w, node.Literal)
+			if entering {
+				html.EscapeHTML(w, node.Literal)
+			}
 		} else {
 			r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
 		}
