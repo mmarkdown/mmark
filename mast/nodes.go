@@ -94,7 +94,7 @@ func Attribute(node ast.Node, key string) []byte {
 func AttributeClass(node ast.Node, key string) bool {
 	a := attributeFromNode(node)
 	if a == nil {
-		return nil
+		return false
 	}
 	for _, c := range a.Classes {
 		if string(c) == key {
