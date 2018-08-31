@@ -478,7 +478,7 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 	}
 
 	if !entering {
-		r.outs(w, "</figure>")
+		r.outs(w, "</figure>\n")
 		return
 	}
 

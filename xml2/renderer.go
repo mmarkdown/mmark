@@ -364,7 +364,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	if inFigure {
 		r.outs(w, "</artwork>")
 	} else {
-		r.outs(w, "</artwork></figure>")
+		r.outs(w, "</artwork></figure>\n")
 	}
 	r.cr(w)
 }
@@ -504,7 +504,7 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	} else {
 		html.EscapeHTML(w, mathBlock.Literal)
 	}
-	r.outs(w, `</artwork></figure>`)
+	r.outs(w, `</artwork></figure>`+"\n")
 	r.cr(w)
 }
 
@@ -519,23 +519,27 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 	}
 
 	if !entering {
-		r.outs(w, "</figure>")
+		r.outs(w, "</figure>\n")
 		return
 	}
 
 	r.outs(w, "<figure")
 	r.outAttr(w, html.BlockAttrs(captionFigure))
-	r.outs(w, ` title="`)
+
 	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {
 		if caption, ok := child.(*ast.Caption); ok {
+			r.outs(w, ` title="`)
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
 				return r.RenderNode(w, node, entering)
 			})
 
 			ast.RemoveFromTree(caption)
+			return
 		}
 	}
+	// Still here? Close tag.
+	r.outs(w, `>`)
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
