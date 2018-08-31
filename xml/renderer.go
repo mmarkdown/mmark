@@ -425,9 +425,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 }
 
 func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
-	// Discard images for now.
-	return
-
 	if entering {
 		r.imageEnter(w, node)
 	} else {
@@ -437,7 +434,8 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 
 func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 	dest := image.Destination
-	r.outs(w, `<img src="`)
+	r.outs(w, `<artwork src="`)
+	// type= will be the extension of dest.
 	html.EscapeHTML(w, dest)
 	r.outs(w, `" alt="`)
 }
@@ -447,7 +445,7 @@ func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 		r.outs(w, `" name="`)
 		html.EscapeHTML(w, image.Title)
 	}
-	r.outs(w, `" />`)
+	r.outs(w, `"/>`)
 }
 
 func (r *Renderer) code(w io.Writer, node *ast.Code) {
