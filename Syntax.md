@@ -42,8 +42,10 @@ could be build into the `mmark` binary itself.
 
 This document describes all the *extra* syntax elements that can be used in Mmark. Mmark's syntax is
 based on the ["standard" Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
+A good primer on what blackfriday implements [is this
+article](https://notes.peter-baumgartner.net/archive/content-organisation/blackfriday-markdown/).
 
-> Read the above document if you haven't already, it helps you understand how markdown looks and feels.
+> Read the above documents if you haven't already, it helps you understand how markdown looks and feels.
 
 For the rest we build up on <https://github.com/gomarkdown/markdown> and support all syntax
 [it supports](https://github.com/gomarkdown/markdown/blob/master/README.md). We enable the following
