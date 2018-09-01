@@ -6,7 +6,10 @@ import (
 	"path/filepath"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/markdown/parser"
 )
+
+var UnsafeInclude parser.Flags = 1 << 3
 
 // Hook will call both TitleHook and ReferenceHook.
 func Hook(data []byte) (ast.Node, []byte, int) {
@@ -27,6 +30,14 @@ func Hook(data []byte) (ast.Node, []byte, int) {
 // optional a prefix="" string.
 func (i Initial) ReadInclude(from, file string, address []byte) []byte {
 	path := i.path(from, file)
+
+	if i.Flags&UnsafeInclude == 0 {
+		if ok := i.pathAllowed(path); !ok {
+			log.Printf("Failure to read: %q: path is not on or below %q", path, i.i)
+			return nil
+		}
+	}
+
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("Failure to read: %q (from %q)", err, filepath.Join(from, "*"))

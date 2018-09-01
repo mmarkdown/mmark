@@ -41,6 +41,9 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 **-html**
 :    create HTML output
 
+**-unsafe**
+:    allow includes from anywhere in the filesystem
+
 **-index**
 :    generate an index at the end of the document (default true)
 

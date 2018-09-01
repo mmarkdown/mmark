@@ -16,22 +16,28 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/mmarkdown/markdown/parser"
 )
 
 // Initial is the initial file we are working on, empty for stdin and adjusted is we we have an absolute or relative file.
-type Initial string
+type Initial struct {
+	Flags parser.Flags
+	i     string
+}
 
 // NewInitial returns an initialized Initial.
 func NewInitial(s string) Initial {
 	if path.IsAbs(s) {
-		return Initial(path.Dir(s))
+		return Initial{i: path.Dir(s)}
 	}
 
 	cwd, _ := os.Getwd()
 	if s == "" {
-		return Initial(cwd)
+		return Initial{i: cwd}
 	}
-	return Initial(path.Dir(filepath.Join(cwd, s)))
+	return Initial{i: path.Dir(filepath.Join(cwd, s))}
 }
 
 // path returns the full path we should use according to from, file and initial.
@@ -43,9 +49,18 @@ func (i Initial) path(from, file string) string {
 		filepath.Join(from, file)
 	}
 
-	f1 := filepath.Join(string(i), from)
+	f1 := filepath.Join(i.i, from)
 
 	return filepath.Join(f1, file)
+}
+
+// pathAllowed returns true is file is on the same level or below the initial file.
+func (i Initial) pathAllowed(file string) bool {
+	x, err := filepath.Rel(i.i, file)
+	if err != nil {
+		return false
+	}
+	return !strings.Contains(x, "..")
 }
 
 // parseAddress parses a code address directive and returns the bytes or an error.

@@ -33,7 +33,8 @@ Mmark adds the following syntax elements to
 * (Extended) [title block](https://mmark.nl/syntax#title-block).
 * [Special sections](https://mmark.nl/syntax#special-sections).
 * [Including other files](https://mmark.nl/syntax#including-files) with the option to specify line ranges, regular
-  expressions and/or prefix each line with a string.
+  expressions and/or prefix each line with a string. By default only files on the same level, or
+  below are allowed to be included (see the `-unsafe` flag).
 * [Document divisions](https://mmark.nl/syntax#document-divisions).
 * [Captions](https://mmark.nl/syntax#captions) for code, tables and quotes
 * [Asides](https://mmark.nl/syntax#asides).

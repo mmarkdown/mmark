@@ -19,14 +19,15 @@ import (
 )
 
 var (
-	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
-	flagFragment = flag.Bool("fragment", false, "don't create a full document")
-	flagHTML     = flag.Bool("html", false, "create HTML output")
 	flagCSS      = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
 	flagHead     = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
-	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
+	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
 	flagBib      = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
+	flagFragment = flag.Bool("fragment", false, "don't create a full document")
+	flagHTML     = flag.Bool("html", false, "create HTML output")
+	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
 	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
+	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagVersion  = flag.Bool("version", false, "show mmark version")
 )
 
@@ -67,6 +68,9 @@ func main() {
 				log.Printf("Couldn't open %q: %q", fileName, err)
 				continue
 			}
+		}
+		if *flagUnsafe {
+			init.Flags |= mparser.UnsafeInclude
 		}
 
 		documentTitle := "" // hack to get document title from toml title block and then set it here.
