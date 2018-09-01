@@ -4,15 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"regexp"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
-)
-
-// TODO, expand this to use regular expressions.
-var (
-	rfcRe = regexp.MustCompile(`/RFC(/d+)/`)
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
@@ -41,8 +35,16 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 
 	tag := ""
 	switch {
-	case bytes.HasPrefix(node.Anchor, []byte("RFC")): // TODO(miek): use regexp here.
+	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
 		tag = makeXiInclude(toolsIetfOrg, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+
+	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
+		hash := bytes.Index(node.Anchor, []byte("#"))
+		if hash > 0 {
+			// rewrite # to - and we have our link
+			node.Anchor[hash] = '-'
+		}
+		tag = makeXiInclude(toolsIetfOrg, fmt.Sprintf("reference.I-D.draft-%s.xml", node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)

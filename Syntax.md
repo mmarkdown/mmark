@@ -454,8 +454,8 @@ For I-Ds you may want to add a draft sequence number, which can be done as such:
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index.
 
-A bibliography section is created by default, but you can suppress it by using the command line flag
-`-bibliography=false`.
+A bibliography section is created by default (if a `{backmatter}` is given, but you can suppress it
+by using the command line flag `-bibliography=false`.
 
 ### XML References
 
