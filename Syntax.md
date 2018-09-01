@@ -163,6 +163,11 @@ Block Level Attributes:
 Footnotes:
 :   Are discarded from the final output, don't use them.
 
+Images:
+:   Images are supported (but for text output only(?) SVG graphcs are allowed. We convert this to
+    an `<artwork>` with `src` set to the image URL of path. I.e. `![alt](img.jpg "title")` becomes
+    `<artwork src="img.jpg" alt="alt" name="title"/>`.
+
 ### XML RFC 7749 Output
 
 Title Block:
@@ -188,6 +193,10 @@ Asides:
 
 Footnotes:
 :   Are discarded from the final output, don't use them.
+
+Images:
+:   Images are not supported and completely discarded from the final output. Using the example from
+    RFC 7991 output would just yields: `<t></t>`.
 
 ### HTML5 Output
 
