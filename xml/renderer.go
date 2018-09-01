@@ -206,6 +206,9 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 			return
 		}
 	}
+	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
+		return
+	}
 	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
@@ -215,6 +218,9 @@ func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
 		if p.ListFlags&ast.ListTypeTerm != 0 {
 			return
 		}
+	}
+	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
+		return
 	}
 	r.outs(w, "</t>")
 	r.cr(w)

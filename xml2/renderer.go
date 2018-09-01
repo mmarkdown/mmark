@@ -203,8 +203,8 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 }
 
 func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
+	// Skip outputting </t> in lists and in caption figures.
 	if p, ok := para.Parent.(*ast.ListItem); ok {
-		// Skip outputting <t> in lists.
 		// Fake multiple paragraphs by inserting a hard break.
 		if len(p.GetChildren()) > 1 {
 			first := ast.GetFirstChild(para.Parent)
@@ -214,14 +214,20 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 		}
 		return
 	}
+	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
+		return
+	}
 
 	tag := tagWithAttributes("<t", html.BlockAttrs(para))
 	r.outs(w, tag)
 }
 
 func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
+	// Skip outputting </t> in lists and in caption figures.
 	if _, ok := para.Parent.(*ast.ListItem); ok {
-		// Skip outputting </t> in lists.
+		return
+	}
+	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
 		return
 	}
 
