@@ -87,8 +87,8 @@ Mmark adds:
 * [Document divisions](#document-divisions).
 * [Captions](#captions) for code, tables and quotes
 * [Asides](#asides).
-* [Figures and Subfigures](#figures-and-subfigures) - this syntax is still under consideration as is
-  "do we really need this?"
+* [Figures and Subfigures](#figures-and-subfigures) - allows grouping images into subfigures as
+  well as giving a single image metadata (a link, attributes, etc.)
 * [Block Level Attributes](#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
 * [Indices](#indices) to mark an item (and/or a subitem) to be referenced in the document index.
@@ -357,32 +357,47 @@ quote, but can be styled differently.
 
 ### Figures and Subfigures
 
-> TODO TODO TODO
-
-To group artworks and code blocks into figures, we need an extra syntax element.
-[Scholarly markdown] has a neat syntax
-for this. It uses a special section syntax and all images in that section become
-subfigures of a larger figure. Disadvantage of this syntax is that it can not be
-used in lists. Hence we use a quote like solution, just like asides,
-but for figures: we prefix the entire paragraph with `F>`. Each of the images and
-or code block included will be part of the same over arching figure.
+To *group* artworks and code blocks into figures, we need an extra syntax element. [Scholarly
+markdown] has a neat syntax for this. It uses a special section syntax and all images in that
+section become subfigures of a larger figure. Disadvantage of this syntax is that it can not be used
+in lists. Hence we use a fenced code block like syntax: `!---` as the opening and closing "tag".
+Note: only inline elements are parsed inside a figure block.
 
 Basic usage:
 
 ~~~
-F> ~~~ ascii-art
-F> +-----+
-F> | ART |
-F> +-----+
-F> ~~~~
-F> Figure: This caption is ignored in v3, but used in v2.
-F>
-F> ~~~ c
-F> printf("%s\n", "hello");
-F> ~~~
-F>
-Figure: Caption for both figures in v3 (in v2 this is ignored).
+!---
+![Alt text](/path/to/img.jpg "Optional title")
+!---
 ~~~
+
+if the figure block has a caption that will be used as well:
+
+~~~
+!---
+![Alt text](/path/to/img.jpg "Optional title")
+![Alt2 text](/path/to/img2.jpg "Optional title2")
+!---
+Figure: this is a figure containing subfigures.
+~~~
+
+Or when just using fenced code blocks:
+
+```
+!---
+~~~ ascii-art
++-----+
+| ART |
++-----+
+~~~
+Figure: Caption for this ascii-art
+
+~~~ c
+printf("%s\n", "hello");
+~~~
+!---
+Figure: Caption for both figures.
+```
 
 ### Block Level Attributes
 
