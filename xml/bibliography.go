@@ -43,6 +43,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 		if hash > 0 {
 			// rewrite # to - and we have our link
 			node.Anchor[hash] = '-'
+			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
 		tag = makeXiInclude(toolsIetfOrg, fmt.Sprintf("reference.I-D.draft-%s.xml", node.Anchor[4:]))
 	}
