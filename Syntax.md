@@ -85,10 +85,10 @@ Mmark adds:
 * [Including other files](#including-files) with the option to specify line ranges, regular
   expressions and/or prefix each line with a string.
 * [Document divisions](#document-divisions).
-* [Captions](#captions) for code, tables and quotes
+* [Captions](#captions) for code, tables, quotes and subfigures.
 * [Asides](#asides).
 * [Figures and Subfigures](#figures-and-subfigures) - allows grouping images into subfigures as
-  well as giving a single image metadata (a link, attributes, etc.)
+  well as giving a single image metadata (a link, attributes, etc.).
 * [Block Level Attributes](#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
 * [Indices](#indices) to mark an item (and/or a subitem) to be referenced in the document index.
