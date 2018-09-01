@@ -3,7 +3,6 @@ package xml
 import (
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 
@@ -411,7 +410,6 @@ func (r *Renderer) index(w io.Writer, index *ast.Index) {
 
 func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	if link.Footnote != nil {
-		log.Printf("Skipping footnote")
 		return
 	}
 	if !entering {
