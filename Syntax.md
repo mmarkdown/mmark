@@ -5,10 +5,9 @@ aliases: [/syntax/]
 toc: true
 ---
 
-This is version 2 of [Mmark](https://github.com/mmarkdown/mmark):
-based on a [new markdown implementation](https://github.com/mmarkdown/markdown)
-and some (small) language changes as well. We think these language changes lead to a more consistent
-user experience and lead to less confusion.
+This is version 2 of [Mmark](https://github.com/mmarkdown/mmark): based on a [new markdown
+implementation](https://github.com/mmarkdown/markdown) and some (small) language changes as well. We
+think these language changes lead to a more consistent user experience and lead to less confusion.
 
 See [changes from v1](#changes-from-version-1) if you're coming from version 1.
 
@@ -49,7 +48,7 @@ article](https://notes.peter-baumgartner.net/archive/content-organisation/blackf
 
 For the rest we build up on <https://github.com/gomarkdown/markdown> and support all syntax
 [it supports](https://github.com/gomarkdown/markdown/blob/master/README.md). We enable the following
-extensions by default:
+[extensions](https://github.com/gomarkdown/markdown/blob/master/README.md#extensions) by default:
 
 * *Strikethrough*, allow strike through text using `~~test~~`.
 * *Autolink*, detect embedded URLs that are not explicitly marked.
@@ -61,7 +60,7 @@ extensions by default:
 * *OrderedListStart*, notice start element of ordered list.
 * *Attributes*, allow block level attributes.
 * *Smartypants*, expand `--` and `---` into ndash and mdashes.
-* *SuperSubscript*, parse super and subscript: H~2~O is water and 2^10^ is 1024.
+* *SuperSubscript*, parse super- and subscript: H~2~O is water and 2^10^ is 1024.
 * *Tables*, parse tables.
 
 Mmark adds numerous enhancements to make it suitable for writing ([IETF](https://ietf.org)) Internet
@@ -80,10 +79,10 @@ Drafts and even complete books. It <strike>steals</strike> borrows syntax elemen
 
 Mmark adds:
 
-* (Extended) [title block](#title-block).
-* [Special sections](#special-sections).
+* (Extended) [title block](#title-block) to specify authors and IETF specific bits.
+* [Special sections](#special-sections), for abstracts or notes.
 * [Including other files](#including-files) with the option to specify line ranges, regular
-  expressions and/or prefix each line with a string.
+  expressions and/or prefix each line with a custom string.
 * [Document divisions](#document-divisions).
 * [Captions](#captions) for code, tables, quotes and subfigures.
 * [Asides](#asides).
@@ -177,8 +176,8 @@ Title Block:
     *Area* defaults to "Internet" and *Ipr* defaults to `trust200902`.
 
 BCP 14/RFC 2119 Keywords:
-:   If an RFC 2119 word is found enclosed in `**` it will be rendered normally
-    i.e. `**MUST**` becomes `MUST`.
+:   If an RFC 2119 word is found enclosed in `**` it will be rendered normally i.e. `**MUST**`
+    becomes `MUST`.
 
 Artwork/Source code:
 :   There is no such distinction so these will be rendered in the same way regardless.

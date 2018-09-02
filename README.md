@@ -14,7 +14,8 @@ It provides an advanced markdown dialect that processes file(s) to produce inter
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), RFC 7749 (xml2rfc version 2) and HTML5 output.
 
-Example RFCs can be [found in the Github repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
+Example RFCs in Mmark format can be [found in the Github
+repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
 Mmark uses [gomarkdown](https://github.com/gomarkdown/markdown) which is a fork of
 [blackfriday](https://github.com/russross/blackfriday/).
@@ -38,8 +39,8 @@ Mmark adds the following syntax elements to
 * [Document divisions](https://mmark.nl/syntax#document-divisions).
 * [Captions](https://mmark.nl/syntax#captions) for code, tables and quotes
 * [Asides](https://mmark.nl/syntax#asides).
-* [Figures and Subfigures](https://mmark.nl/syntax#figures-and-subfigures) - this syntax is still under consideration as is
-  "do we really need this?"
+* [Figures and Subfigures](https://mmark.nl/syntax#figures-and-subfigures) - bundle (sub)figures
+  into a larger figure.
 * [Block Level Attributes](https://mmark.nl/syntax#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
 * [Indices](https://mmark.nl/syntax#indices) to mark an item (and/or a subitem) to be referenced in the document index.
@@ -88,7 +89,7 @@ cd rfc
 make txt
 ~~~
 
-For v2 (i.e. the current (2018) way a making RFC), just run:
+For v2 (i.e. the current (2018) way of making RFC), just run:
 ~~~ sh
 cd rfc
 make TWO="yes" txt
