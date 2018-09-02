@@ -33,7 +33,9 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 			}
 		case *ast.HTMLBlock:
 			anchor := anchorFromReference(c.Content)
-			raw[string(bytes.ToLower(anchor))] = c.Content
+			if anchor != nil {
+				raw[string(bytes.ToLower(anchor))] = c.Content
+			}
 		}
 		return ast.GoToNext
 	})
@@ -55,6 +57,7 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 			if informative == nil {
 				informative = &mast.Bibliography{Type: ast.CitationTypeInformative}
 			}
+
 			ast.AppendChild(informative, r)
 		case ast.CitationTypeSuppressed:
 			fallthrough

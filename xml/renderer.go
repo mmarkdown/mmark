@@ -331,7 +331,6 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
-
 	mast.AttributeInit(codeBlock)
 	appendLanguageAttr(codeBlock, codeBlock.Info)
 

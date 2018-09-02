@@ -347,8 +347,6 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
-	mast.DeleteAttribute(codeBlock, "id")
-
 	mast.AttributeInit(codeBlock)
 	appendLanguageAttr(codeBlock, codeBlock.Info)
 
@@ -357,7 +355,8 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	if inFigure {
 		r.outTag(w, "<artwork", html.BlockAttrs(codeBlock))
 	} else {
-		r.outTag(w, "<figure><artwork", html.BlockAttrs(codeBlock))
+		r.outTag(w, "<figure", html.BlockAttrs(codeBlock))
+		r.outs(w, "<artwork>")
 	}
 
 	if r.opts.Comments != nil {
