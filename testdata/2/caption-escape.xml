@@ -1,0 +1,4 @@
+<figure title="this is a &lt;caption&gt;">
+<artwork>fmt.Printf(&quot;Go!&quot;)
+</artwork>
+</figure>

@@ -10,6 +10,10 @@ import (
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
+	if len(node.GetChildren()) == 0 {
+		return
+	}
+
 	if !entering {
 		r.outs(w, "</references>\n")
 		return

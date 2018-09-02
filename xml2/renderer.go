@@ -84,21 +84,14 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 		r.out(w, text.Literal)
 		return
 	}
+
 	if heading, parentIsHeading := text.Parent.(*ast.Heading); parentIsHeading {
 		if heading.IsSpecial && xml.IsAbstract(heading.Literal) {
 			return
 		}
-
-		html.EscapeHTML(w, text.Literal)
-		r.outs(w, `">`)
-		return
 	}
 
 	html.EscapeHTML(w, text.Literal)
-
-	if _, parentIsCaption := text.Parent.(*ast.Caption); parentIsCaption {
-		r.outs(w, `">`)
-	}
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
@@ -173,6 +166,11 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 }
 
 func (r *Renderer) headingExit(w io.Writer, heading *ast.Heading) {
+	if heading.IsSpecial && xml.IsAbstract(heading.Literal) {
+		return
+	}
+
+	r.outs(w, `">`)
 	r.cr(w)
 }
 
@@ -538,6 +536,7 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
 				return r.RenderNode(w, node, entering)
 			})
+			r.outs(w, `">`)
 
 			ast.RemoveFromTree(caption)
 			return
@@ -570,11 +569,14 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 			ast.WalkFunc(caption, func(node ast.Node, entering bool) ast.WalkStatus {
 				return r.RenderNode(w, node, entering)
 			})
+			r.outs(w, `">`)
 
 			ast.RemoveFromTree(caption)
-			break
+			return
 		}
 	}
+	// Still here? Close tag.
+	r.outs(w, `>`)
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
