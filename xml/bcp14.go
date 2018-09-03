@@ -12,6 +12,7 @@ var words2119 = [][]byte{
 	[]byte("SHOULD"),
 	[]byte("SHOULD NOT"),
 	[]byte("RECOMMENDED"),
+	[]byte("NOT RECOMMENDED"),
 	[]byte("MAY"),
 	[]byte("OPTIONAL"),
 }
