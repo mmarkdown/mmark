@@ -353,6 +353,8 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	r.cr(w)
 	_, inFigure := codeBlock.Parent.(*ast.CaptionFigure)
 	if inFigure {
+		// Drop anchor for now, but need to figure out what to allow here.
+		mast.DeleteAttribute(codeBlock, "id")
 		r.outTag(w, "<artwork", html.BlockAttrs(codeBlock))
 	} else {
 		r.outTag(w, "<figure", html.BlockAttrs(codeBlock))

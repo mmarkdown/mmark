@@ -44,7 +44,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 		tag = makeRFCInclude(xml.ToolsRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
-		tag = makeRFCInclude(xml.ToolsW3C, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+		tag = makeRFCInclude(xml.ToolsW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))

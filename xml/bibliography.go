@@ -42,7 +42,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 		tag = makeXiInclude(ToolsRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
-		tag = makeXiInclude(ToolsW3C, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+		tag = makeXiInclude(ToolsW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
@@ -63,7 +63,7 @@ func makeXiInclude(url, reference string) string {
 }
 
 var (
-	ToolsRFC = "https://xml2rfc.ietf.org/public/rfc/bibxml/"
-	ToolsID  = "https://xml2rfc.ietf.org/public/rfc/bibxml-ids/"
-	ToolsW3C = "https://xml2rfc.ietf.org/public/rfc/bibxml-w3c/"
+	ToolsRFC = "https://xml2rfc.ietf.org/public/rfc/bibxml"
+	ToolsID  = "https://xml2rfc.ietf.org/public/rfc/bibxml-ids"
+	ToolsW3C = "https://xml2rfc.ietf.org/public/rfc/bibxml-w3c"
 )
