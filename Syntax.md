@@ -540,7 +540,8 @@ detected by Mmark.
 
 Phrases that are defined in RFC 2119 (i.e. MUST, SHOULD, etc) are detected when being type set as
 strong elements: `**MUST**`, in the RFC 7991 output these will typeset as `<bcp14>MUST</bcp14>`. In
-RFC 7749 output it will just be `MUST`.
+RFC 7749 output it will just be `MUST`. Not that these can't span lines, e.g., `**MUST NOT**`, must
+be on a single line.
 
 # Changes from version 1
 
