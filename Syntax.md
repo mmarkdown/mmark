@@ -446,8 +446,11 @@ citation to the references, but does not show up in the document as a citation.
 The first seen modifier determines the type (suppressed, normative or informative).
 Multiple citation can separated with a semicolon: `[@RFC1034; @RFC1035]`.
 
-If you reference an RFC or I-D the reference will be added automatically (no need to muck about
-with an `<reference>` block.
+If you reference an RFC, I-D or W3C document the reference will be added automatically (no need to
+muck about with an `<reference>` block. This is to say:
+
+Any reference starting with *RFC*, *I-D.* or *W3C.* will be automatically added to the correct
+reference section.
 
 For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in

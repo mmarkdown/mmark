@@ -7,6 +7,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/xml"
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
@@ -40,7 +41,11 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
-		tag = makeRFCInclude(toolsIetfOrg, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+		tag = makeRFCInclude(xml.ToolsRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+
+	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
+		tag = makeRFCInclude(xml.ToolsW3C, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
 		if hash > 0 {
@@ -48,7 +53,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 			node.Anchor[hash] = '-'
 			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
-		tag = makeRFCInclude(toolsIetfOrg, fmt.Sprintf("reference.I-D.draft-%s.xml", node.Anchor[4:]))
+		tag = makeRFCInclude(xml.ToolsID, fmt.Sprintf("reference.I-D.draft-%s.xml", node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)
@@ -57,5 +62,3 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 func makeRFCInclude(url, reference string) string {
 	return fmt.Sprintf("<?rfc include=\"%s/%s\"?>", url, reference)
 }
-
-var toolsIetfOrg = "https://xml2rfc.tools.ietf.org/public/rfc/bibxml"
