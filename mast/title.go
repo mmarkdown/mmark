@@ -18,7 +18,6 @@ func NewTitle() *Title {
 		TitleData: &TitleData{
 			Area: "Internet",
 			Ipr:  "trust200902",
-			Date: time.Now(),
 		},
 	}
 	return t

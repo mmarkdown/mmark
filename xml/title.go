@@ -128,8 +128,12 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 
 // TitleDate outputs the date from the TOML title block.
 func (r *Renderer) TitleDate(w io.Writer, d time.Time) {
-	var attr = []string{}
+	if d.IsZero() { // not specified
+		r.outs(w, "<date/>\n")
+		return
+	}
 
+	var attr = []string{}
 	if x := d.Year(); x > 0 {
 		attr = append(attr, fmt.Sprintf(`year="%d"`, x))
 	}

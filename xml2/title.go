@@ -57,8 +57,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	html.EscapeHTML(w, []byte(d.Title))
 	r.outs(w, "</title>")
 
-	// use a fake xml rendering to hook into the generation of these title elements
-	// defined there.
+	// use a fake xml rendering to hook into the generation of these title elements defined there.
 	faker := xml.NewRenderer(xml.RendererOptions{})
 
 	for _, author := range d.Author {
