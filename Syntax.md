@@ -180,7 +180,10 @@ BCP 14/RFC 2119 Keywords:
     becomes `MUST`.
 
 Artwork/Source code:
-:   There is no such distinction so these will be rendered in the same way regardless.
+:   There is no such distinction so these will be rendered in the same way regardless. If you need a
+    caption you can just give it one. If you want the *final* output to prefix `Figure N` or `Table
+    N` is **also** needs to have an anchor; this is done with a block level attribute: `{#figX}`. If
+    you *only* want `Figure N`, only give it an anchor.
 
 Block Level Attributes:
 :   We use the attributes as specified in RFC 7749, e.g. to speficify an empty list style use:
