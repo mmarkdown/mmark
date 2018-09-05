@@ -53,7 +53,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 			node.Anchor[hash] = '-'
 			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
-		tag = makeRFCInclude(xml.ToolsID, fmt.Sprintf("reference.I-D.draft-%s.xml", node.Anchor[4:]))
+		tag = makeRFCInclude(xml.ToolsID, fmt.Sprintf("reference.I-D.%s.xml", node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)
