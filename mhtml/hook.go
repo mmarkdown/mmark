@@ -87,7 +87,7 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 			io.WriteString(w, "</a>")
 			return ast.GoToNext, true
 		}
-		io.WriteString(w, ` <a class="indexreturn" href="#`+string(node.Destination)+`">`)
+		io.WriteString(w, ` <a class="index-return" href="#`+string(node.Destination)+`">`)
 		io.WriteString(w, IndexReturnLinkContents)
 		return ast.GoToNext, true
 
@@ -96,15 +96,15 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 }
 
 func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
-	io.WriteString(w, `<div class="item" id="`+string(bib.Anchor)+`">`+"\n")
-	io.WriteString(w, `<span class="cite">`+string(bib.Anchor)+"</span>\n")
-	io.WriteString(w, `<span class="author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
-	io.WriteString(w, `<span class="title">`+bib.Reference.Front.Title+"</span>\n")
+	io.WriteString(w, `<div class="bibliography-item" id="`+string(bib.Anchor)+`">`+"\n")
+	io.WriteString(w, `<span class="bibliography-cite">`+string(bib.Anchor)+"</span>\n")
+	io.WriteString(w, `<span class="bibliography-author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
+	io.WriteString(w, `<span class="bibliography-title">`+bib.Reference.Front.Title+"</span>\n")
 	if bib.Reference.Format.Target != "" {
-		io.WriteString(w, "<a href=\""+bib.Reference.Format.Target+"\">"+bib.Reference.Format.Target+"</a>\n")
+		io.WriteString(w, `<a class="bliography-target" href="`+bib.Reference.Format.Target+"\">"+bib.Reference.Format.Target+"</a>\n")
 	}
 	if bib.Reference.Front.Date.Year != "" {
-		io.WriteString(w, "<date>"+bib.Reference.Front.Date.Year+"</date>\n")
+		io.WriteString(w, `<date class="bibliography-date">`+bib.Reference.Front.Date.Year+"</date>\n")
 	}
 	io.WriteString(w, "</div>\n")
 }
