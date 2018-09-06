@@ -24,8 +24,8 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 			io.WriteString(w, "\n</div>\n")
 			return ast.GoToNext, true
 		}
-		// TODO(miek): Figure out if this heading makes sense or that we need to BibliographyStart Hook in renderer.
-		io.WriteString(w, "<h1>Bibliography</h1>\n<div class=\"bibliography\">\n")
+		io.WriteString(w, "<h1 id=\"bibliography-section\">Bibliography</h1>\n<div class=\"bibliography\">\n")
+		// start a list
 		return ast.GoToNext, true
 	case *mast.BibliographyItem:
 		if !entering {
