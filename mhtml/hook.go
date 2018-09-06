@@ -1,14 +1,17 @@
 package mhtml
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
 )
 
-// IndexReturnLinkContents is the string to use for index item return links.
-var IndexReturnLinkContents = "<sup>[go]</sup>"
+var (
+	// IndexReturnLinkContents is the string to use for index item return links.
+	IndexReturnLinkContents = "<sup>[go]</sup>"
+)
 
 // RenderHook is used to render mmark specific AST nodes.
 func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
@@ -21,15 +24,14 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		io.WriteString(w, `<h1 id="footnote-section">Footnotes`)
 	case *mast.Bibliography:
 		if !entering {
-			io.WriteString(w, "\n</div>\n")
+			io.WriteString(w, "</dl>\n")
 			return ast.GoToNext, true
 		}
 		io.WriteString(w, "<h1 id=\"bibliography-section\">Bibliography</h1>\n<div class=\"bibliography\">\n")
-		// start a list
+		io.WriteString(w, "<dl>\n")
 		return ast.GoToNext, true
 	case *mast.BibliographyItem:
 		if !entering {
-			io.WriteString(w, "\n</div>\n")
 			return ast.GoToNext, true
 		}
 		bibliographyItem(w, node, entering)
@@ -96,8 +98,8 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 }
 
 func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
-	io.WriteString(w, `<div class="bibliography-item" id="`+string(bib.Anchor)+`">`+"\n")
-	io.WriteString(w, `<span class="bibliography-cite">`+string(bib.Anchor)+"</span>\n")
+	io.WriteString(w, `<dt class="bibliography-cite" id="`+string(bib.Anchor)+`">`+fmt.Sprintf("[%s]", bib.Anchor)+"</dt>\n")
+	io.WriteString(w, `<dd>`)
 	io.WriteString(w, `<span class="bibliography-author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
 	io.WriteString(w, `<span class="bibliography-title">`+bib.Reference.Front.Title+"</span>\n")
 	if bib.Reference.Format.Target != "" {
@@ -106,7 +108,7 @@ func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	if bib.Reference.Front.Date.Year != "" {
 		io.WriteString(w, `<date class="bibliography-date">`+bib.Reference.Front.Date.Year+"</date>\n")
 	}
-	io.WriteString(w, "</div>\n")
+	io.WriteString(w, "</dd>\n")
 }
 
 func firstSubItem(node ast.Node) bool {
