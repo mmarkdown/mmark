@@ -23,7 +23,7 @@ type IndexSubItem struct {
 
 // IndexLetter has the Letter of this index item.
 type IndexLetter struct {
-	ast.Leaf
+	ast.Container
 }
 
 // IndexLink links to the index in the document.

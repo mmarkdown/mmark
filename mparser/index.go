@@ -70,17 +70,22 @@ func IndexToDocumentIndex(doc ast.Node) *mast.DocumentIndex {
 	}
 	sort.Strings(keys)
 
-	docIndex := &mast.DocumentIndex{}
-	prevLetter := ""
+	letters := []*mast.IndexLetter{}
+	var prevLetter byte
+	var il *mast.IndexLetter
 	for _, k := range keys {
-		letter := string(k[0])
+		letter := k[0]
 		if letter != prevLetter {
-			il := &mast.IndexLetter{}
-			il.Literal = []byte(letter)
-			ast.AppendChild(docIndex, il)
+			il = &mast.IndexLetter{}
+			il.Literal = []byte{letter}
+			letters = append(letters, il)
 		}
-		ast.AppendChild(docIndex, main[k])
+		ast.AppendChild(il, main[k])
 		prevLetter = letter
+	}
+	docIndex := &mast.DocumentIndex{}
+	for i := range letters {
+		ast.AppendChild(docIndex, letters[i])
 	}
 
 	return docIndex
