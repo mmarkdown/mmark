@@ -94,3 +94,5 @@ For v2 (i.e. the current (2018) way of making RFC), just run:
 cd rfc
 make TWO="yes" txt
 ~~~
+
+Official RFCs are in rfc/orig.

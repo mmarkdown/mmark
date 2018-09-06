@@ -124,7 +124,7 @@ Title Block:
     front matter can only be done by starting the middle matter with `{mainmatter}`. Any open
     "matters" are closed when the document ends. *Area* defaults to "Internet" and *Ipr* defaults to
     `trust200902`.
-    
+
     Not giving a date will output `<date/>` which mean the current date will be applied *when
     xml2rfc is run*.
 
@@ -177,7 +177,7 @@ Title Block:
     understand. An Mmark document will generate valid RFC 7991 and 7749 XML, unless [block
     level attributes](#block-level-attributes) are used that are speficic to each format.
     *Area* defaults to "Internet" and *Ipr* defaults to `trust200902`.
-    
+
     Not giving a date will output `<date/>` which mean the current date will be applied *when
     xml2rfc is run*.
 
