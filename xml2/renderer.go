@@ -110,6 +110,11 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 		}
 	}
 
+	if _, isCaption := node.GetParent().(*ast.Caption); isCaption {
+		r.outOneOf(w, entering, "", "")
+		return
+	}
+
 	r.outOneOf(w, entering, `<spanx style="strong">`, "</spanx>")
 }
 
@@ -495,6 +500,10 @@ func (r *Renderer) code(w io.Writer, node *ast.Code) {
 		html.EscapeHTML(w, node.Literal)
 		return
 	}
+	if _, isCaption := node.GetParent().(*ast.Caption); isCaption {
+		html.EscapeHTML(w, node.Literal)
+		return
+	}
 
 	r.outs(w, `<spanx style="verb">`)
 	html.EscapeHTML(w, node.Literal)
@@ -652,7 +661,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 				html.EscapeHTML(w, node.Literal)
 			}
 		} else {
-			r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
+			if _, isCaption := node.GetParent().(*ast.Caption); isCaption {
+				r.outOneOf(w, entering, "", "")
+			} else {
+				r.outOneOf(w, entering, `<spanx style="emph">`, "</spanx>")
+			}
 		}
 	case *ast.Strong:
 		r.strong(w, node, entering)
