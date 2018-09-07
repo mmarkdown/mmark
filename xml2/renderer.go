@@ -362,8 +362,14 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 		mast.DeleteAttribute(codeBlock, "id")
 		r.outTag(w, "<artwork", html.BlockAttrs(codeBlock))
 	} else {
+		typ := mast.Attribute(codeBlock, "type") // only valid on artwork
+		mast.DeleteAttribute(codeBlock, "type")
 		r.outTag(w, "<figure", html.BlockAttrs(codeBlock))
-		r.outs(w, "<artwork>")
+		mast.DeleteAttribute(codeBlock, "id")
+		if typ != nil {
+			mast.SetAttribute(codeBlock, "type", typ)
+		}
+		r.outTag(w, "<artwork", html.BlockAttrs(codeBlock))
 	}
 
 	if r.opts.Comments != nil {
