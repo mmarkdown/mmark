@@ -20,9 +20,9 @@ const (
 	FlagsNone   Flags = 0
 	XMLFragment Flags = 1 << iota // Don't generate a complete XML document
 	SkipHTML                      // Skip preformatted HTML blocks - skips comments
-	SkipImages                    // Skip embedded images, set to true for XML2
+	SkipImages                    // Skip embedded images
 
-	CommonFlags Flags = SkipImages
+	CommonFlags Flags = FlagsNone
 )
 
 // RendererOptions is a collection of supplementary parameters tweaking
@@ -477,8 +477,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 }
 
 func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
-	// Discard images for now
-	return
 	if entering {
 		r.imageEnter(w, node)
 	} else {
@@ -487,18 +485,18 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 }
 
 func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
-	dest := image.Destination
-	r.outs(w, `<img src="`)
-	html.EscapeHTML(w, dest)
-	r.outs(w, `" alt="`)
+	r.outs(w, "<artwork>\n")
+	html.EscapeHTML(w, image.Destination)
+	r.outs(w, ` `)
 }
 
 func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 	if image.Title != nil {
-		r.outs(w, `" name="`)
+		r.outs(w, ` "`)
 		html.EscapeHTML(w, image.Title)
 	}
-	r.outs(w, `" />`)
+	r.outs(w, `"`)
+	r.outs(w, "</artwork>\n")
 }
 
 func (r *Renderer) code(w io.Writer, node *ast.Code) {
