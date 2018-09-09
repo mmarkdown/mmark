@@ -494,8 +494,8 @@ func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 	if image.Title != nil {
 		r.outs(w, ` "`)
 		html.EscapeHTML(w, image.Title)
+		r.outs(w, `"`)
 	}
-	r.outs(w, `"`)
 	r.outs(w, "</artwork>\n")
 }
 
