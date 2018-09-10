@@ -203,8 +203,8 @@ Footnotes:
 :   Are discarded from the final output, don't use them.
 
 Images:
-:   Images are not supported and completely discarded from the final output. Using the example from
-    RFC 7991 output would just yields: `<t></t>`.
+:   Images are not supported and we fake an artwork with some of the meta date. Using the example from
+    RFC 7991 output would just yields: `<artwork>img.jpg "alt" "title"</artwork>`.
 
 ### HTML5 Output
 
