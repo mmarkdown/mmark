@@ -170,6 +170,9 @@ Images:
     an `<artwork>` with `src` set to the image URL of path. I.e. `![alt](img.jpg "title")` becomes
     `<artwork src="img.jpg" alt="alt" name="title"/>`.
 
+Horizontal Line:
+:   Outputs a paragraph with 60 dashes `-`.
+
 ### XML RFC 7749 Output
 
 Title Block:
@@ -205,6 +208,12 @@ Footnotes:
 Images:
 :   Images are not supported and we fake an artwork with some of the meta date. Using the example from
     RFC 7991 output would just yields: `<artwork>img.jpg "alt" "title"</artwork>`.
+
+Block quote:
+:   Supported by faking an list with style empty.
+
+Horizontal Line:
+:   Outputs a paragraph with 60 dashes `-`.
 
 ### HTML5 Output
 

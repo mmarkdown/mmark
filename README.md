@@ -8,7 +8,8 @@ aliases: [/about/]
 
 Mmark is a powerful markdown processor written in Go, geared towards writing IETF documents. It is,
 however, *also* suited for writing complete books and other technical documentation, like the
-[Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo)).
+[Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo), and
+[I-D text output](https://miek.nl/go/learninggo-2.txt).
 
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
@@ -95,4 +96,4 @@ cd rfc
 make TWO="yes" txt
 ~~~
 
-Official RFCs are in rfc/orig.
+Official RFCs are in rfc/orig (so you can compare the text output from mmark).
