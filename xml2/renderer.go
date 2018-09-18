@@ -40,6 +40,9 @@ type RendererOptions struct {
 	// Comments is a list of comments the renderer should detect when
 	// parsing code blocks and detecting callouts.
 	Comments [][]byte
+
+	// Generator is a comment that is inserted in the generated XML to show what rendered it.
+	Generator string
 }
 
 // Renderer implements Renderer interface for IETF XMLv2 output. See RFC 7941.
@@ -76,6 +79,9 @@ var filterFunc mast.FilterFunc = func(s string) bool {
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
 	html.IDTag = "anchor"
+	if opts.Generator == "" {
+		opts.Generator = xml.Generator
+	}
 	return &Renderer{opts: opts, headingIDs: make(map[string]int), filter: filterFunc}
 }
 
@@ -811,7 +817,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
-	r.outs(w, xml.Generator)
+	r.outs(w, r.opts.Generator)
 	r.cr(w)
 	r.outs(w, `<!DOCTYPE rfc SYSTEM 'rfc2629.dtd' []>`)
 	r.cr(w)

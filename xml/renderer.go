@@ -39,6 +39,9 @@ type RendererOptions struct {
 	// Comments is a list of comments the renderer should detect when
 	// parsing code blocks and detecting callouts.
 	Comments [][]byte
+
+	// Generator is a comment that is inserted in the generated XML to show what rendered it.
+	Generator string
 }
 
 // Renderer implements Renderer interface for IETF XMLv3 output. See RFC 7991.
@@ -75,6 +78,9 @@ var filterFunc mast.FilterFunc = func(s string) bool {
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
 func NewRenderer(opts RendererOptions) *Renderer {
 	html.IDTag = "anchor"
+	if opts.Generator == "" {
+		opts.Generator = Generator
+	}
 	return &Renderer{opts: opts, headingIDs: make(map[string]int), filter: filterFunc}
 }
 
@@ -733,7 +739,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
-	r.outs(w, Generator)
+	r.outs(w, r.opts.Generator)
 	r.cr(w)
 }
 
@@ -745,5 +751,4 @@ func tagWithAttributes(name string, attrs []string) string {
 	return s + ">"
 }
 
-// Generator is a comment that is inserted in the generated XML to show what rendered it.
-var Generator = `<!-- name="GENERATOR" content="https://github.com/mmarkdown/mmark Mmark Markdown Processor - https://mmark.nl" -->`
+const Generator = `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl" -->`

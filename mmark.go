@@ -115,6 +115,7 @@ func main() {
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
 				RenderNodeHook: mhtml.RenderHook,
 				Flags:          html.CommonFlags | html.FootnoteNoHRTag | html.FootnoteReturnLinks,
+				Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl`,
 			}
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
