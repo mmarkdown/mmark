@@ -43,10 +43,13 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes)},
 	)...)
 	// number is deprecated, but xml2rfc want's it here to generate an actual RFC.
-	attrs = append(attrs, Attributes(
-		[]string{"number"},
-		[]string{t.SeriesInfo.Value},
-	)...)
+	// But only if number is a integer (what a mess).
+	if _, err := strconv.Atoi(t.SeriesInfo.Value); err == nil {
+		attrs = append(attrs, Attributes(
+			[]string{"number"},
+			[]string{t.SeriesInfo.Value},
+		)...)
+	}
 	r.outTag(w, "<rfc", attrs)
 	r.cr(w)
 

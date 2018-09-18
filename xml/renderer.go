@@ -150,9 +150,12 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	tag := "<section"
 
 	mast.AttributeInit(heading)
-	if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" {
-		id := r.ensureUniqueHeadingID(heading.HeadingID)
-		mast.SetAttribute(heading, "id", []byte(id))
+	// In XML2 output we can't have an anchor attribute on a note.
+	if !heading.IsSpecial {
+		if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" {
+			id := r.ensureUniqueHeadingID(heading.HeadingID)
+			mast.SetAttribute(heading, "id", []byte(id))
+		}
 	}
 
 	if heading.IsSpecial {
