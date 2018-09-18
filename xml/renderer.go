@@ -733,7 +733,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
-	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
+	r.outs(w, Generator)
 	r.cr(w)
 }
 
@@ -744,3 +744,6 @@ func tagWithAttributes(name string, attrs []string) string {
 	}
 	return s + ">"
 }
+
+// Generator is a comment that is inserted in the generated XML to show what rendered it.
+var Generator = `<!-- name="GENERATOR" content="https://github.com/mmarkdown/mmark Mmark Markdown Processor - https://mmark.nl" -->`

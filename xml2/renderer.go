@@ -811,7 +811,7 @@ func (r *Renderer) writeDocumentHeader(w io.Writer) {
 	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
-	r.outs(w, `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark markdown processor for Go" -->`)
+	r.outs(w, xml.Generator)
 	r.cr(w)
 	r.outs(w, `<!DOCTYPE rfc SYSTEM 'rfc2629.dtd' []>`)
 	r.cr(w)
