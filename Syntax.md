@@ -80,9 +80,9 @@ Drafts and even complete books. It <strike>steals</strike> borrows syntax elemen
 Mmark adds:
 
 * (Extended) [title block](#title-block) to specify authors and IETF specific bits.
-* [Special sections](#special-sections), for abstracts or notes.
+* [Special sections](#special-sections), for abstracts, prefaces or notes.
 * [Including other files](#including-files) with the option to specify line ranges, regular
-  expressions and/or prefix each line with a custom string.
+  expressions and/or prefixing each line with a custom string.
 * [Document divisions](#document-divisions).
 * [Captions](#captions) for code, tables, quotes and subfigures.
 * [Asides](#asides).
