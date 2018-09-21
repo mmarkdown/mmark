@@ -18,10 +18,10 @@ other technical documentation.
 It provides an advanced markdown dialect that processes file(s) to
 produce internet\-drafts in XML RFC
 7991 (https://tools.ietf.org/html/rfc7991) format.
-Mmark can produce xml2rfc (aforementioned RFC 7991), RFC 7941 (xml2rfc
+Mmark can produce xml2rfc (aforementioned RFC 7991), RFC 7749 (xml2rfc
 version 2) and HTML5 output.
 .PP
-The syntax is detailed at <https://mmark.nl/synax>.
+The syntax is detailed at <https://mmark.nl/syntax>.
 .SH OPTIONS
 .TP
 .B \f[B]\-2\f[]
@@ -54,13 +54,18 @@ create HTML output
 .RS
 .RE
 .TP
+.B \f[B]\-unsafe\f[]
+allow includes from anywhere in the filesystem
+.RS
+.RE
+.TP
 .B \f[B]\-index\f[]
 generate an index at the end of the document (default true)
 .RS
 .RE
 .TP
-.B \f[B]\-reference\f[]
-generate a references section at the end of the document (default true)
+.B \f[B]\-bibliography\f[]
+generate a bibliographtysection after the back matter (default true)
 .RS
 .RE
 .TP
@@ -70,7 +75,7 @@ show mmark version
 .RE
 .SH ALSO SEE
 .PP
-RFC 7791 and RFC 7741.
+RFC 7791 and RFC 7749.
 The main site for Mmark is <https://mmark.nl>
 .SH AUTHORS
 Mmark Authors.
