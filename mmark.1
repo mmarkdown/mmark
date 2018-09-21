@@ -15,7 +15,7 @@ towards writing IETF documents.
 It is, however, \f[I]also\f[] suited for writing complete books and
 other technical documentation.
 .PP
-It provides an advanced markdown dialect that processes file(s) to
+Mmark provides an advanced markdown dialect that processes file(s) to
 produce internet\-drafts in XML RFC
 7991 (https://tools.ietf.org/html/rfc7991) format.
 Mmark can produce xml2rfc (aforementioned RFC 7991), RFC 7749 (xml2rfc
@@ -55,7 +55,8 @@ create HTML output
 .RE
 .TP
 .B \f[B]\-unsafe\f[]
-allow includes from anywhere in the filesystem
+allow includes from anywhere in the filesystem, otherwise they are only
+allowed \f[I]under\f[] the current document.
 .RS
 .RE
 .TP
@@ -65,12 +66,13 @@ generate an index at the end of the document (default true)
 .RE
 .TP
 .B \f[B]\-bibliography\f[]
-generate a bibliographtysection after the back matter (default true)
+generate a bibliographtysection after the back matter (default true),
+this needs a \f[C]{{backmatter}}\f[] in the document.
 .RS
 .RE
 .TP
 .B \f[B]\-version\f[]
-show mmark version
+show mmark\[aq]s version
 .RS
 .RE
 .SH ALSO SEE
