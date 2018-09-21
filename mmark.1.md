@@ -13,9 +13,9 @@ mmark – generate XML or HTML from mmark markdown
 # DESCRIPTION
 
 **Mmark** is a powerful markdown processor written in Go, geared towards writing IETF documents. It
- is, however, *also* suited for writing complete books and other technical documentation.
+is, however, *also* suited for writing complete books and other technical documentation.
 
-It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
+Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), RFC 7749 (xml2rfc version 2) and HTML5 output.
 
@@ -42,16 +42,18 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 :    create HTML output
 
 **-unsafe**
-:    allow includes from anywhere in the filesystem
+:    allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
+     current document.
 
 **-index**
 :    generate an index at the end of the document (default true)
 
 **-bibliography**
-:    generate a bibliographtysection after the back matter (default true)
+:    generate a bibliographtysection after the back matter (default true), this needs
+     a `{{backmatter}}` in the document.
 
 **-version**
-:    show mmark version
+:    show mmark's version
 
 # ALSO SEE
 
