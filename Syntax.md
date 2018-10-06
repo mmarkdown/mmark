@@ -104,7 +104,7 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
 
 * Adding a caption under a quote block (`Quote: `) needs a newline before it, otherwise the caption text
   will be detected as being part of the quote.
-* Including files (and code includes) requires are empty line before them, as they are block level
+* Including files (and code includes) requires an empty line before them, as they are block level
   elements and we need to trigger *that* scan from the parser.
 * Including files in lists requires a empty line to be present in the list item; otherwise Mmark
   will only assume inline elements and not parse the includes (which are block level elements).
