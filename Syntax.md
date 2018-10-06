@@ -465,7 +465,7 @@ The first seen modifier determines the type (suppressed, normative or informativ
 Multiple citation can separated with a semicolon: `[@RFC1034; @RFC1035]`.
 
 If you reference an RFC, I-D or W3C document the reference will be added automatically (no need to
-muck about with an `<reference>` block. This is to say:
+muck about with an `<reference>` block). This is to say:
 
 Any reference starting with *RFC*, *I-D.* or *W3C.* will be automatically added to the correct
 reference section.
@@ -474,7 +474,7 @@ For I-Ds you may want to add a draft sequence number, which can be done as such:
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index.
 
-A bibliography section is created by default (if a `{backmatter}` is given, but you can suppress it
+A bibliography section is created by default if a `{backmatter}` is given, but you can suppress it
 by using the command line flag `-bibliography=false`.
 
 ### XML References
@@ -484,7 +484,7 @@ The syntax of the XML reference element is defined in [RFC
 7749](https://tools.ietf.org/html/rfc7749#section-2.30). The `anchor` defined can be used in the
 [citation](#Citations), which the example below that would be `[@pandoc]`:
 
-~~~
+~~~ html
 <reference anchor='pandoc' target='http://johnmacfarlane.net/pandoc/'>
     <front>
         <title>Pandoc, a universal document converter</title>
