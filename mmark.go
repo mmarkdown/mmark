@@ -11,6 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	mmarkout "github.com/mmarkdown/mmark/markdown"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
@@ -27,6 +28,8 @@ var (
 	flagHTML     = flag.Bool("html", false, "create HTML output")
 	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
 	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
+	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
+	flagWidth    = flag.Int("width", 80, "text width when generating markdown")
 	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagVersion  = flag.Bool("version", false, "show mmark version")
 )
@@ -75,11 +78,14 @@ func main() {
 
 		documentTitle := "" // hack to get document title from toml title block and then set it here.
 
+		if !*flagMarkdown {
+			Extensions |= parser.Includes
+		}
+
 		p := parser.NewWithExtensions(Extensions)
 		parserFlags := parser.FlagsNone
 		if !*flagHTML {
-			// both xml formats don't deal with footnotes well.
-			parserFlags |= parser.SkipFootnoteList
+			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
 		p.Opts = parser.ParserOptions{
 			ParserHook: func(data []byte) (ast.Node, []byte, int) {
@@ -109,7 +115,8 @@ func main() {
 
 		var renderer markdown.Renderer
 
-		if *flagHTML {
+		switch {
+		case *flagHTML:
 			opts := html.RendererOptions{
 				// TODO(miek): make this an option.
 				Comments:       [][]byte{[]byte("//"), []byte("#")},
@@ -134,7 +141,7 @@ func main() {
 			}
 
 			renderer = html.NewRenderer(opts)
-		} else if *flagTwo {
+		case *flagTwo:
 			opts := xml2.RendererOptions{
 				Flags:    xml2.CommonFlags,
 				Comments: [][]byte{[]byte("//"), []byte("#")},
@@ -144,7 +151,10 @@ func main() {
 			}
 
 			renderer = xml2.NewRenderer(opts)
-		} else {
+		case *flagMarkdown:
+			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
+			renderer = mmarkout.NewRenderer(opts)
+		default:
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,
 				Comments: [][]byte{[]byte("//"), []byte("#")},
