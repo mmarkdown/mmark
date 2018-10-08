@@ -103,31 +103,31 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 		r.outTagContent(w, "<street", street)
 	}
 
-	r.outTagContent(w, "<city", a.Address.Postal.City)
+	r.outTagMaybe(w, "<city", a.Address.Postal.City)
 	for _, city := range a.Address.Postal.Cities {
 		r.outTagContent(w, "<city", city)
 	}
 
-	r.outTagContent(w, "<code", a.Address.Postal.Code)
+	r.outTagMaybe(w, "<code", a.Address.Postal.Code)
 	for _, code := range a.Address.Postal.Codes {
 		r.outTagContent(w, "<code", code)
 	}
 
-	r.outTagContent(w, "<country", a.Address.Postal.Country)
+	r.outTagMaybe(w, "<country", a.Address.Postal.Country)
 	for _, country := range a.Address.Postal.Countries {
 		r.outTagContent(w, "<country", country)
 	}
 
-	r.outTagContent(w, "<region", a.Address.Postal.Region)
+	r.outTagMaybe(w, "<region", a.Address.Postal.Region)
 	for _, region := range a.Address.Postal.Regions {
 		r.outTagContent(w, "<region", region)
 	}
 
 	r.outs(w, "</postal>")
 
-	r.outTagContent(w, "<phone", a.Address.Phone)
-	r.outTagContent(w, "<email", a.Address.Email)
-	r.outTagContent(w, "<uri", a.Address.URI)
+	r.outTagMaybe(w, "<phone", a.Address.Phone)
+	r.outTagMaybe(w, "<email", a.Address.Email)
+	r.outTagMaybe(w, "<uri", a.Address.URI)
 
 	r.outs(w, "</address>")
 	r.outs(w, "</author>")
