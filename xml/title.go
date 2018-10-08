@@ -145,8 +145,8 @@ func (r *Renderer) TitleDate(w io.Writer, d time.Time) {
 	if x := d.Year(); x > 0 {
 		attr = append(attr, fmt.Sprintf(`year="%d"`, x))
 	}
-	if x := d.Month(); x > 0 {
-		attr = append(attr, fmt.Sprintf(`month="%d"`, x))
+	if d.Month() > 0 {
+		attr = append(attr, d.Format("month=\"January\""))
 	}
 	if x := d.Day(); x > 0 {
 		attr = append(attr, fmt.Sprintf(`day="%d"`, x))
