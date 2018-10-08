@@ -57,4 +57,4 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 
 # ALSO SEE
 
-RFC 7791 and RFC 7749. The main site for Mmark is <https://mmark.nl>
+RFC 7991 and RFC 7749. The main site for Mmark is <https://mmark.nl>

@@ -226,7 +226,7 @@ Title Block:
 
 A Title Block contains a document's meta data; title, authors, date and other elements. The elements
 that can be specified are copied from the [xml2rfc v3
-standard](https://tools.ietf.org/html/rfc7791). More on these below. The complete title block is
+standard](https://tools.ietf.org/html/rfc7991). More on these below. The complete title block is
 specified in [TOML](https://github.com/toml-lang/toml). Examples title blocks can be [found in the
 repository of Mmark](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
