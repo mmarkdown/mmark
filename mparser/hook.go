@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/mmarkdown/markdown/parser"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 var UnsafeInclude parser.Flags = 1 << 3

@@ -18,7 +18,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mmarkdown/markdown/parser"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 // Initial is the initial file we are working on, empty for stdin and adjusted is we we have an absolute or relative file.
