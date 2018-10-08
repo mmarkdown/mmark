@@ -48,6 +48,12 @@ func (r *Renderer) outOneOfCr(w io.Writer, outFirst bool, first string, second s
 	}
 }
 
+func (r *Renderer) outTagMaybe(w io.Writer, name string, content string) {
+	if content != "" {
+		r.outTagContent(w, name, content)
+	}
+}
+
 func (r *Renderer) outTagContent(w io.Writer, name string, content string) {
 	io.WriteString(w, name+">")
 	html.EscapeHTML(w, []byte(content))
