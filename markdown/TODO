@@ -1,2 +1,0 @@
-* all elements, still some left: htmlblock, mathblock, etc. see renderer.go
-* ordered list start is discarded - this can play into the 3 chars wide indent we use by default.

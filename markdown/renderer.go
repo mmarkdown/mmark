@@ -540,6 +540,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.paragraph(w, node, entering)
 	case *ast.HTMLSpan:
 	case *ast.HTMLBlock:
+		r.out(w, node.Content)
+		if !last(node) {
+			r.cr(w)
+			r.cr(w)
+		}
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
