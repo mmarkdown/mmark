@@ -302,6 +302,12 @@ func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 }
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
+	if entering {
+		r.outs(w, "(#")
+		r.out(w, cr.Destination)
+		return
+	}
+	r.outs(w, ")")
 }
 
 func (r *Renderer) index(w io.Writer, index *ast.Index, entering bool) {
@@ -537,6 +543,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Aside:
 		r.aside(w, node, entering)
 	case *ast.CrossReference:
+		r.crossReference(w, node, entering)
 	case *ast.Index:
 		r.index(w, node, entering)
 	case *ast.Link:
