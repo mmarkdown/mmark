@@ -3,6 +3,7 @@ package markdown
 import (
 	"bytes"
 	"io"
+	"unicode"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/kr/text"
@@ -79,4 +80,26 @@ func isEscape(data []byte, i int) bool {
 	j++
 	// odd number of backslahes means escape
 	return (i-j)%2 != 0
+}
+
+// Copied from gomarkdown/markdown.
+
+// sanitizeAnchorName returns a sanitized anchor name for the given text.
+// Taken from https://github.com/shurcooL/sanitized_anchor_name/blob/master/main.go#L14:1
+func sanitizeAnchorName(text string) string {
+	var anchorName []rune
+	var futureDash = false
+	for _, r := range text {
+		switch {
+		case unicode.IsLetter(r) || unicode.IsNumber(r):
+			if futureDash && len(anchorName) > 0 {
+				anchorName = append(anchorName, '-')
+			}
+			futureDash = false
+			anchorName = append(anchorName, unicode.ToLower(r))
+		default:
+			futureDash = true
+		}
+	}
+	return string(anchorName)
 }
