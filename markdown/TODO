@@ -1,5 +1,3 @@
-* all inline elements: links, citations
-* tests
+* all inline elements, still some left
 * block level attributes
 * heading (optional ID)
-* Generic first item and lastitem (don't need newlines)
