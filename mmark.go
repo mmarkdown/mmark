@@ -29,6 +29,7 @@ var (
 	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
 	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
 	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
+	flagWrite    = flag.Bool("w", false, "write to source file when generating markdown")
 	flagWidth    = flag.Int("width", 80, "text width when generating markdown")
 	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagVersion  = flag.Bool("version", false, "show mmark version")
@@ -167,6 +168,10 @@ func main() {
 		}
 
 		x := markdown.Render(doc, renderer)
+		if *flagMarkdown && *flagWrite && fileName != "os.Stdin" {
+			ioutil.WriteFile(fileName, x, 0600)
+			continue
+		}
 		fmt.Println(string(x))
 	}
 }

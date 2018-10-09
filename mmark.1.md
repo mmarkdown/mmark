@@ -51,6 +51,9 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 **-textwidth integer**
 :    set the text width when generating markdown, defaults to 80 characters.
 
+**-w**
+:    write to source file when generating markdown.
+
 **-index**
 :    generate an index at the end of the document (default true).
 
