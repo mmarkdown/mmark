@@ -206,11 +206,15 @@ func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
 }
 
 func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
-	r.cr(w)
+	if !last(listItem) {
+		r.cr(w)
+	}
 	if listItem.ListFlags&ast.ListTypeTerm != 0 {
 		return
 	}
-	r.cr(w)
+	if !last(listItem) {
+		r.cr(w)
+	}
 }
 
 func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
