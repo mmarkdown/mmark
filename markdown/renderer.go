@@ -512,8 +512,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Content)
 		r.cr(w)
 		r.outs(w, "%%%")
-		r.cr(w)
-		r.cr(w)
+		if !last(node) {
+			r.cr(w)
+			r.cr(w)
+		}
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:

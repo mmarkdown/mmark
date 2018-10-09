@@ -169,6 +169,7 @@ func main() {
 
 		x := markdown.Render(doc, renderer)
 		if *flagMarkdown && *flagWrite && fileName != "os.Stdin" {
+			x = append(x, []byte("\n")...)
 			ioutil.WriteFile(fileName, x, 0600)
 			continue
 		}
