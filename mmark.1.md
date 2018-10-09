@@ -23,37 +23,43 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 
 # OPTIONS
 
-**-2**
-:   generate RFC 7749 XML
-
 **-ast**
-:    print abstract syntax tree and exit
+:    print abstract syntax tree and exit.
 
 **-css string**
-:    link to a CSS stylesheet (only used with -html)
+:    link to a CSS stylesheet (only used with -html).
 
 **-fragment**
-:    don't create a full document
+:    don't create a full document.
 
 **-head string**
-:    link to HTML to be included in head (only used with -html)
+:    link to HTML to be included in head (only used with -html).
 
 **-html**
-:    create HTML output
+:    create HTML output.
+
+**-2**
+:   generate RFC 7749 XML.
+
+**-markdown**
+:    output (normalized) markdown.
 
 **-unsafe**
 :    allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
      current document.
 
+**-textwidth integer**
+:    set the text width when generating markdown, defaults to 80 characters.
+
 **-index**
-:    generate an index at the end of the document (default true)
+:    generate an index at the end of the document (default true).
 
 **-bibliography**
 :    generate a bibliographtysection after the back matter (default true), this needs
      a `{{backmatter}}` in the document.
 
 **-version**
-:    show mmark's version
+:    show mmark's version.
 
 # ALSO SEE
 
