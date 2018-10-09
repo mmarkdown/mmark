@@ -101,7 +101,7 @@ func AttributeBytes(attr *ast.Attribute) []byte {
 		ret.Write(attr.ID)
 	}
 	for _, c := range attr.Classes {
-		if ret.Len() > 0 {
+		if ret.Len() > 1 {
 			ret.WriteByte(' ')
 		}
 		ret.WriteByte('.')
@@ -109,7 +109,7 @@ func AttributeBytes(attr *ast.Attribute) []byte {
 	}
 
 	for k, v := range attr.Attrs {
-		if ret.Len() > 0 {
+		if ret.Len() > 1 {
 			ret.WriteByte(' ')
 		}
 		ret.WriteString(k)
