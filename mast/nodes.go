@@ -1,6 +1,8 @@
 package mast
 
 import (
+	"bytes"
+
 	"github.com/gomarkdown/markdown/ast"
 )
 
@@ -19,7 +21,8 @@ func MoveChildren(a, b ast.Node) {
 
 // Some attribute helper functions.
 
-func attributeFromNode(node ast.Node) *ast.Attribute {
+// AttributeFromNode returns the attribute from the node, if it was there was one.
+func AttributeFromNode(node ast.Node) *ast.Attribute {
 	if c := node.AsContainer(); c != nil && c.Attribute != nil {
 		return c.Attribute
 	}
@@ -43,7 +46,7 @@ func AttributeInit(node ast.Node) {
 
 // DeleteAttribute delete the attribute under key from a.
 func DeleteAttribute(node ast.Node, key string) {
-	a := attributeFromNode(node)
+	a := AttributeFromNode(node)
 	if a == nil {
 		return
 	}
@@ -60,7 +63,7 @@ func DeleteAttribute(node ast.Node, key string) {
 
 // SetAttribute sets the attribute under key to value.
 func SetAttribute(node ast.Node, key string, value []byte) {
-	a := attributeFromNode(node)
+	a := AttributeFromNode(node)
 	if a == nil {
 		return
 	}
@@ -76,7 +79,7 @@ func SetAttribute(node ast.Node, key string, value []byte) {
 
 // Attribute returns the attribute value under key.
 func Attribute(node ast.Node, key string) []byte {
-	a := attributeFromNode(node)
+	a := AttributeFromNode(node)
 	if a == nil {
 		return nil
 	}
@@ -90,9 +93,37 @@ func Attribute(node ast.Node, key string) []byte {
 	return a.Attrs[key]
 }
 
+func AttributeBytes(attr *ast.Attribute) []byte {
+	ret := &bytes.Buffer{}
+	ret.WriteByte('{')
+	if len(attr.ID) != 0 {
+		ret.WriteByte('#')
+		ret.Write(attr.ID)
+	}
+	for _, c := range attr.Classes {
+		if ret.Len() > 0 {
+			ret.WriteByte(' ')
+		}
+		ret.WriteByte('.')
+		ret.Write(c)
+	}
+
+	for k, v := range attr.Attrs {
+		if ret.Len() > 0 {
+			ret.WriteByte(' ')
+		}
+		ret.WriteString(k)
+		ret.WriteString(`="`)
+		ret.Write(v)
+		ret.WriteByte('"')
+	}
+	ret.WriteByte('}')
+	return ret.Bytes()
+}
+
 // AttributeClass returns true is class key is set.
 func AttributeClass(node ast.Node, key string) bool {
-	a := attributeFromNode(node)
+	a := AttributeFromNode(node)
 	if a == nil {
 		return false
 	}
@@ -106,7 +137,7 @@ func AttributeClass(node ast.Node, key string) bool {
 
 // AttributeFilter runs the attribute on node through filter and only allows elements for which filter returns true.
 func AttributeFilter(node ast.Node, filter func(key string) bool) {
-	a := attributeFromNode(node)
+	a := AttributeFromNode(node)
 	if a == nil {
 		return
 	}

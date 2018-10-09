@@ -79,6 +79,9 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) 
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if !entering {
+		if node.HeadingID != "" {
+			r.outs(w, " {#"+node.HeadingID+"}")
+		}
 		r.cr(w)
 		r.cr(w)
 		return
@@ -478,6 +481,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		if didHandle {
 			return status
 		}
+	}
+
+	if attr := mast.AttributeFromNode(node); attr != nil {
+		w.Write((mast.AttributeBytes(attr)))
+		r.cr(w)
 	}
 
 	switch node := node.(type) {
