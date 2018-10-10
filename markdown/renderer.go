@@ -433,7 +433,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		}
 	}
 
-	if attr := mast.AttributeFromNode(node); attr != nil {
+	if attr := mast.AttributeFromNode(node); attr != nil && entering {
 		w.Write((mast.AttributeBytes(attr)))
 		r.cr(w)
 	}
