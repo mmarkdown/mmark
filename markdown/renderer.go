@@ -187,6 +187,10 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		r.prefix.push(Space3)
 	} else {
 		r.prefix.pop()
+		if !last(list) {
+			r.cr(w)
+			r.newline(w)
+		}
 	}
 }
 
