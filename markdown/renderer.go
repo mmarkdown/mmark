@@ -158,8 +158,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		switch x := item.ListFlags; {
 		case x&ast.ListTypeOrdered != 0:
 			indented[plen+0] = '1'
-			indented[plen+1] = ' '
-			indented[plen+2] = '.'
+			indented[plen+1] = '.'
+			indented[plen+2] = ' '
 		case x&ast.ListTypeTerm != 0:
 			indented = indented[plen+3:] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:

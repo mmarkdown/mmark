@@ -3,6 +3,7 @@ package markdown
 import (
 	"bytes"
 	"io"
+	"regexp"
 	"unicode"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -28,9 +29,12 @@ func (r *Renderer) newline(w io.Writer) {
 
 func last(node ast.Node) bool { return ast.GetNextNode(node) == nil }
 
+var re = regexp.MustCompile("  +")
+
 // wrapText wraps the text in data, taking len(prefix) into account.
 func (r *Renderer) wrapText(data, prefix []byte) []byte {
-	wrapped := text.WrapBytes(data, r.opts.TextWidth-len(prefix))
+	replaced := re.ReplaceAll(data, []byte(" "))
+	wrapped := text.WrapBytes(replaced, r.opts.TextWidth-len(prefix))
 	return r.indentText(wrapped, prefix)
 }
 

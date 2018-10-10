@@ -18,8 +18,7 @@ func Wrap(s string, lim int) string {
 	return string(WrapBytes([]byte(s), lim))
 }
 
-// WrapBytes wraps b into a paragraph of lines of length lim, with minimal
-// raggedness.
+// WrapBytes wraps b into a paragraph of lines of length lim, with minimal raggedness.
 func WrapBytes(b []byte, lim int) []byte {
 	words := bytes.Split(bytes.Replace(bytes.TrimSpace(b), nl, sp, -1), sp)
 	var lines [][]byte
