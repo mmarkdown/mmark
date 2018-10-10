@@ -160,9 +160,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+0] = '1'
 			indented[plen+1] = ' '
 			indented[plen+2] = '.'
-
 		case x&ast.ListTypeTerm != 0:
-			// nothing
+			indented = indented[plen+3:] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:
 			indented[plen+0] = ':'
 			indented[plen+1] = ' '
@@ -551,7 +550,6 @@ func (r *Renderer) RenderHeader(_ io.Writer, _ ast.Node) {}
 func (r *Renderer) writeDocumentHeader(_ io.Writer)      {}
 
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
-	return
 	buf, ok := w.(*bytes.Buffer)
 	if !ok {
 		return
