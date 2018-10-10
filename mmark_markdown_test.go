@@ -8,6 +8,7 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/google/go-cmp/cmp"
 	mmarkdown "github.com/mmarkdown/mmark/markdown"
 	"github.com/mmarkdown/mmark/mparser"
 )
@@ -59,8 +60,8 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 	doc := markdown.Parse(input, p)
 	actual := markdown.Render(doc, renderer)
 	actual = bytes.TrimSpace(actual)
-	if bytes.Compare(actual, expected) != 0 {
-		t.Errorf("\n    [%#v]\nExpected[%s]\nActual  [%s]",
-			basename+".md", expected, actual)
+
+	if diff := cmp.Diff(string(actual), string(expected)); diff != "" {
+		t.Errorf("%s: differs: (-want +got)\n%s", basename+".md", diff)
 	}
 }

@@ -2,6 +2,7 @@
 package markdown
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -37,19 +38,18 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
-	// TODO(miek): these should probably be a stack, aside in para in aside, etc.
+	// TODO(miek): paraStart should probably be a stack, aside in para in aside, etc.
 	paraStart    int
-	quoteStart   int
-	asideStart   int
 	headingStart int
+
+	prefix     *prefixStack // track current prefix, quote, aside, etc.
+	listMarker string
 
 	// tables
 	cellStart int
 	col       int
 	colWidth  []int
 	tableType ast.Node
-
-	indent int
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -57,11 +57,10 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	if opts.TextWidth == 0 {
 		opts.TextWidth = 80
 	}
-	return &Renderer{opts: opts}
+	return &Renderer{opts: opts, prefix: &prefixStack{p: [][]byte{}}}
 }
 
-func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
-}
+func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {}
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
 	if !entering {
@@ -148,18 +147,34 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 	// Reformat the entire buffer and rewrite to the writer.
 	b := buf.Bytes()[r.paraStart:end]
-	prefix := bytes.Repeat(Space, r.indent)
-	indented := r.wrapText(b, prefix)
+	indented := r.wrapText(b, r.prefix.flatten())
 
 	buf.Truncate(r.paraStart)
 
-	// If in list, start at the 3rd item to print.
-	_, inList := para.Parent.(*ast.ListItem)
-	if inList {
-		r.out(w, indented[r.indent:])
-	} else {
-		r.out(w, indented)
+	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
+	// created with the list marker, taking the current prefix into account.
+	if item, inList := para.Parent.(*ast.ListItem); inList {
+		plen := r.prefix.len() - 3
+		switch x := item.ListFlags; {
+		case x&ast.ListTypeOrdered != 0:
+			indented[plen+0] = '1'
+			indented[plen+1] = ' '
+			indented[plen+2] = '.'
+
+		case x&ast.ListTypeTerm != 0:
+			// nothing
+		case x&ast.ListTypeDefinition != 0:
+			indented[plen+0] = ':'
+			indented[plen+1] = ' '
+			indented[plen+2] = ' '
+		default:
+			indented[plen+0] = '*'
+			indented[plen+1] = ' '
+			indented[plen+2] = ' '
+		}
 	}
+
+	r.out(w, indented)
 
 	if !last(para) {
 		r.cr(w)
@@ -167,61 +182,20 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 }
 
-func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
-	r.indent += 3
-}
-
-func (r *Renderer) listExit(w io.Writer, list *ast.List) {
-	r.indent -= 3
-}
-
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
-		r.listEnter(w, list)
+		r.prefix.push(Space3)
 	} else {
-		r.listExit(w, list)
-	}
-}
-
-func (r *Renderer) listItemEnter(w io.Writer, listItem *ast.ListItem) {
-	indent := r.indent - 3
-	if indent < 0 {
-		indent = 0
-	}
-	prefix := bytes.Repeat([]byte(" "), indent)
-
-	switch x := listItem.ListFlags; {
-	case x&ast.ListTypeOrdered != 0:
-		r.out(w, prefix)
-		r.outs(w, "1. ")
-	case x&ast.ListTypeTerm != 0:
-		r.out(w, prefix)
-	case x&ast.ListTypeDefinition != 0:
-		r.out(w, prefix)
-		r.outs(w, ":  ")
-	default:
-		r.out(w, prefix)
-		r.outs(w, "*  ")
-	}
-}
-
-func (r *Renderer) listItemExit(w io.Writer, listItem *ast.ListItem) {
-	if !last(listItem) {
-		r.cr(w)
-	}
-	if listItem.ListFlags&ast.ListTypeTerm != 0 {
-		return
-	}
-	if !last(listItem) {
-		r.cr(w)
+		r.prefix.pop()
 	}
 }
 
 func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
-	if entering {
-		r.listItemEnter(w, listItem)
-	} else {
-		r.listItemExit(w, listItem)
+	if !entering {
+		if !last(listItem) {
+			r.cr(w)
+			r.newline(w)
+		}
 	}
 }
 
@@ -237,8 +211,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 	}
 
 	r.cr(w)
-	prefix := bytes.Repeat(Space, r.indent)
-	indented := r.indentText(codeBlock.Literal, prefix)
+	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
 	r.out(w, indented)
 	r.outs(w, "~~~")
 	r.cr(w)
@@ -258,13 +231,14 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 
 func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) {
 	if entering {
+		r.out(w, r.prefix.flatten())
 		r.col = 0
-
 		for i, width := range r.colWidth {
 			if _, isFooter := r.tableType.(*ast.TableFooter); isFooter {
 				r.out(w, bytes.Repeat([]byte("="), width+1))
 				if i == len(r.colWidth)-1 {
 					r.cr(w)
+					r.out(w, r.prefix.flatten())
 				} else {
 					r.outs(w, "|")
 				}
@@ -276,6 +250,9 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 
 	for i, width := range r.colWidth {
 		if _, isHeader := r.tableType.(*ast.TableHeader); isHeader {
+			if i == 0 {
+				r.out(w, r.prefix.flatten())
+			}
 			r.out(w, bytes.Repeat([]byte("-"), width+1))
 			if i == len(r.colWidth)-1 {
 				r.cr(w)
@@ -291,7 +268,6 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	if len(r.colWidth) == 0 {
 		return
 	}
-
 	if entering {
 		if buf, ok := w.(*bytes.Buffer); ok {
 			r.cellStart = buf.Len() + 1
@@ -317,8 +293,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	r.col++
 }
 
-func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
-}
+func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {}
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
 	if entering {
@@ -421,72 +396,28 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
-	// TODO; see paragraph that is almost identical, and for asides as well.
 	if entering {
-		if buf, ok := w.(*bytes.Buffer); ok {
-			r.quoteStart = buf.Len()
-		}
+		r.prefix.push(Quote)
 		return
 	}
-
-	buf, ok := w.(*bytes.Buffer)
-	end := 0
-	if ok {
-		end = buf.Len()
-	}
-
-	// Reformat the entire buffer and rewrite to the writer.
-	b := buf.Bytes()[r.quoteStart:end]
-	indented := r.wrapText(b, Quote)
-
-	buf.Truncate(r.quoteStart)
-
-	// If in list, start at the 3rd item to print.
-	_, inList := block.Parent.(*ast.ListItem)
-	if inList {
-		r.out(w, indented[r.indent:])
-	} else {
-		r.out(w, indented)
-	}
+	r.prefix.pop()
 
 	if !last(block) {
 		r.cr(w)
-		r.cr(w)
+		r.newline(w)
 	}
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
-	// TODO; see paragraph that is almost identical, and for asides as well.
 	if entering {
-		if buf, ok := w.(*bytes.Buffer); ok {
-			r.asideStart = buf.Len()
-		}
+		r.prefix.push(Aside)
 		return
 	}
-
-	buf, ok := w.(*bytes.Buffer)
-	end := 0
-	if ok {
-		end = buf.Len()
-	}
-
-	// Reformat the entire buffer and rewrite to the writer.
-	b := buf.Bytes()[r.asideStart:end]
-	indented := r.wrapText(b, Aside)
-
-	buf.Truncate(r.asideStart)
-
-	// If in list, start at the 3rd item to print.
-	_, inList := block.Parent.(*ast.ListItem)
-	if inList {
-		r.out(w, indented[r.indent:])
-	} else {
-		r.out(w, indented)
-	}
+	r.prefix.pop()
 
 	if !last(block) {
 		r.cr(w)
-		r.cr(w)
+		r.newline(w)
 	}
 }
 
@@ -613,11 +544,32 @@ func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 }
 
 func (r *Renderer) RenderHeader(_ io.Writer, _ ast.Node) {}
-func (r *Renderer) RenderFooter(_ io.Writer, _ ast.Node) {}
 func (r *Renderer) writeDocumentHeader(_ io.Writer)      {}
 
+func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
+	return
+	buf, ok := w.(*bytes.Buffer)
+	if !ok {
+		return
+	}
+
+	trimmed := &bytes.Buffer{}
+
+	scanner := bufio.NewScanner(buf)
+	for scanner.Scan() {
+		trimmed.Write(bytes.TrimRight(scanner.Bytes(), " "))
+		trimmed.WriteString("\n")
+	}
+	if err := scanner.Err(); err != nil {
+		return
+	}
+	buf.Truncate(0)
+	buf.Write(trimmed.Bytes())
+}
+
 var (
-	Space = []byte(" ")
-	Aside = []byte("A> ")
-	Quote = []byte("> ")
+	Space  = []byte(" ")
+	Space3 = []byte("   ")
+	Aside  = []byte("A> ")
+	Quote  = []byte("> ")
 )

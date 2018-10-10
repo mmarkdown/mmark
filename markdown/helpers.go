@@ -19,23 +19,18 @@ func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
 func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s) }
+func (r *Renderer) cr(w io.Writer)             { r.outs(w, "\n") }
 
-func (r *Renderer) cr(w io.Writer) {
-	// suppress multiple newlines
-	if buf, ok := w.(*bytes.Buffer); ok {
-		b := buf.Bytes()
-		if len(b) > 2 && b[len(b)-1] == '\n' && b[len(b)-2] == '\n' {
-			return
-		}
-	}
+func (r *Renderer) newline(w io.Writer) {
+	r.out(w, r.prefix.flatten())
 	r.outs(w, "\n")
 }
 
 func last(node ast.Node) bool { return ast.GetNextNode(node) == nil }
 
-// wrapText wraps the text in data, taking r.indent into account.
+// wrapText wraps the text in data, taking len(prefix) into account.
 func (r *Renderer) wrapText(data, prefix []byte) []byte {
-	wrapped := text.WrapBytes(data, r.opts.TextWidth-r.indent)
+	wrapped := text.WrapBytes(data, r.opts.TextWidth-len(prefix))
 	return r.indentText(wrapped, prefix)
 }
 
@@ -102,4 +97,27 @@ func sanitizeAnchorName(text string) string {
 		}
 	}
 	return string(anchorName)
+}
+
+type prefixStack struct {
+	p [][]byte
+}
+
+func (p *prefixStack) push(data []byte) { p.p = append(p.p, data) }
+func (p *prefixStack) pop()             { p.p = p.p[:len(p.p)-1] }
+
+// flatten stack in reverse order
+func (p *prefixStack) flatten() []byte {
+	ret := []byte{}
+	for _, b := range p.p {
+		ret = append(ret, b...)
+	}
+	return ret
+}
+
+func (p *prefixStack) len() (l int) {
+	for _, b := range p.p {
+		l += len(b)
+	}
+	return l
 }
