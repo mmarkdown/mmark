@@ -19,4 +19,4 @@ SRO Param
     - 10 - Scenic Routing **SHOULD** be used for this packet.
     - 11 - Scenic Routing **MUST** be used for this packet.
 
-    The following BIT (A) defines if Avian IP Carriers should be used:
+    The following BIT (A) defines if Avian IP Carriers should be used.

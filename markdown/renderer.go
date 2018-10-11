@@ -174,32 +174,23 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 
 	r.out(w, indented)
-
-	if !last(para) {
-		r.cr(w)
-		r.cr(w)
-	}
+	r.cr(w)
+	r.newline(w)
 }
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
 		r.prefix.push(Space3)
-	} else {
-		r.prefix.pop()
-		if !last(list) {
-			r.cr(w)
-			r.newline(w)
-		}
+		return
 	}
+	r.prefix.pop()
 }
 
 func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
-	if !entering {
-		if !last(listItem) {
-			r.cr(w)
-			r.newline(w)
-		}
-	}
+	//	if !entering {
+	//		r.cr(w)
+	//		r.newline(w)
+	//	}
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
@@ -221,7 +212,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 	r.outs(w, "~~~")
 	r.cr(w)
 	if _, ok := ast.GetNextNode(codeBlock).(*ast.Caption); !ok {
-		r.cr(w)
+		r.newline(w)
 	}
 }
 
@@ -395,9 +386,8 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
-	if !entering && !last(captionFigure) {
-		r.cr(w)
-		r.cr(w)
+	if !entering {
+		r.newline(w)
 	}
 }
 
@@ -407,11 +397,7 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return
 	}
 	r.prefix.pop()
-
-	if !last(block) {
-		r.cr(w)
-		r.newline(w)
-	}
+	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
@@ -420,11 +406,6 @@ func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 		return
 	}
 	r.prefix.pop()
-
-	if !last(block) {
-		r.cr(w)
-		r.newline(w)
-	}
 }
 
 // RenderNode renders a markdown node to markdown.
@@ -468,10 +449,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Content)
 		r.cr(w)
 		r.outs(w, "%%%")
-		if !last(node) {
-			r.cr(w)
-			r.cr(w)
-		}
+		r.cr(w)
+		r.cr(w)
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
@@ -497,20 +476,19 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		if entering {
 			r.outPrefix(w)
 			r.outs(w, "********\n")
+			r.newline(w)
 		}
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
 	case *ast.HTMLSpan:
 	case *ast.HTMLBlock:
 		r.out(w, node.Content)
-		if !last(node) {
-			r.cr(w)
-			r.cr(w)
-		}
+		r.cr(w)
+		r.cr(w)
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
-		r.listItem(w, node, entering)
+		// do nothing
 	case *ast.CodeBlock:
 		r.codeBlock(w, node, entering)
 	case *ast.Caption:
@@ -600,8 +578,15 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 	if err := scanner.Err(); err != nil {
 		return
 	}
+
 	buf.Truncate(0)
-	buf.Write(trimmed.Bytes())
+	data := trimmed.Bytes()
+	i := len(data)
+	for data[i-1] == '\n' {
+		i--
+	}
+
+	buf.Write(data[:i])
 }
 
 var (

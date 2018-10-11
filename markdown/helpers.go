@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"unicode"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/kr/text"
 )
 
@@ -27,8 +26,6 @@ func (r *Renderer) newline(w io.Writer) {
 	r.out(w, r.prefix.flatten())
 	r.outs(w, "\n")
 }
-
-func last(node ast.Node) bool { return ast.GetNextNode(node) == nil }
 
 var re = regexp.MustCompile("  +")
 
