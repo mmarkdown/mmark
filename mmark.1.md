@@ -4,7 +4,7 @@
 
 # NAME
 
-mmark – generate XML or HTML from mmark markdown
+mmark – generate XML, HTML or markdown from mmark markdown
 
 # SYNOPSIS
 
@@ -17,7 +17,7 @@ is, however, *also* suited for writing complete books and other technical docume
 
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2) and HTML5 output.
+RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 and markdown output.
 
 The syntax is detailed at <https://mmark.nl/syntax>.
 
@@ -58,7 +58,7 @@ The syntax is detailed at <https://mmark.nl/syntax>.
 :    generate an index at the end of the document (default true).
 
 **-bibliography**
-:    generate a bibliographtysection after the back matter (default true), this needs
+:    generate a bibliography section after the back matter (default true), this needs
      a `{{backmatter}}` in the document.
 
 **-version**

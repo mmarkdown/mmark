@@ -2,6 +2,7 @@ package mast
 
 import (
 	"bytes"
+	"sort"
 
 	"github.com/gomarkdown/markdown/ast"
 )
@@ -108,13 +109,19 @@ func AttributeBytes(attr *ast.Attribute) []byte {
 		ret.Write(c)
 	}
 
-	for k, v := range attr.Attrs {
+	keys := []string{}
+	for k := range attr.Attrs {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for k := range attr.Attrs {
 		if ret.Len() > 1 {
 			ret.WriteByte(' ')
 		}
 		ret.WriteString(k)
 		ret.WriteString(`="`)
-		ret.Write(v)
+		ret.Write(attr.Attrs[k])
 		ret.WriteByte('"')
 	}
 	ret.WriteByte('}')
