@@ -480,7 +480,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Softbreak:
 	case *ast.Hardbreak:
 	case *ast.Callout:
-		r.outOneOf(w, entering, "<<", ">>")
+		r.callout(w, node, entering)
 	case *ast.Emph:
 		r.outOneOf(w, entering, "*", "*")
 	case *ast.Strong:
@@ -494,6 +494,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Heading:
 		r.heading(w, node, entering)
 	case *ast.HorizontalRule:
+		if entering {
+			r.outPrefix(w)
+			r.outs(w, "********\n")
+		}
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
 	case *ast.HTMLSpan:
@@ -559,6 +563,15 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
 	return ast.GoToNext
+}
+
+func (r *Renderer) callout(w io.Writer, node *ast.Callout, entering bool) {
+	if !entering {
+		return
+	}
+	r.outs(w, "<<")
+	r.out(w, node.ID)
+	r.outs(w, ">>")
 }
 
 func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
