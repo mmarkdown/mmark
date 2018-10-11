@@ -207,6 +207,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 		return
 	}
 
+	r.outPrefix(w)
 	r.outs(w, "~~~")
 	if codeBlock.Info != nil {
 		r.outs(w, " ")
@@ -216,6 +217,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 	r.cr(w)
 	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
 	r.out(w, indented)
+	r.outPrefix(w)
 	r.outs(w, "~~~")
 	r.cr(w)
 	if _, ok := ast.GetNextNode(codeBlock).(*ast.Caption); !ok {
@@ -234,14 +236,14 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 
 func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) {
 	if entering {
-		r.out(w, r.prefix.flatten())
+		r.outPrefix(w)
 		r.col = 0
 		for i, width := range r.colWidth {
 			if _, isFooter := r.tableType.(*ast.TableFooter); isFooter {
 				r.out(w, bytes.Repeat([]byte("="), width+1))
 				if i == len(r.colWidth)-1 {
 					r.cr(w)
-					r.out(w, r.prefix.flatten())
+					r.outPrefix(w)
 				} else {
 					r.outs(w, "|")
 				}
@@ -254,7 +256,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 	for i, width := range r.colWidth {
 		if _, isHeader := r.tableType.(*ast.TableHeader); isHeader {
 			if i == 0 {
-				r.out(w, r.prefix.flatten())
+				r.outPrefix(w)
 			}
 			r.out(w, bytes.Repeat([]byte("-"), width+1))
 			if i == len(r.colWidth)-1 {
@@ -381,6 +383,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 		return
 	}
 
+	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
 		r.outs(w, "Quote: ")
@@ -392,7 +395,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 }
 
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
-	if !entering {
+	if !entering && !last(captionFigure) {
 		r.cr(w)
 		r.cr(w)
 	}
@@ -434,8 +437,23 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	}
 
 	if attr := mast.AttributeFromNode(node); attr != nil && entering {
-		w.Write((mast.AttributeBytes(attr)))
-		r.cr(w)
+		switch node.(type) {
+		case *ast.CaptionFigure:
+			// captionFigure also gets the attribute for a codeblock, don't output that.
+			if childs := node.GetChildren(); len(childs) > 0 {
+				if _, isCodeBlock := childs[0].(*ast.CodeBlock); !isCodeBlock {
+					r.outPrefix(w)
+					w.Write((mast.AttributeBytes(attr)))
+					r.cr(w)
+				}
+			}
+
+		default:
+			r.outPrefix(w)
+			w.Write((mast.AttributeBytes(attr)))
+			r.cr(w)
+
+		}
 	}
 
 	switch node := node.(type) {

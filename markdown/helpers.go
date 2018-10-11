@@ -21,6 +21,7 @@ func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
 func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s) }
 func (r *Renderer) cr(w io.Writer)             { r.outs(w, "\n") }
+func (r *Renderer) outPrefix(w io.Writer)      { r.out(w, r.prefix.flatten()) }
 
 func (r *Renderer) newline(w io.Writer) {
 	r.out(w, r.prefix.flatten())

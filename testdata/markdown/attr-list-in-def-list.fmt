@@ -1,0 +1,29 @@
+Option Length
+
+:  8-bit unsigned integer. The length of the option in octets (excluding the
+   Option Type and Option Length fields). The value **MUST** be greater than 0.
+
+SRO Param
+
+:  8-bit identifier indicating Scenic Routing parameters encoded as a bit
+   string.
+
+   ~~~
+   +-+-+-+-+-+-+-+-+
+   | SR A W AA X Y |
+   +-+-+-+-+-+-+-+-+
+   ~~~
+   Figure: SRO Param Bit String Layout
+
+
+   {empty="true" style="empty"}
+   *  00 - Scenic Routing **MUST NOT** be used for this packet.
+
+   *  01 - Scenic Routing **MIGHT** be used for this packet.
+
+   *  10 - Scenic Routing **SHOULD** be used for this packet.
+
+   *  11 - Scenic Routing **MUST** be used for this packet.
+
+:  The following BIT (A) defines if Avian IP Carriers should be used:
+
