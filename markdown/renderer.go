@@ -441,7 +441,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		case *ast.CaptionFigure:
 			// captionFigure also gets the attribute for a codeblock, don't output that.
 			if childs := node.GetChildren(); len(childs) > 0 {
-				if _, isCodeBlock := childs[0].(*ast.CodeBlock); !isCodeBlock {
+
+				switch childs[0].(type) {
+				case *ast.CodeBlock:
+				case *ast.BlockQuote:
+				default:
 					r.outPrefix(w)
 					w.Write((mast.AttributeBytes(attr)))
 					r.cr(w)
