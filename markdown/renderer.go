@@ -186,13 +186,6 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	r.prefix.pop()
 }
 
-func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
-	//	if !entering {
-	//		r.cr(w)
-	//		r.newline(w)
-	//	}
-}
-
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
 	if !entering {
 		return

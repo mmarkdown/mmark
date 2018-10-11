@@ -15,7 +15,7 @@ SRO Param
    ~~~
    Figure: SRO Param Bit String Layout
 
-   {style="empty" empty="true"}
+   {empty="true" style="empty"}
    *  00 - Scenic Routing **MUST NOT** be used for this packet.
 
    *  01 - Scenic Routing **MIGHT** be used for this packet.

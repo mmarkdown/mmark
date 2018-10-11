@@ -46,7 +46,13 @@ func escapeText(data []byte) []byte {
 
 	for i := range data {
 		switch data[i] {
-		case '<', '>':
+		case '<':
+			if isCodeInclude(data[i:]) {
+				buf.WriteByte(data[i])
+				continue
+			}
+			fallthrough
+		case '>':
 			fallthrough
 		case '&':
 			fallthrough

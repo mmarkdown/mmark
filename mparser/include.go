@@ -83,7 +83,7 @@ func parseAddress(addr []byte, data []byte) ([]byte, error) {
 			return nil, fmt.Errorf("invalid prefix in address specification: %s", addr)
 		}
 
-		end := skipUntilChar(addr, start+1, quote)
+		end := SkipUntilChar(addr, start+1, quote)
 		prefix = addr[start+1 : end]
 		if len(prefix) == 0 {
 			return nil, fmt.Errorf("invalid prefix in address specification: %s", addr)
@@ -227,7 +227,7 @@ func addrRegexp(data []byte, start, end string) (int, int, error) {
 	return lo, hi, nil
 }
 
-func skipUntilChar(data []byte, i int, c byte) int {
+func SkipUntilChar(data []byte, i int, c byte) int {
 	n := len(data)
 	for i < n && data[i] != c {
 		i++
