@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"unicode"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/kr/text"
 )
 
@@ -28,6 +29,9 @@ func (r *Renderer) newline(w io.Writer) {
 }
 
 var re = regexp.MustCompile("  +")
+
+// lastNode returns true if we are the last node under this parent.
+func lastNode(node ast.Node) bool { return ast.GetNextNode(node) == nil }
 
 // wrapText wraps the text in data, taking len(prefix) into account.
 func (r *Renderer) wrapText(data, prefix []byte) []byte {

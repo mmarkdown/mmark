@@ -153,6 +153,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
 	// created with the list marker, taking the current prefix into account.
+	lastListItem := false
 	if item, inList := para.Parent.(*ast.ListItem); inList {
 		plen := r.prefix.len() - 3
 		switch x := item.ListFlags; {
@@ -171,11 +172,19 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
+
+		lastListItem = lastNode(item)
 	}
 
 	r.out(w, indented)
 	r.cr(w)
-	r.newline(w)
+	// ending is a bit tricky
+	if !lastListItem {
+		r.newline(w) // with a prefix
+	} else {
+		// if we are the last we don't want to output a danling prefix, just a new line
+		r.cr(w)
+	}
 }
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
@@ -390,7 +399,6 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return
 	}
 	r.prefix.pop()
-	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
