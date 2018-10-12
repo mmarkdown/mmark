@@ -115,7 +115,7 @@ func AttributeBytes(attr *ast.Attribute) []byte {
 	}
 	sort.Strings(keys)
 
-	for k := range attr.Attrs {
+	for _, k := range keys {
 		if ret.Len() > 1 {
 			ret.WriteByte(' ')
 		}

@@ -172,6 +172,11 @@ func main() {
 			ioutil.WriteFile(fileName, x, 0600)
 			continue
 		}
+		if *flagMarkdown {
+			fmt.Print(string(x))
+			continue
+		}
+
 		fmt.Println(string(x))
 	}
 }

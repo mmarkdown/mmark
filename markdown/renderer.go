@@ -153,10 +153,10 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
 	// created with the list marker, taking the current prefix into account.
-	lastListItem := false
-	if item, inList := para.Parent.(*ast.ListItem); inList {
+	listItem, inList := para.Parent.(*ast.ListItem)
+	if inList {
 		plen := r.prefix.len() - 3
-		switch x := item.ListFlags; {
+		switch x := listItem.ListFlags; {
 		case x&ast.ListTypeOrdered != 0:
 			indented[plen+0] = '1'
 			indented[plen+1] = '.'
@@ -172,18 +172,28 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
+	}
 
-		lastListItem = lastNode(item)
+	// Endings and beginnings of paragraphs are hard.
+	prev := ast.GetPrevNode(para)
+	switch prev.(type) {
+	case *ast.BlockQuote:
+		r.newline(w)
+	case *ast.Aside:
+		r.newline(w)
+	case *ast.List:
+		r.newline(w)
 	}
 
 	r.out(w, indented)
 	r.cr(w)
-	// ending is a bit tricky
-	if !lastListItem {
-		r.newline(w) // with a prefix
-	} else {
-		// if we are the last we don't want to output a danling prefix, just a new line
-		r.cr(w)
+
+	if inList && !lastNode(listItem) {
+		r.newline(w)
+		return
+	}
+	if !lastNode(para) {
+		r.newline(w)
 	}
 }
 
@@ -373,23 +383,19 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 
 func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	if !entering {
+		r.newline(w)
 		return
 	}
 
 	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
+		r.newline(w)
 		r.outs(w, "Quote: ")
 	case *ast.Table:
 		r.outs(w, "Table: ")
 	case *ast.CodeBlock:
 		r.outs(w, "Figure: ")
-	}
-}
-
-func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
-	if !entering {
-		r.newline(w)
 	}
 }
 
@@ -495,7 +501,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Caption:
 		r.caption(w, node, entering)
 	case *ast.CaptionFigure:
-		r.captionFigure(w, node, entering)
+		// do nothing
 	case *ast.Table:
 		r.table(w, node, entering)
 	case *ast.TableCell:
@@ -582,12 +588,7 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 	buf.Truncate(0)
 	data := trimmed.Bytes()
-	i := len(data)
-	for data[i-1] == '\n' {
-		i--
-	}
-
-	buf.Write(data[:i])
+	buf.Write(data)
 }
 
 var (

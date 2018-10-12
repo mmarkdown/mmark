@@ -116,7 +116,15 @@ type prefixStack struct {
 }
 
 func (p *prefixStack) push(data []byte) { p.p = append(p.p, data) }
-func (p *prefixStack) pop()             { p.p = p.p[:len(p.p)-1] }
+
+func (p *prefixStack) pop() []byte {
+	if len(p.p) == 0 {
+		return nil
+	}
+	last := p.p[len(p.p)-1]
+	p.p = p.p[:len(p.p)-1]
+	return last
+}
 
 // flatten stack in reverse order
 func (p *prefixStack) flatten() []byte {
