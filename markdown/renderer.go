@@ -335,6 +335,22 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		return
 	}
 
+	defer ast.RemoveFromTree(link) // nothing needs to be rendered anymore
+
+	// footnote
+	if link.NoteID > 0 {
+		r.outs(w, "^[")
+		r.out(w, link.Title)
+		r.outs(w, "]")
+		for _, child := range link.GetChildren() {
+			ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
+				ast.RemoveFromTree(child)
+				return ast.GoToNext
+			})
+		}
+		return
+	}
+
 	// Render the text here, because we need it before the link.
 	r.outs(w, "[")
 	for _, child := range link.GetChildren() {
@@ -343,7 +359,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		})
 	}
 	r.outs(w, "]")
-	ast.RemoveFromTree(link) // nothing needs to be rendered anymore
 
 	r.outs(w, "(")
 	r.out(w, link.Destination)
@@ -461,6 +476,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
+	case *ast.Footnotes:
+		// do nothing, we're not outputing a footnote list
 	case *ast.Text:
 		r.text(w, node, entering)
 	case *ast.Softbreak:
