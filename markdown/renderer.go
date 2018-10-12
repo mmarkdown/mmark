@@ -203,6 +203,11 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		return
 	}
 	r.prefix.pop()
+	next := ast.GetNextNode(list)
+	switch next.(type) {
+	case *ast.Heading:
+		r.newline(w)
+	}
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
