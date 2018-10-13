@@ -75,7 +75,9 @@ Making a draft in text form (v2 output)
     % ./mmark -2 rfc/3514.md > x.xml
     % xml2rfc --text x.xml
 
-Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`.
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`. And
+outputting markdown is done with the `-markdown` switch (optionally you can use `-width` to set the
+text width).
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"

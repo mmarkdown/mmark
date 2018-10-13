@@ -154,7 +154,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
 	// created with the list marker, taking the current prefix into account.
 	listItem, inList := para.Parent.(*ast.ListItem)
-	if inList {
+	firstPara := ast.GetPrevNode(para) // only the first para in the listItem needs a list marker
+	if inList && firstPara == nil {
 		plen := r.prefix.len() - 3
 		switch x := listItem.ListFlags; {
 		case x&ast.ListTypeOrdered != 0:
