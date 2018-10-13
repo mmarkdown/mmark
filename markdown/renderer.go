@@ -152,7 +152,6 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	if ok {
 		end = buf.Len()
 	}
-
 	// Reformat the entire buffer and rewrite to the writer.
 	b := buf.Bytes()[r.paraStart:end]
 	indented := r.wrapText(b, r.prefix.flatten())
@@ -195,7 +194,11 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 
 	r.out(w, indented)
-	r.cr(w)
+	// A paragraph can only be rendered if we are in a subfigure, if so suppress some newlines.
+	_, inCaption := para.Parent.(*ast.CaptionFigure)
+	if !inCaption {
+		r.cr(w)
+	}
 
 	if inList && !lastNode(listItem) {
 		r.newline(w)
@@ -415,6 +418,24 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 }
 
+func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
+	// if one of our children is an image this is an subfigure.
+	isImage := false
+	ast.WalkFunc(figure, func(node ast.Node, entering bool) ast.WalkStatus {
+		_, isImage = node.(*ast.Image)
+		if isImage {
+			return ast.Terminate
+		}
+		return ast.GoToNext
+
+	})
+	if isImage && entering {
+		r.newline(w)
+		r.outs(w, "!---")
+		r.cr(w)
+	}
+}
+
 func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	if !entering {
 		r.newline(w)
@@ -426,11 +447,18 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	case *ast.BlockQuote:
 		r.newline(w)
 		r.outs(w, "Quote: ")
+		return
 	case *ast.Table:
 		r.outs(w, "Table: ")
+		return
 	case *ast.CodeBlock:
 		r.outs(w, "Figure: ")
+		return
 	}
+	// If here, we're dealing with a subfigure captionFigure.
+	r.outs(w, "!---")
+	r.cr(w)
+	r.outs(w, "Figure: ")
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
@@ -538,7 +566,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Caption:
 		r.caption(w, node, entering)
 	case *ast.CaptionFigure:
-		// do nothing
+		r.captionFigure(w, node, entering)
 	case *ast.Table:
 		r.table(w, node, entering)
 	case *ast.TableCell:

@@ -1,20 +1,23 @@
 package markdown
 
-import "runtime"
+import (
+	"io"
+	"runtime"
+)
 
-func caller() string {
+func caller(w io.Writer) {
 	fpcs := make([]uintptr, 1)
-
-	// skip 3 levels to get to the caller of whoever called Caller()
 	n := runtime.Callers(3, fpcs)
 	if n == 0 {
-		return "n/a"
+		io.WriteString(w, "n/a")
+		return
 	}
 
 	fun := runtime.FuncForPC(fpcs[0] - 1)
 	if fun == nil {
-		return "n/a"
+		io.WriteString(w, "n/a")
+		return
 	}
 
-	return fun.Name()
+	io.WriteString(w, fun.Name())
 }
