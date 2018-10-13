@@ -49,6 +49,7 @@ type Renderer struct {
 	cellStart int
 	col       int
 	colWidth  []int
+	colAlign  []ast.CellAlignFlags
 	tableType ast.Node
 }
 
@@ -238,10 +239,11 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 	if entering {
-		r.colWidth = r.tableColWidth(tab)
+		r.colWidth, r.colAlign = r.tableColWidth(tab)
 		r.col = 0
 	} else {
 		r.colWidth = []int{}
+		r.colAlign = []ast.CellAlignFlags{}
 	}
 }
 
@@ -252,6 +254,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 		for i, width := range r.colWidth {
 			if _, isFooter := r.tableType.(*ast.TableFooter); isFooter {
 				r.out(w, bytes.Repeat([]byte("="), width+1))
+
 				if i == len(r.colWidth)-1 {
 					r.cr(w)
 					r.outPrefix(w)
@@ -269,7 +272,15 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 			if i == 0 {
 				r.outPrefix(w)
 			}
-			r.out(w, bytes.Repeat([]byte("-"), width+1))
+			heading := bytes.Repeat([]byte("-"), width+1)
+
+			switch r.colAlign[i] {
+			case ast.TableAlignmentLeft:
+				heading[0] = ':'
+			case ast.TableAlignmentRight:
+				heading[width] = ':'
+			}
+			r.out(w, heading)
 			if i == len(r.colWidth)-1 {
 				r.cr(w)
 			} else {
