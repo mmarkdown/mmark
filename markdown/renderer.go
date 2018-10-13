@@ -94,6 +94,13 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		r.cr(w)
 		return
 	}
+
+	prev := ast.GetPrevNode(node)
+	switch prev.(type) {
+	case *ast.List, *ast.Aside, *ast.BlockQuote:
+		r.newline(w)
+	}
+
 	if buf, ok := w.(*bytes.Buffer); ok {
 		r.headingStart = buf.Len()
 	}
@@ -204,11 +211,6 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		return
 	}
 	r.prefix.pop()
-	next := ast.GetNextNode(list)
-	switch next.(type) {
-	case *ast.Heading:
-		r.newline(w)
-	}
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
