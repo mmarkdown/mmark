@@ -154,8 +154,18 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 	// Reformat the entire buffer and rewrite to the writer.
 	b := buf.Bytes()[r.paraStart:end]
-	indented := r.wrapText(b, r.prefix.flatten())
+	// Ugly hack to re-detect code includes and a potential caption that should be put on a new line.
+	if newlines := bytes.Count(b, []byte("\n")); newlines == 1 { // cheap check first for one line paragraph.
+		if j := isCodeInclude(b); j > 0 {
+			if bytes.HasPrefix(b[j:], []byte("\nFigure: ")) {
+				r.cr(w)
+				r.cr(w)
+				return
+			}
+		}
+	}
 
+	indented := r.wrapText(b, r.prefix.flatten())
 	buf.Truncate(r.paraStart)
 
 	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
@@ -190,6 +200,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	case *ast.Aside:
 		r.newline(w)
 	case *ast.List:
+		r.newline(w)
+	case *ast.MathBlock:
 		r.newline(w)
 	}
 
@@ -427,6 +439,7 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering boo
 
 	r.outPrefix(w)
 	r.outs(w, "$$")
+	r.cr(w)
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {

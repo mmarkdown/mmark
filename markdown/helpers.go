@@ -51,7 +51,8 @@ func escapeText(data []byte) []byte {
 	for i := range data {
 		switch data[i] {
 		case '<':
-			if isCodeInclude(data[i:]) {
+			// don't escape if this is a code include.
+			if j := isCodeInclude(data[i:]); j > 0 {
 				buf.WriteByte(data[i])
 				continue
 			}
