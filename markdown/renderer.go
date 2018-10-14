@@ -415,7 +415,18 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 	r.outs(w, ")")
 }
 
-func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
+func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering bool) {
+	if !entering {
+		return
+	}
+	r.outPrefix(w)
+	r.outs(w, "$$")
+
+	math := r.indentText(mathBlock.Literal, r.prefix.flatten())
+	r.out(w, math)
+
+	r.outPrefix(w)
+	r.outs(w, "$$")
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
@@ -590,6 +601,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Link:
 		r.link(w, node, entering)
 	case *ast.Math:
+		r.outOneOf(w, true, "$", "$")
+		if entering {
+			r.out(w, node.Literal)
+		}
+		r.outOneOf(w, false, "$", "$")
 	case *ast.Image:
 		r.image(w, node, entering)
 	case *ast.Code:
@@ -597,6 +613,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Literal)
 		r.outs(w, "`")
 	case *ast.MathBlock:
+		r.mathBlock(w, node, entering)
 	case *ast.Subscript:
 		r.outOneOf(w, true, "~", "~")
 		if entering {
