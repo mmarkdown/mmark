@@ -569,6 +569,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.heading(w, node, entering)
 	case *ast.HorizontalRule:
 		if entering {
+			r.newline(w)
 			r.outPrefix(w)
 			r.outs(w, "********\n")
 			r.newline(w)
