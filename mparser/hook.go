@@ -49,6 +49,9 @@ func (i Initial) ReadInclude(from, file string, address []byte) []byte {
 		log.Printf("Failure to parse address for %q: %q (from %q)", path, err, filepath.Join(from, "*"))
 		return nil
 	}
+	if len(data) == 0 {
+		return data
+	}
 	if data[len(data)-1] != '\n' {
 		data = append(data, '\n')
 	}
