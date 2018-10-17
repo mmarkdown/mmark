@@ -30,7 +30,7 @@ var (
 	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
 	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
 	flagWrite    = flag.Bool("w", false, "write to source file when generating markdown")
-	flagWidth    = flag.Int("width", 80, "text width when generating markdown")
+	flagWidth    = flag.Int("width", 100, "text width when generating markdown")
 	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagVersion  = flag.Bool("version", false, "show mmark version")
 )

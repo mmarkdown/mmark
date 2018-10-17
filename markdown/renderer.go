@@ -368,20 +368,14 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	if !entering {
 		return
 	}
-
-	defer ast.RemoveFromTree(link) // nothing needs to be rendered anymore
+	// clear link so we don't render any children.
+	defer func() { *link = ast.Link{} }()
 
 	// footnote
 	if link.NoteID > 0 {
 		r.outs(w, "^[")
 		r.out(w, link.Title)
 		r.outs(w, "]")
-		for _, child := range link.GetChildren() {
-			ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
-				ast.RemoveFromTree(child)
-				return ast.GoToNext
-			})
-		}
 		return
 	}
 
@@ -408,6 +402,9 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 	if !entering {
 		return
 	}
+	// clear link so we don't render any children.
+	defer func() { *node = ast.Image{} }()
+
 	r.outs(w, "![")
 	for _, child := range node.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
@@ -415,7 +412,6 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 		})
 	}
 	r.outs(w, "]")
-	ast.RemoveFromTree(node) // nothing needs to be rendered anymore
 
 	r.outs(w, "(")
 	r.out(w, node.Destination)

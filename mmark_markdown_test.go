@@ -61,7 +61,7 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 	actual := markdown.Render(doc, renderer)
 	actual = bytes.TrimSpace(actual)
 
-	if diff := cmp.Diff(string(actual), string(expected)); diff != "" {
+	if diff := cmp.Diff(string(expected), string(actual)); diff != "" {
 		t.Errorf("%s: differs: (-want +got)\n%s", basename+".md", diff)
 	}
 }

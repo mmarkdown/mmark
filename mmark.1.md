@@ -49,7 +49,7 @@ The syntax is detailed at <https://mmark.nl/syntax>.
      current document.
 
 **-textwidth integer**
-:    set the text width when generating markdown, defaults to 80 characters.
+:    set the text width when generating markdown, defaults to 100 characters.
 
 **-w**
 :    write to source file when generating markdown.
