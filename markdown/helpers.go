@@ -7,7 +7,7 @@ import (
 	"unicode"
 
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/kr/text"
+	"github.com/mmarkdown/mmark/pkg/text"
 )
 
 func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
