@@ -475,7 +475,7 @@ a normative reference for RFC 2535. To suppress a citation use `[@-RFC1000]`. It
 citation to the references, but does not show up in the document as a citation.
 
 The first seen modifier determines the type (suppressed, normative or informative).
-Multiple citation can separated with a semicolon: `[@RFC1034; @RFC1035]`.
+Multiple citation can separated with a semicolon: `[@RFC1034;@RFC1035]`.
 
 If you reference an RFC, I-D or W3C document the reference will be added automatically (no need to
 muck about with an `<reference>` block). This is to say:
