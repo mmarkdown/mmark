@@ -37,8 +37,7 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		bibliographyItem(w, node, entering)
 		return ast.GoToNext, true
 	case *mast.Title:
-		// outout toml title block in html.
-		//title(w, node, entering)
+		// we out if in mmark.go with a hack to capture it.
 		return ast.GoToNext, true
 	case *mast.DocumentIndex:
 		if !entering {

@@ -92,7 +92,9 @@ func main() {
 			ParserHook: func(data []byte) (ast.Node, []byte, int) {
 				node, data, consumed := mparser.Hook(data)
 				if t, ok := node.(*mast.Title); ok {
-					documentTitle = t.TitleData.Title
+					if !t.IsTriggerDash() {
+						documentTitle = t.TitleData.Title
+					}
 				}
 				return node, data, consumed
 			},

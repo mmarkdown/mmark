@@ -534,10 +534,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Document:
 		// do nothing
 	case *mast.Title:
-		r.outs(w, "%%%")
+		r.outs(w, node.Trigger)
 		r.out(w, node.Content)
-		r.cr(w)
-		r.outs(w, "%%%")
+		r.outs(w, node.Trigger)
 		r.cr(w)
 		r.cr(w)
 	case *mast.Bibliography:

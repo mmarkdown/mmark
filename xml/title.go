@@ -28,6 +28,11 @@ var StatusToCategory = map[string]string{
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	// Order is fixed in RFC 7991.
 
+	if t.IsTriggerDash() {
+		// it was not parsed, leave it alone.
+		return
+	}
+
 	d := t.TitleData
 	if d == nil {
 		return

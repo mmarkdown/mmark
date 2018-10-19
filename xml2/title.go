@@ -12,6 +12,10 @@ import (
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	// Order is fixed in RFC 7749.
 
+	if t.IsTriggerDash() {
+		return
+	}
+
 	d := t.TitleData
 	if d == nil {
 		return

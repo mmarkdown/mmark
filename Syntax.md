@@ -230,14 +230,27 @@ standard](https://tools.ietf.org/html/rfc7991). More on these below. The complet
 specified in [TOML](https://github.com/toml-lang/toml). Examples title blocks can be [found in the
 repository of Mmark](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
-The title block itself needs three or more `%`'s at the start and end of the block. A minimal title
-block would look like this:
+The title block itself needs three or more `%`'s (or `-`'s) at the start and end of the block. A
+minimal title block would look like this:
 
 ~~~
 %%%
 title = "Foo Bar"
 %%%
 ~~~
+or
+
+~~~
+---
+title = "Foo Bar"
+---
+~~~
+
+The difference between the two is:
+
+* `%%%`: block is assumed to be encoded in TOML and *parsed*.
+* `---`: block is not parsed just outputted as-is again (for markdown output), all other format
+  ignore the contents.
 
 #### Elements of the Title Block
 
