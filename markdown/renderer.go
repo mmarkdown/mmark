@@ -574,7 +574,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.HTMLSpan:
 		r.out(w, node.Literal)
 	case *ast.HTMLBlock:
-		r.out(w, node.Content)
+		r.out(w, node.Literal)
 		r.cr(w)
 		r.cr(w)
 	case *ast.List:

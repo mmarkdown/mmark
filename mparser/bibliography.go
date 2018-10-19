@@ -32,9 +32,9 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 				seen[string(d)] = ref
 			}
 		case *ast.HTMLBlock:
-			anchor := anchorFromReference(c.Content)
+			anchor := anchorFromReference(c.Literal)
 			if anchor != nil {
-				raw[string(bytes.ToLower(anchor))] = c.Content
+				raw[string(bytes.ToLower(anchor))] = c.Literal
 			}
 		}
 		return ast.GoToNext
@@ -139,6 +139,6 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 	}
 
 	node := &ast.HTMLBlock{}
-	node.Content = data[:i]
+	node.Literal = data[:i]
 	return node, nil, i
 }
