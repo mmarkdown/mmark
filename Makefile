@@ -18,7 +18,7 @@ clean:
 .PHONY: git-commit
 git-commit:
 	git ci -am"Version $(VERSION)"
-	git push
+	git push --tags
 
 .PHONY: build
 build:
