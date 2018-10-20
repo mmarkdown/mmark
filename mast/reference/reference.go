@@ -1,6 +1,8 @@
 // Package reference defines the elements of a <reference> block.
 package reference
 
+import "encoding/xml"
+
 // Author is the reference author.
 type Author struct {
 	Fullname string `xml:"fullname,attr"`
@@ -30,7 +32,8 @@ type Format struct {
 
 // Reference is the entire <reference> structure.
 type Reference struct {
-	Anchor string `xml:"anchor,attr"`
-	Front  Front  `xml:"front"`
-	Format Format `xml:"format"`
+	XMLName xml.Name `xml:"reference"`
+	Anchor  string   `xml:"anchor,attr"`
+	Front   Front    `xml:"front"`
+	Format  *Format  `xml:"format,omitempty"`
 }

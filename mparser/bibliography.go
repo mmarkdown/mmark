@@ -48,7 +48,6 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 				log.Printf("Failed to unmarshal reference: %q: %s", r.Anchor, e)
 				continue
 			}
-			r.Raw = raw
 			r.Reference = x
 		}
 
@@ -139,6 +138,19 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 	}
 
 	node := &ast.HTMLBlock{}
-	node.Literal = data[:i]
+	node.Literal = fmtReference(data[:i])
 	return node, nil, i
+}
+
+func fmtReference(data []byte) []byte {
+	var x reference.Reference
+	if e := xml.Unmarshal(data, &x); e != nil {
+		return data
+	}
+
+	out, e := xml.MarshalIndent(x, "", "   ")
+	if e != nil {
+		return data
+	}
+	return out
 }
