@@ -503,7 +503,14 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		return
 	}
 
-	r.outs(w, "<figure>")
+	if captionFigure.HeadingID != "" {
+		mast.AttributeInit(captionFigure)
+		captionFigure.Attribute.ID = []byte(captionFigure.HeadingID)
+	}
+
+	r.outs(w, "<figure")
+	r.outAttr(w, html.BlockAttrs(captionFigure))
+
 	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {
 		if caption, ok := child.(*ast.Caption); ok {
@@ -522,14 +529,18 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 		r.outs(w, "</table>")
 		return
 	}
+	captionFigure, isCaptionFigure := tab.Parent.(*ast.CaptionFigure)
+	if isCaptionFigure && captionFigure.HeadingID != "" {
+		mast.AttributeInit(tab)
+		tab.Attribute.ID = []byte(captionFigure.HeadingID)
+	}
 
 	tag := tagWithAttributes("<table", html.BlockAttrs(tab))
 	r.outs(w, tag)
 
 	// Now render the caption if our parent is a ast.CaptionFigure
 	// and then *remove* it from the tree.
-	captionFigure, ok := tab.Parent.(*ast.CaptionFigure)
-	if !ok {
+	if !isCaptionFigure {
 		return
 	}
 	for _, child := range captionFigure.GetChildren() {
@@ -549,6 +560,11 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		r.outs(w, "</blockquote>")
 		return
 	}
+	captionFigure, isCaptionFigure := block.Parent.(*ast.CaptionFigure)
+	if isCaptionFigure && captionFigure.HeadingID != "" {
+		mast.AttributeInit(block)
+		block.Attribute.ID = []byte(captionFigure.HeadingID)
+	}
 
 	r.outs(w, "<blockquote")
 	r.outAttr(w, html.BlockAttrs(block))
@@ -556,8 +572,7 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 
 	// Now render the caption if our parent is a ast.CaptionFigure
 	// and then *remove* it from the tree.
-	captionFigure, ok := block.Parent.(*ast.CaptionFigure)
-	if !ok {
+	if !isCaptionFigure {
 		return
 	}
 	for _, child := range captionFigure.GetChildren() {
