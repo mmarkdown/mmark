@@ -560,6 +560,10 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		r.outs(w, "</figure>\n")
 		return
 	}
+	if captionFigure.HeadingID != "" {
+		mast.AttributeInit(captionFigure)
+		captionFigure.Attribute.ID = []byte(captionFigure.HeadingID)
+	}
 
 	r.outs(w, "<figure")
 	r.outAttr(w, html.BlockAttrs(captionFigure))
@@ -586,13 +590,19 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 		r.outs(w, "</texttable>")
 		return
 	}
+	captionFigure, inFigure := tab.Parent.(*ast.CaptionFigure)
+	if inFigure {
+		if captionFigure.HeadingID != "" {
+			mast.AttributeInit(tab)
+			tab.Attribute.ID = []byte(captionFigure.HeadingID)
+		}
+	}
 
 	r.outs(w, "<texttable")
 	r.outAttr(w, html.BlockAttrs(tab))
 	// Now render the caption if our parent is a ast.CaptionFigure
 	// and then *remove* it from the tree.
-	captionFigure, ok := tab.Parent.(*ast.CaptionFigure)
-	if !ok {
+	if !inFigure {
 		r.outs(w, `>`)
 		return
 	}

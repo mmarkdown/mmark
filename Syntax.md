@@ -388,6 +388,17 @@ And for a quote:
 
      Quote: https://example.com, Napoleon Bonaparte
 
+A caption can potentially contain a "heading ID": `{#id}` as the *last* text in the caption. If this
+is found that ID is used as the ID for the entire figure:
+
+~~~
+Name    | Age
+--------|-----:
+Bob     | 27
+Alice   | 23
+Table: This is the table caption. {#ages}
+~~~
+
 ### Asides
 
 Any text prefixed with `A>` will become an
