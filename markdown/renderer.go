@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -176,9 +177,23 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		plen := r.prefix.len() - 3
 		switch x := listItem.ListFlags; {
 		case x&ast.ListTypeOrdered != 0:
-			indented[plen+0] = '1'
-			indented[plen+1] = '.'
-			indented[plen+2] = ' '
+			list := listItem.Parent.(*ast.List) // this must be always true
+			switch s := list.Start; {
+			case s == 0:
+				indented[plen+0] = '1'
+				indented[plen+1] = '.'
+				indented[plen+2] = ' '
+			case s < 10:
+				b := strconv.Itoa(s)
+				indented[plen+0] = b[0]
+				indented[plen+1] = '.'
+				indented[plen+2] = ' '
+			default:
+				// for s > 9 we don't have the space to plot things...
+				indented[plen+0] = '1'
+				indented[plen+1] = '.'
+				indented[plen+2] = ' '
+			}
 		case x&ast.ListTypeTerm != 0:
 			indented = indented[plen+3:] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:
