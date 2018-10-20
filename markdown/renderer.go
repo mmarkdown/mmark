@@ -641,13 +641,13 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Subscript:
 		r.outOneOf(w, true, "~", "~")
 		if entering {
-			r.out(w, escapeText(node.Literal))
+			r.out(w, EscapeText(node.Literal))
 		}
 		r.outOneOf(w, false, "~", "~")
 	case *ast.Superscript:
 		r.outOneOf(w, true, "^", "^")
 		if entering {
-			r.out(w, escapeText(node.Literal))
+			r.out(w, EscapeText(node.Literal))
 		}
 		r.outOneOf(w, false, "^", "^")
 	default:
@@ -669,7 +669,7 @@ func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 	if !entering {
 		return
 	}
-	r.out(w, escapeText(node.Literal))
+	r.out(w, EscapeText(node.Literal))
 }
 
 func (r *Renderer) RenderHeader(_ io.Writer, _ ast.Node) {}

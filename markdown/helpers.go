@@ -45,7 +45,7 @@ func (r *Renderer) indentText(data, prefix []byte) []byte {
 }
 
 // escapeText escape the text in data using isEscape.
-func escapeText(data []byte) []byte {
+func EscapeText(data []byte) []byte {
 	buf := &bytes.Buffer{}
 
 	for i := range data {
