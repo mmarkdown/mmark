@@ -418,10 +418,10 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	openTag := "<c"
 	if tableCell.IsHeader {
 		openTag = "<ttcol"
-	}
-	align := tableCell.Align.String()
-	if align != "" {
-		mast.SetAttribute(tableCell, "align", []byte(align))
+		align := tableCell.Align.String()
+		if align != "" {
+			mast.SetAttribute(tableCell, "align", []byte(align))
+		}
 	}
 	if ast.GetPrevNode(tableCell) == nil {
 		r.cr(w)
