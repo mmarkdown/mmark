@@ -65,8 +65,8 @@ func NewRenderer(opts RendererOptions) *Renderer {
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
-	// TODO(miek): hard to do because of the wrapping of the paragraph that
-	// happens afer this.
+	r.outs(w, `\`)
+	r.endline(w)
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
@@ -166,7 +166,20 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		}
 	}
 
-	indented := r.wrapText(b, r.prefix.flatten())
+	var indented []byte
+	// Scan for hardbreaks, if found, split the text up into multiple pieces, wrap each and put them
+	// back together with a newline in between.
+	p := bytes.Split(b, []byte("\\\n"))
+	for i := range p {
+		if len(indented) > 0 {
+			p1 := r.wrapText(p[i], r.prefix.flatten())
+			indented = append(indented, []byte("\\\n")...)
+			indented = append(indented, p1...)
+			continue
+		}
+		indented = r.wrapText(p[i], r.prefix.flatten())
+	}
+
 	buf.Truncate(r.paraStart)
 
 	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
