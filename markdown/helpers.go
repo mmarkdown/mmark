@@ -23,14 +23,6 @@ func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s); r.suppres
 func (r *Renderer) outPrefix(w io.Writer)      { r.out(w, r.prefix.flatten()); r.suppress = false }
 func (r *Renderer) endline(w io.Writer)        { r.outs(w, "\n"); r.suppress = false }
 
-func (r *Renderer) cr(w io.Writer) {
-	if r.suppress {
-		return
-	}
-	r.outs(w, "\n")
-	r.suppress = true
-}
-
 func (r *Renderer) newline(w io.Writer) {
 	if r.suppress {
 		return

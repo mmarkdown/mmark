@@ -64,7 +64,10 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	return &Renderer{opts: opts, prefix: &prefixStack{p: [][]byte{}}}
 }
 
-func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {}
+func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
+	// TODO(miek): hard to do because of the wrapping of the paragraph that
+	// happens afer this.
+}
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
 	if !entering {
@@ -232,7 +235,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 		r.out(w, codeBlock.Info)
 	}
 
-	r.cr(w)
+	r.endline(w)
 	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
 	r.out(w, indented)
 	r.outPrefix(w)
@@ -263,7 +266,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 				r.out(w, bytes.Repeat([]byte("="), width+1))
 
 				if i == len(r.colWidth)-1 {
-					r.cr(w)
+					r.endline(w)
 					r.outPrefix(w)
 				} else {
 					r.outs(w, "|")
@@ -289,7 +292,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 			}
 			r.out(w, heading)
 			if i == len(r.colWidth)-1 {
-				r.cr(w)
+				r.endline(w)
 			} else {
 				r.outs(w, "|")
 			}
@@ -320,7 +323,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	fill := bytes.Repeat(Space, size-(cur-r.cellStart))
 	r.out(w, fill)
 	if r.col == len(r.colWidth)-1 {
-		r.cr(w)
+		r.endline(w)
 	} else {
 		r.outs(w, "|")
 	}
@@ -446,7 +449,7 @@ func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, enterin
 	})
 	if isImage && entering {
 		r.outs(w, "!---")
-		r.cr(w)
+		r.endline(w)
 	}
 }
 
@@ -470,7 +473,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	}
 	// If here, we're dealing with a subfigure captionFigure.
 	r.outs(w, "!---")
-	r.cr(w)
+	r.endline(w)
 	r.outs(w, "Figure: ")
 }
 
@@ -515,14 +518,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 				default:
 					r.outPrefix(w)
 					w.Write((mast.AttributeBytes(attr)))
-					r.cr(w)
+					r.endline(w)
 				}
 			}
 
 		default:
 			r.outPrefix(w)
 			w.Write((mast.AttributeBytes(attr)))
-			r.cr(w)
+			r.endline(w)
 
 		}
 	}
@@ -535,7 +538,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Content)
 		r.outs(w, node.Trigger)
 		r.outs(w, "\n")
-		r.cr(w)
+		r.newline(w)
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
@@ -545,6 +548,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.text(w, node, entering)
 	case *ast.Softbreak:
 	case *ast.Hardbreak:
+		r.hardBreak(w, node)
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
