@@ -1,7 +1,6 @@
 package markdown
 
 import (
-	"bytes"
 	"io"
 	"regexp"
 	"unicode"
@@ -47,54 +46,6 @@ func (r *Renderer) wrapText(data, prefix []byte) []byte {
 func (r *Renderer) indentText(data, prefix []byte) []byte {
 	return text.IndentBytes(data, prefix)
 }
-
-// escapeText escape the text in data using isEscape.
-func EscapeText(data []byte) []byte {
-	buf := &bytes.Buffer{}
-
-	for i := range data {
-		switch data[i] {
-		case '<':
-			// don't escape if this is a code include.
-			if j := isCodeInclude(data[i:]); j > 0 {
-				buf.WriteByte(data[i])
-				continue
-			}
-			fallthrough
-		case '>':
-			fallthrough
-		case '&':
-			fallthrough
-		case '\\':
-			if !isEscape(data, i) {
-				buf.WriteByte('\\')
-			}
-		}
-		buf.WriteByte(data[i])
-	}
-	return buf.Bytes()
-}
-
-// isEscape returns true if byte i is prefixed by an odd number of backslahses.
-func isEscape(data []byte, i int) bool {
-	if i == 0 {
-		return false
-	}
-	if i == 1 {
-		return data[0] == '\\'
-	}
-	j := i - 1
-	for ; j >= 0; j-- {
-		if data[j] != '\\' {
-			break
-		}
-	}
-	j++
-	// odd number of backslahes means escape
-	return (i-j)%2 != 0
-}
-
-// Copied from gomarkdown/markdown.
 
 // sanitizeAnchorName returns a sanitized anchor name for the given text.
 // Taken from https://github.com/shurcooL/sanitized_anchor_name/blob/master/main.go#L14:1
