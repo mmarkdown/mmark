@@ -18,14 +18,18 @@ func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
 	}
 }
 
-func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
-func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s) }
-func (r *Renderer) cr(w io.Writer)             { r.outs(w, "\n") }
-func (r *Renderer) outPrefix(w io.Writer)      { r.out(w, r.prefix.flatten()) }
+func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d); r.suppress = false }
+func (r *Renderer) outs(w io.Writer, s string) { io.WriteString(w, s); r.suppress = false }
+func (r *Renderer) outPrefix(w io.Writer)      { r.out(w, r.prefix.flatten()); r.suppress = false }
+func (r *Renderer) endline(w io.Writer)        { r.outs(w, "\n"); r.suppress = false }
 
 func (r *Renderer) newline(w io.Writer) {
+	if r.suppress {
+		return
+	}
 	r.out(w, r.prefix.flatten())
 	r.outs(w, "\n")
+	r.suppress = true
 }
 
 var re = regexp.MustCompile("  +")
@@ -114,6 +118,18 @@ func sanitizeAnchorName(text string) string {
 
 type prefixStack struct {
 	p [][]byte
+}
+
+func (r *Renderer) pop() []byte {
+	last := r.prefix.pop()
+	if last != nil && r.prefix.len() == 0 {
+		r.suppress = false
+	}
+	return last
+}
+
+func (r *Renderer) push(data []byte) {
+	r.prefix.push(data)
 }
 
 func (p *prefixStack) push(data []byte) { p.p = append(p.p, data) }

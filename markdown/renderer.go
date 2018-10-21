@@ -52,6 +52,8 @@ type Renderer struct {
 	colWidth  []int
 	colAlign  []ast.CellAlignFlags
 	tableType ast.Node
+
+	suppress bool // when true we suppress newlines
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -62,7 +64,10 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	return &Renderer{opts: opts, prefix: &prefixStack{p: [][]byte{}}}
 }
 
-func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {}
+func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
+	// TODO(miek): hard to do because of the wrapping of the paragraph that
+	// happens afer this.
+}
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
 	if !entering {
@@ -70,13 +75,12 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) 
 	}
 	switch node.Matter {
 	case ast.DocumentMatterFront:
-		r.outs(w, "{frontmatter}\n")
+		r.outs(w, "{frontmatter}\n\n")
 	case ast.DocumentMatterMain:
-		r.outs(w, "{mainmatter}\n")
+		r.outs(w, "{mainmatter}\n\n")
 	case ast.DocumentMatterBack:
-		r.outs(w, "{backmatter}\n")
+		r.outs(w, "{backmatter}\n\n")
 	}
-	r.cr(w)
 }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
@@ -92,16 +96,12 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 				r.outs(w, " {#"+node.HeadingID+"}")
 			}
 		}
-		r.cr(w)
-		r.cr(w)
+		r.endline(w)
+		r.newline(w)
 		return
 	}
 
-	prev := ast.GetPrevNode(node)
-	switch prev.(type) {
-	case *ast.List, *ast.Aside, *ast.BlockQuote:
-		r.newline(w)
-	}
+	r.outPrefix(w)
 
 	if buf, ok := w.(*bytes.Buffer); ok {
 		r.headingStart = buf.Len()
@@ -115,9 +115,9 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 }
 
 func (r *Renderer) horizontalRule(w io.Writer, node *ast.HorizontalRule) {
-	r.cr(w)
+	r.newline(w)
 	r.outs(w, "******")
-	r.cr(w)
+	r.newline(w)
 }
 
 func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
@@ -159,8 +159,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	if newlines := bytes.Count(b, []byte("\n")); newlines == 1 { // cheap check first for one line paragraph.
 		if j := isCodeInclude(b); j > 0 {
 			if bytes.HasPrefix(b[j:], []byte("\nFigure: ")) {
-				r.cr(w)
-				r.cr(w)
+				r.endline(w)
+				r.newline(w)
 				return
 			}
 		}
@@ -207,28 +207,11 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		}
 	}
 
-	// Endings and beginnings of paragraphs are hard.
-	prev := ast.GetPrevNode(para)
-	switch prev.(type) {
-	case *ast.BlockQuote:
-		r.newline(w)
-	case *ast.Aside:
-		r.newline(w)
-	case *ast.List:
-		r.newline(w)
-	case *ast.MathBlock:
-		r.newline(w)
-	}
-
 	r.out(w, indented)
-	// A paragraph can only be rendered if we are in a subfigure, if so suppress some newlines.
-	_, inCaption := para.Parent.(*ast.CaptionFigure)
-	if !inCaption {
-		r.cr(w)
-	}
+	r.endline(w)
 
-	if inList && !lastNode(listItem) {
-		r.newline(w)
+	// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
+	if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
 		return
 	}
 	if !lastNode(para) {
@@ -238,17 +221,13 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
-		r.prefix.push(Space3)
+		r.push(Space3)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
-	if !entering {
-		return
-	}
-
 	r.outPrefix(w)
 	r.outs(w, "~~~")
 	if codeBlock.Info != nil {
@@ -256,15 +235,16 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 		r.out(w, codeBlock.Info)
 	}
 
-	r.cr(w)
+	r.endline(w)
 	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
 	r.out(w, indented)
 	r.outPrefix(w)
-	r.outs(w, "~~~")
-	r.cr(w)
+	r.outs(w, "~~~\n")
+
 	if _, ok := ast.GetNextNode(codeBlock).(*ast.Caption); !ok {
 		r.newline(w)
 	}
+	return
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
@@ -286,7 +266,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 				r.out(w, bytes.Repeat([]byte("="), width+1))
 
 				if i == len(r.colWidth)-1 {
-					r.cr(w)
+					r.endline(w)
 					r.outPrefix(w)
 				} else {
 					r.outs(w, "|")
@@ -312,7 +292,7 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 			}
 			r.out(w, heading)
 			if i == len(r.colWidth)-1 {
-				r.cr(w)
+				r.endline(w)
 			} else {
 				r.outs(w, "|")
 			}
@@ -343,7 +323,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	fill := bytes.Repeat(Space, size-(cur-r.cellStart))
 	r.out(w, fill)
 	if r.col == len(r.colWidth)-1 {
-		r.cr(w)
+		r.endline(w)
 	} else {
 		r.outs(w, "|")
 	}
@@ -417,7 +397,7 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 	if !entering {
 		return
 	}
-	// clear link so we don't render any children.
+	// clear image so we don't render any children.
 	defer func() { *node = ast.Image{} }()
 
 	r.outs(w, "![")
@@ -449,8 +429,11 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering boo
 	r.out(w, math)
 
 	r.outPrefix(w)
-	r.outs(w, "$$")
-	r.cr(w)
+	r.outs(w, "$$\n")
+
+	if !lastNode(mathBlock) {
+		r.newline(w)
+	}
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
@@ -465,9 +448,8 @@ func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, enterin
 
 	})
 	if isImage && entering {
-		r.newline(w)
 		r.outs(w, "!---")
-		r.cr(w)
+		r.endline(w)
 	}
 }
 
@@ -480,7 +462,6 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
-		r.newline(w)
 		r.outs(w, "Quote: ")
 		return
 	case *ast.Table:
@@ -492,24 +473,28 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	}
 	// If here, we're dealing with a subfigure captionFigure.
 	r.outs(w, "!---")
-	r.cr(w)
+	r.endline(w)
 	r.outs(w, "Figure: ")
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
 	if entering {
-		r.prefix.push(Quote)
+		r.push(Quote)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
+	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 	if entering {
-		r.prefix.push(Aside)
+		r.push(Aside)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
+	if !lastNode(block) {
+		r.newline(w)
+	}
 }
 
 // RenderNode renders a markdown node to markdown.
@@ -533,14 +518,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 				default:
 					r.outPrefix(w)
 					w.Write((mast.AttributeBytes(attr)))
-					r.cr(w)
+					r.endline(w)
 				}
 			}
 
 		default:
 			r.outPrefix(w)
 			w.Write((mast.AttributeBytes(attr)))
-			r.cr(w)
+			r.endline(w)
 
 		}
 	}
@@ -552,8 +537,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.outs(w, node.Trigger)
 		r.out(w, node.Content)
 		r.outs(w, node.Trigger)
-		r.cr(w)
-		r.cr(w)
+		r.outs(w, "\n")
+		r.newline(w)
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
@@ -563,6 +548,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.text(w, node, entering)
 	case *ast.Softbreak:
 	case *ast.Hardbreak:
+		r.hardBreak(w, node)
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
@@ -590,12 +576,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Literal)
 	case *ast.HTMLBlock:
 		r.out(w, node.Literal)
-		r.cr(w)
-		r.cr(w)
+		r.endline(w)
+		r.newline(w)
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
-		// do nothing
+		if !entering {
+			r.newline(w)
+		}
 	case *ast.CodeBlock:
 		r.codeBlock(w, node, entering)
 	case *ast.Caption:
@@ -694,7 +682,11 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 	buf.Truncate(0)
 	data := trimmed.Bytes()
-	buf.Write(data)
+	ld := len(data)
+	if ld > 2 && data[ld-1] == '\n' && data[ld-2] == '\n' {
+		ld--
+	}
+	buf.Write(data[:ld])
 }
 
 var (

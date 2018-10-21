@@ -28,7 +28,9 @@ func TestMmarkMarkdown(t *testing.T) {
 			continue
 		}
 		base := f.Name()[:len(f.Name())-3]
-		opts := mmarkdown.RendererOptions{}
+		opts := mmarkdown.RendererOptions{
+			TextWidth: 100,
+		}
 
 		renderer := mmarkdown.NewRenderer(opts)
 

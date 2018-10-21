@@ -1,12 +1,11 @@
 Option Length
 
-:  8-bit unsigned integer. The length of the option in octets (excluding the
-   Option Type and Option Length fields). The value **MUST** be greater than 0.
+:  8-bit unsigned integer. The length of the option in octets (excluding the Option Type and Option
+   Length fields). The value **MUST** be greater than 0.
 
 SRO Param
 
-:  8-bit identifier indicating Scenic Routing parameters encoded as a bit
-   string.
+:  8-bit identifier indicating Scenic Routing parameters encoded as a bit string.
 
    ~~~
    +-+-+-+-+-+-+-+-+

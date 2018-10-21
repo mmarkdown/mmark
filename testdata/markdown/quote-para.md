@@ -2,4 +2,4 @@
 >
 > This is another paragraph.
 
-Quote: On adding complex numbers to Go, Ken Thompson
+This is a new paragraph.
