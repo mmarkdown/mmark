@@ -1,5 +1,7 @@
 *  `len(slice) == n`
+
 *  `cap(slice) == m`
+
 *  `len(array) == cap(array) == m`
 
 !---

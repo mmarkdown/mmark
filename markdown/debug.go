@@ -21,3 +21,5 @@ func caller(w io.Writer) {
 
 	io.WriteString(w, fun.Name())
 }
+
+func debug(w io.Writer) { io.WriteString(w, "*DEBUG*") }

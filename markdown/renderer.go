@@ -140,6 +140,14 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 
 func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	if entering {
+		r.endline(w)
+
+		// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
+		//		if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
+		//			return
+		//		}
+		r.newline(w)
+
 		if buf, ok := w.(*bytes.Buffer); ok {
 			r.paraStart = buf.Len()
 		}
@@ -206,24 +214,14 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 
 	r.out(w, indented)
-	r.endline(w)
-
-	// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
-	if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
-		return
-	}
-	next := ast.GetNextNode(para)
-	if _, isPara := next.(*ast.Paragraph); isPara {
-		r.newline(w)
-	}
 }
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
-		r.prefix.push(Space3)
+		r.push(Space3)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
@@ -431,8 +429,8 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering boo
 	r.out(w, math)
 
 	r.outPrefix(w)
-	r.outs(w, "$$")
-	r.cr(w)
+	r.outs(w, "$$\n")
+	r.newline(w)
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
@@ -447,7 +445,6 @@ func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, enterin
 
 	})
 	if isImage && entering {
-		r.newline(w)
 		r.outs(w, "!---")
 		r.cr(w)
 	}
@@ -479,19 +476,19 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
 	if entering {
-		r.prefix.push(Quote)
+		r.push(Quote)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
 	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 	if entering {
-		r.prefix.push(Aside)
+		r.push(Aside)
 		return
 	}
-	r.prefix.pop()
+	r.pop()
 	r.newline(w)
 }
 

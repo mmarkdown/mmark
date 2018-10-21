@@ -128,6 +128,18 @@ type prefixStack struct {
 	p [][]byte
 }
 
+func (r *Renderer) pop() []byte {
+	last := r.prefix.pop()
+	if last != nil && r.prefix.len() == 0 {
+		r.suppress = false
+	}
+	return last
+}
+
+func (r *Renderer) push(data []byte) {
+	r.prefix.push(data)
+}
+
 func (p *prefixStack) push(data []byte) { p.p = append(p.p, data) }
 
 func (p *prefixStack) pop() []byte {
