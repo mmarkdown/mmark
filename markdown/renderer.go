@@ -72,13 +72,12 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) 
 	}
 	switch node.Matter {
 	case ast.DocumentMatterFront:
-		r.outs(w, "{frontmatter}\n")
+		r.outs(w, "{frontmatter}\n\n")
 	case ast.DocumentMatterMain:
-		r.outs(w, "{mainmatter}\n")
+		r.outs(w, "{mainmatter}\n\n")
 	case ast.DocumentMatterBack:
-		r.outs(w, "{backmatter}\n")
+		r.outs(w, "{backmatter}\n\n")
 	}
-	r.cr(w)
 }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
@@ -113,9 +112,9 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 }
 
 func (r *Renderer) horizontalRule(w io.Writer, node *ast.HorizontalRule) {
-	r.cr(w)
+	r.newline(w)
 	r.outs(w, "******")
-	r.cr(w)
+	r.newline(w)
 }
 
 func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
@@ -140,14 +139,6 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 
 func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	if entering {
-		r.endline(w)
-
-		// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
-		//		if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
-		//			return
-		//		}
-		r.newline(w)
-
 		if buf, ok := w.(*bytes.Buffer); ok {
 			r.paraStart = buf.Len()
 		}
@@ -165,8 +156,8 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	if newlines := bytes.Count(b, []byte("\n")); newlines == 1 { // cheap check first for one line paragraph.
 		if j := isCodeInclude(b); j > 0 {
 			if bytes.HasPrefix(b[j:], []byte("\nFigure: ")) {
-				r.cr(w)
-				r.cr(w)
+				r.endline(w)
+				r.newline(w)
 				return
 			}
 		}
@@ -214,6 +205,15 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	}
 
 	r.out(w, indented)
+	r.endline(w)
+
+	// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
+	if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
+		return
+	}
+	if !lastNode(para) {
+		r.newline(w)
+	}
 }
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
@@ -225,10 +225,6 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
-	if !entering {
-		return
-	}
-
 	r.outPrefix(w)
 	r.outs(w, "~~~")
 	if codeBlock.Info != nil {
@@ -240,11 +236,12 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
 	r.out(w, indented)
 	r.outPrefix(w)
-	r.outs(w, "~~~")
-	r.cr(w)
+	r.outs(w, "~~~\n")
+
 	if _, ok := ast.GetNextNode(codeBlock).(*ast.Caption); !ok {
 		r.newline(w)
 	}
+	return
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
@@ -430,7 +427,10 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering boo
 
 	r.outPrefix(w)
 	r.outs(w, "$$\n")
-	r.newline(w)
+
+	if !lastNode(mathBlock) {
+		r.newline(w)
+	}
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
@@ -489,7 +489,9 @@ func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 		return
 	}
 	r.pop()
-	r.newline(w)
+	if !lastNode(block) {
+		r.newline(w)
+	}
 }
 
 // RenderNode renders a markdown node to markdown.
@@ -532,7 +534,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.outs(w, node.Trigger)
 		r.out(w, node.Content)
 		r.outs(w, node.Trigger)
-		r.cr(w)
+		r.outs(w, "\n")
 		r.cr(w)
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
@@ -570,8 +572,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.out(w, node.Literal)
 	case *ast.HTMLBlock:
 		r.out(w, node.Literal)
-		r.cr(w)
-		r.cr(w)
+		r.endline(w)
+		r.newline(w)
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
@@ -676,7 +678,11 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 	buf.Truncate(0)
 	data := trimmed.Bytes()
-	buf.Write(data)
+	ld := len(data)
+	if ld > 2 && data[ld-1] == '\n' && data[ld-2] == '\n' {
+		ld--
+	}
+	buf.Write(data[:ld])
 }
 
 var (
