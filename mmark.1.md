@@ -1,6 +1,9 @@
-% MMARK(1)
-% Mmark Authors
-% August 2018
+---
+title: 'MMARK(1)'
+author:
+    - Mmark Authors
+date: August 2018
+---
 
 # NAME
 
@@ -19,51 +22,64 @@ Mmark provides an advanced markdown dialect that processes file(s) to produce in
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 and markdown output.
 
-The syntax is detailed at <https://mmark.nl/syntax>.
+The syntax is detailed at [https://mmark.nl/syntax](https://mmark.nl/syntax).
 
 # OPTIONS
 
 **-ast**
-:    print abstract syntax tree and exit.
+
+:  print abstract syntax tree and exit.
 
 **-css string**
-:    link to a CSS stylesheet (only used with -html).
+
+:  link to a CSS stylesheet (only used with -html).
 
 **-fragment**
-:    don't create a full document.
+
+:  don't create a full document.
 
 **-head string**
-:    link to HTML to be included in head (only used with -html).
+
+:  link to HTML to be included in head (only used with -html).
 
 **-html**
-:    create HTML output.
+
+:  create HTML output.
 
 **-2**
-:   generate RFC 7749 XML.
+
+:  generate RFC 7749 XML.
 
 **-markdown**
-:    output (normalized) markdown.
+
+:  output (normalized) markdown.
 
 **-unsafe**
-:    allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
-     current document.
+
+:  allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
+   current document.
 
 **-textwidth integer**
-:    set the text width when generating markdown, defaults to 100 characters.
+
+:  set the text width when generating markdown, defaults to 100 characters.
 
 **-w**
-:    write to source file when generating markdown.
+
+:  write to source file when generating markdown.
 
 **-index**
-:    generate an index at the end of the document (default true).
+
+:  generate an index at the end of the document (default true).
 
 **-bibliography**
-:    generate a bibliography section after the back matter (default true), this needs
-     a `{{backmatter}}` in the document.
+
+:  generate a bibliography section after the back matter (default true), this needs a
+   `{{backmatter}}` in the document.
 
 **-version**
-:    show mmark's version.
+
+:  show mmark's version.
 
 # ALSO SEE
 
-RFC 7991 and RFC 7749. The main site for Mmark is <https://mmark.nl>
+RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.nl](https://mmark.nl)
