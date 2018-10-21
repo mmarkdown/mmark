@@ -52,6 +52,8 @@ type Renderer struct {
 	colWidth  []int
 	colAlign  []ast.CellAlignFlags
 	tableType ast.Node
+
+	suppress bool // when true we suppress newlines
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -92,16 +94,12 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 				r.outs(w, " {#"+node.HeadingID+"}")
 			}
 		}
-		r.cr(w)
-		r.cr(w)
+		r.endline(w)
+		r.newline(w)
 		return
 	}
 
-	prev := ast.GetPrevNode(node)
-	switch prev.(type) {
-	case *ast.List, *ast.Aside, *ast.BlockQuote:
-		r.newline(w)
-	}
+	r.outPrefix(w)
 
 	if buf, ok := w.(*bytes.Buffer); ok {
 		r.headingStart = buf.Len()
@@ -207,31 +205,15 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		}
 	}
 
-	// Endings and beginnings of paragraphs are hard.
-	prev := ast.GetPrevNode(para)
-	switch prev.(type) {
-	case *ast.BlockQuote:
-		r.newline(w)
-	case *ast.Aside:
-		r.newline(w)
-	case *ast.List:
-		r.newline(w)
-	case *ast.MathBlock:
-		r.newline(w)
-	}
-
 	r.out(w, indented)
-	// A paragraph can only be rendered if we are in a subfigure, if so suppress some newlines.
-	_, inCaption := para.Parent.(*ast.CaptionFigure)
-	if !inCaption {
-		r.cr(w)
-	}
+	r.endline(w)
 
-	if inList && !lastNode(listItem) {
-		r.newline(w)
+	// A paragraph can be rendered if we are in a subfigure, if so suppress some newlines.
+	if _, inCaption := para.Parent.(*ast.CaptionFigure); inCaption {
 		return
 	}
-	if !lastNode(para) {
+	next := ast.GetNextNode(para)
+	if _, isPara := next.(*ast.Paragraph); isPara {
 		r.newline(w)
 	}
 }
@@ -417,7 +399,7 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 	if !entering {
 		return
 	}
-	// clear link so we don't render any children.
+	// clear image so we don't render any children.
 	defer func() { *node = ast.Image{} }()
 
 	r.outs(w, "![")
@@ -480,7 +462,6 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
-		r.newline(w)
 		r.outs(w, "Quote: ")
 		return
 	case *ast.Table:
@@ -502,6 +483,7 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return
 	}
 	r.prefix.pop()
+	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
@@ -510,6 +492,7 @@ func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 		return
 	}
 	r.prefix.pop()
+	r.newline(w)
 }
 
 // RenderNode renders a markdown node to markdown.
@@ -595,7 +578,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
-		// do nothing
+		if !entering {
+			r.newline(w)
+		}
 	case *ast.CodeBlock:
 		r.codeBlock(w, node, entering)
 	case *ast.Caption:
