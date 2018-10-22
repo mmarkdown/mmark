@@ -1,0 +1,22 @@
+<texttable anchor="data_types" title="Data Type Values for the DTLS Tunnel Protocol ">
+<ttcol align="center">MsgType</ttcol>
+<ttcol align="left">Description</ttcol>
+
+
+<c>0x01</c>
+<c>Supported SRTP Protection Profiles</c>
+
+<c>0x02</c>
+<c>Unsupported Version</c>
+
+<c>0x03</c>
+<c>Media Keys</c>
+
+<c>0x04</c>
+<c>Tunneled DTLS</c>
+
+<c>0x05</c>
+<c>Endpoint Disconnect</c>
+
+</texttable><t>The value 0x00 and all values in the range 0x06 to 0xFF are reserved.</t>
+

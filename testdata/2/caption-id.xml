@@ -1,0 +1,12 @@
+<texttable anchor="data_types" title="This is a proper table caption. ">
+<ttcol>Name</ttcol>
+<ttcol>Age</ttcol>
+
+
+<c>Bob</c>
+<c>27</c>
+
+<c>Alice</c>
+<c>23</c>
+
+</texttable>
