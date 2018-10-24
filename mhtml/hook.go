@@ -101,7 +101,7 @@ func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	io.WriteString(w, `<dd>`)
 	io.WriteString(w, `<span class="bibliography-author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
 	io.WriteString(w, `<span class="bibliography-title">`+bib.Reference.Front.Title+"</span>\n")
-	if bib.Reference.Format.Target != "" {
+	if bib.Reference.Format != nil && bib.Reference.Format.Target != "" {
 		io.WriteString(w, `<a class="bliography-target" href="`+bib.Reference.Format.Target+"\">"+bib.Reference.Format.Target+"</a>\n")
 	}
 	if bib.Reference.Front.Date.Year != "" {
