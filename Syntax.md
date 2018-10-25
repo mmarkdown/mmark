@@ -592,7 +592,8 @@ These are the changes from Mmark version 1:
 * Citations:
    * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
    * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
-   * **TODO** Reference text is allowed `[@ref p. 23]`.
+   * A reference text suffix is allowed `[@ref, p. 23]`, the separation character is a comma; this
+     mirrors the pandoc syntax.
 * Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
 * Code block callouts are now a renderer setting, not a [Block Level
   Attribute](#block-level-attributes). Callout in code are *only* detected if they are used after
