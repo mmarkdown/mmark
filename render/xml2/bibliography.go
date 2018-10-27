@@ -7,7 +7,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/xml"
+	"github.com/mmarkdown/mmark/render/xml"
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {

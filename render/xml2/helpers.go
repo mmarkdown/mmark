@@ -8,7 +8,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/xml"
+	"github.com/mmarkdown/mmark/render/xml"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }

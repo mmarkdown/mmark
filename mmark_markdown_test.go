@@ -9,8 +9,8 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/google/go-cmp/cmp"
-	mmarkdown "github.com/mmarkdown/mmark/markdown"
 	"github.com/mmarkdown/mmark/mparser"
+	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 )
 
 func TestMmarkMarkdown(t *testing.T) {

@@ -11,12 +11,12 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	mmarkout "github.com/mmarkdown/mmark/markdown"
 	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/mhtml"
 	"github.com/mmarkdown/mmark/mparser"
-	"github.com/mmarkdown/mmark/xml"
-	"github.com/mmarkdown/mmark/xml2"
+	mmarkout "github.com/mmarkdown/mmark/render/markdown"
+	"github.com/mmarkdown/mmark/render/mhtml"
+	"github.com/mmarkdown/mmark/render/xml"
+	"github.com/mmarkdown/mmark/render/xml2"
 )
 
 var (

@@ -9,7 +9,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/xml"
+	"github.com/mmarkdown/mmark/render/xml"
 )
 
 // Flags control optional behavior of XML2 renderer.
