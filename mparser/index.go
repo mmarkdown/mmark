@@ -97,3 +97,15 @@ func newLink(id string, number int, primary bool) *mast.IndexLink {
 	il.Literal = []byte(fmt.Sprintf("%d", number))
 	return il
 }
+
+// AddIndex adds an index to the end of the current document. If not indices can be found
+// this returns false and no index will be added.
+func AddIndex(doc ast.Node) bool {
+	idx := IndexToDocumentIndex(doc)
+	if idx == nil {
+		return false
+	}
+
+	ast.AppendChild(doc, idx)
+	return true
+}

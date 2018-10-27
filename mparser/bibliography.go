@@ -154,3 +154,22 @@ func fmtReference(data []byte) []byte {
 	}
 	return out
 }
+
+// AddBibliography adds the bibliography to the document. It will be
+// added just after the backmatter node. If that node can't be found this
+// function returns false and does nothing.
+func AddBibliography(doc ast.Node) bool {
+	where := NodeBackMatter(doc)
+	if where == nil {
+		return false
+	}
+
+	norm, inform := CitationToBibliography(doc)
+	if norm != nil {
+		ast.AppendChild(where, norm)
+	}
+	if inform != nil {
+		ast.AppendChild(where, inform)
+	}
+	return (norm != nil) || (inform != nil)
+}

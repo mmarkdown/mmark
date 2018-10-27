@@ -77,14 +77,13 @@ func main() {
 			init.Flags |= mparser.UnsafeInclude
 		}
 
-		documentTitle := "" // hack to get document title from toml title block and then set it here.
-
 		if !*flagMarkdown {
-			Extensions |= parser.Includes
+			mparser.Extensions |= mparser.Includes
 		}
 
-		p := parser.NewWithExtensions(Extensions)
+		p := parser.NewWithExtensions(mparser.Extensions)
 		parserFlags := parser.FlagsNone
+		documentTitle := "" // hack to get document title from toml title block and then set it here.
 		if !*flagHTML {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
@@ -104,10 +103,10 @@ func main() {
 
 		doc := markdown.Parse(d, p)
 		if *flagBib {
-			addBibliography(doc)
+			mparser.AddBibliography(doc)
 		}
 		if *flagIndex {
-			addIndex(doc)
+			mparser.AddIndex(doc)
 		}
 
 		if *flagAst {
@@ -182,35 +181,3 @@ func main() {
 		fmt.Println(string(x))
 	}
 }
-
-func addBibliography(doc ast.Node) bool {
-	where := mparser.NodeBackMatter(doc)
-	if where == nil {
-		return false
-	}
-
-	norm, inform := mparser.CitationToBibliography(doc)
-	if norm != nil {
-		ast.AppendChild(where, norm)
-	}
-	if inform != nil {
-		ast.AppendChild(where, inform)
-	}
-	return (norm != nil) || (inform != nil)
-}
-
-func addIndex(doc ast.Node) bool {
-	idx := mparser.IndexToDocumentIndex(doc)
-	if idx == nil {
-		return false
-	}
-
-	ast.AppendChild(doc, idx)
-	return true
-}
-
-// Extensions is exported to we can use it in tests.
-var Extensions = parser.Tables | parser.FencedCode | parser.Autolink | parser.Strikethrough |
-	parser.SpaceHeadings | parser.HeadingIDs | parser.BackslashLineBreak | parser.SuperSubscript |
-	parser.DefinitionLists | parser.MathJax | parser.AutoHeadingIDs | parser.Footnotes |
-	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark
