@@ -4,11 +4,8 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-// Extensions is the default set of extensions mmark requires. Not the parser.Includes is *not* included.
+// Extensions is the default set of extensions mmark requires.
 var Extensions = parser.Tables | parser.FencedCode | parser.Autolink | parser.Strikethrough |
 	parser.SpaceHeadings | parser.HeadingIDs | parser.BackslashLineBreak | parser.SuperSubscript |
 	parser.DefinitionLists | parser.MathJax | parser.AutoHeadingIDs | parser.Footnotes |
-	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark
-
-// Includes extension enables to use of file includes.
-const Includes = parser.Includes
+	parser.Strikethrough | parser.OrderedListStart | parser.Attributes | parser.Mmark | parser.Includes

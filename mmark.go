@@ -77,8 +77,8 @@ func main() {
 			init.Flags |= mparser.UnsafeInclude
 		}
 
-		if !*flagMarkdown {
-			mparser.Extensions |= mparser.Includes
+		if *flagMarkdown {
+			mparser.Extensions &^= parser.Includes
 		}
 
 		p := parser.NewWithExtensions(mparser.Extensions)

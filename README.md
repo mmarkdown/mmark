@@ -110,7 +110,7 @@ In this snippet we set if to `fileName` which is the file we're currently readin
 standard input, this can be set to `""`.
 
 ~~~ go
-p := parser.NewWithExtensions(mparser.Extensions|mparser.Includes)
+p := parser.NewWithExtensions(mparser.Extensions)
 init := mparser.NewInitial(fileName)
 documentTitle := "" // hack to get document title from TOML title block and then set it here.
 p.Opts = parser.ParserOptions{
@@ -150,5 +150,5 @@ opts.Title = documentTitle // hack to add-in discovered title
 renderer := html.NewRenderer(opts)
 ~~~
 
-Next we we only need to generate the HTML5: `x := markdown.Render(doc, renderer)`. Now `x` contains
-a `[]byte` with the HTML5.
+Next we we only need to generate the HTML: `x := markdown.Render(doc, renderer)`. Now `x` contains
+a `[]byte` with the HTML.

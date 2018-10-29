@@ -53,7 +53,7 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 	}
 	expected = bytes.TrimSpace(expected)
 
-	p := parser.NewWithExtensions(mparser.Extensions) // no includes
+	p := parser.NewWithExtensions(mparser.Extensions &^ parser.Includes)
 
 	p.Opts = parser.ParserOptions{
 		ParserHook: mparser.TitleHook,
