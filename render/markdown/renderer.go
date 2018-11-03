@@ -459,6 +459,7 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		r.out(r.deferredLinkBuf, link.Title)
 		r.outs(r.deferredLinkBuf, `"`)
 	}
+	r.deferredLinkBuf.Write([]byte("\n"))
 
 	r.deferredLinkID[string(link.DeferredID)] = struct{}{}
 }
