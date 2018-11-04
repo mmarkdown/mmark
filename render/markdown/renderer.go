@@ -54,6 +54,12 @@ type Renderer struct {
 	tableType ast.Node
 
 	suppress bool // when true we suppress newlines
+
+	deferredFootBuf *bytes.Buffer // deferred footnote buffer. Appended to the doc at the end.
+	deferredFootID  map[string]struct{}
+
+	deferredLinkBuf *bytes.Buffer // deferred footnote buffer. Appended to the doc at the end.
+	deferredLinkID  map[string]struct{}
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -61,7 +67,14 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	if opts.TextWidth == 0 {
 		opts.TextWidth = 80
 	}
-	return &Renderer{opts: opts, prefix: &prefixStack{p: [][]byte{}}}
+	return &Renderer{
+		opts:            opts,
+		prefix:          &prefixStack{p: [][]byte{}},
+		deferredFootBuf: &bytes.Buffer{},
+		deferredFootID:  make(map[string]struct{}),
+		deferredLinkBuf: &bytes.Buffer{},
+		deferredLinkID:  make(map[string]struct{}),
+	}
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
@@ -381,6 +394,25 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// footnote
 	if link.NoteID > 0 {
+		if len(link.DeferredID) > 0 {
+			r.outs(w, "[^")
+			r.out(w, link.DeferredID)
+			r.outs(w, "]")
+
+			if _, ok := r.deferredFootID[string(link.DeferredID)]; ok {
+				return
+			}
+
+			r.deferredFootBuf.Write([]byte("[^"))
+			r.deferredFootBuf.Write(link.DeferredID)
+			r.deferredFootBuf.Write([]byte("]: "))
+			r.deferredFootBuf.Write(link.Title)
+			r.deferredFootBuf.Write([]byte("\n"))
+
+			r.deferredFootID[string(link.DeferredID)] = struct{}{}
+
+			return
+		}
 		r.outs(w, "^[")
 		r.out(w, link.Title)
 		r.outs(w, "]")
@@ -388,6 +420,7 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	}
 
 	// Render the text here, because we need it before the link.
+
 	r.outs(w, "[")
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
@@ -396,14 +429,39 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	}
 	r.outs(w, "]")
 
-	r.outs(w, "(")
-	r.out(w, link.Destination)
-	if len(link.Title) > 0 {
-		r.outs(w, ` "`)
-		r.out(w, link.Title)
-		r.outs(w, `"`)
+	if len(link.DeferredID) == 0 {
+
+		r.outs(w, "(")
+		r.out(w, link.Destination)
+		if len(link.Title) > 0 {
+			r.outs(w, ` "`)
+			r.out(w, link.Title)
+			r.outs(w, `"`)
+		}
+		r.outs(w, ")")
+		return
 	}
-	r.outs(w, ")")
+
+	r.outs(w, "[")
+	r.out(w, link.DeferredID)
+	r.outs(w, "]")
+
+	if _, ok := r.deferredLinkID[string(link.DeferredID)]; ok {
+		return
+	}
+
+	r.outs(r.deferredLinkBuf, "[")
+	r.out(r.deferredLinkBuf, link.DeferredID)
+	r.outs(r.deferredLinkBuf, "]: ")
+	r.out(r.deferredLinkBuf, link.Destination)
+	if len(link.Title) > 0 {
+		r.outs(r.deferredLinkBuf, ` "`)
+		r.out(r.deferredLinkBuf, link.Title)
+		r.outs(r.deferredLinkBuf, `"`)
+	}
+	r.deferredLinkBuf.Write([]byte("\n"))
+
+	r.deferredLinkID[string(link.DeferredID)] = struct{}{}
 }
 
 func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
@@ -677,6 +735,15 @@ func (r *Renderer) RenderHeader(_ io.Writer, _ ast.Node) {}
 func (r *Renderer) writeDocumentHeader(_ io.Writer)      {}
 
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
+	if r.deferredFootBuf.Len() > 0 {
+		r.newline(w)
+		io.Copy(w, r.deferredFootBuf)
+	}
+	if r.deferredLinkBuf.Len() > 0 {
+		r.newline(w)
+		io.Copy(w, r.deferredLinkBuf)
+	}
+
 	buf, ok := w.(*bytes.Buffer)
 	if !ok {
 		return
