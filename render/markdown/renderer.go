@@ -394,7 +394,9 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// footnote
 	if link.NoteID > 0 {
+		ast.RemoveFromTree(link.Footnote)
 		if len(link.DeferredID) > 0 {
+
 			r.outs(w, "[^")
 			r.out(w, link.DeferredID)
 			r.outs(w, "]")
@@ -407,7 +409,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 			r.deferredFootBuf.Write(link.DeferredID)
 			r.deferredFootBuf.Write([]byte("]: "))
 			r.deferredFootBuf.Write(link.Title)
-			r.deferredFootBuf.Write([]byte("\n"))
 
 			r.deferredFootID[string(link.DeferredID)] = struct{}{}
 
@@ -459,7 +460,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		r.out(r.deferredLinkBuf, link.Title)
 		r.outs(r.deferredLinkBuf, `"`)
 	}
-	r.deferredLinkBuf.Write([]byte("\n"))
 
 	r.deferredLinkID[string(link.DeferredID)] = struct{}{}
 }
@@ -736,11 +736,11 @@ func (r *Renderer) writeDocumentHeader(_ io.Writer)      {}
 
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 	if r.deferredFootBuf.Len() > 0 {
-		r.newline(w)
+		r.outs(w, "\n")
 		io.Copy(w, r.deferredFootBuf)
 	}
 	if r.deferredLinkBuf.Len() > 0 {
-		r.newline(w)
+		r.outs(w, "\n")
 		io.Copy(w, r.deferredLinkBuf)
 	}
 

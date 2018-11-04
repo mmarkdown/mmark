@@ -1,8 +1,8 @@
-Footnote[^id] Reference the footnote [^id]
+Here [^id] Reference the fnid [^id]
 
-In line ^[footnote]
+In line ^[fnnote]
 This is a deferred [link][1]
 Normal [link](https://miek.nl "Miek site")
 
 [1]: https://www.miek.nl "Miek's website"
-[^id]: footnote *with* stuff
+[^id]: test in fn *with* stuff

@@ -65,5 +65,6 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 
 	if diff := cmp.Diff(string(expected), string(actual)); diff != "" {
 		t.Errorf("%s: differs: (-want +got)\n%s", basename+".md", diff)
+		t.Logf("\n%s\n%s\n%s\n", "---", string(actual), "---")
 	}
 }
