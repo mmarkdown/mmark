@@ -510,6 +510,7 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 
 	r.outs(w, "<figure")
 	r.outAttr(w, html.BlockAttrs(captionFigure))
+	r.outs(w, ">")
 
 	// Now render the caption and then *remove* it from the tree.
 	for _, child := range captionFigure.GetChildren() {

@@ -2,6 +2,7 @@ package xml
 
 import (
 	"bytes"
+	goxml "encoding/xml"
 	"fmt"
 	"io"
 
@@ -30,8 +31,9 @@ func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering b
 }
 
 func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
-	if node.Raw != nil {
-		r.out(w, node.Raw)
+	if node.Reference != nil {
+		data, _ := goxml.MarshalIndent(node.Reference, "", "  ")
+		r.out(w, data)
 		r.cr(w)
 		return
 	}

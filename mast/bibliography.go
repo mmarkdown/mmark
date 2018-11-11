@@ -19,6 +19,5 @@ type BibliographyItem struct {
 	Anchor []byte
 	Type   ast.CitationTypes
 
-	Raw       []byte              // raw reference XML
-	Reference reference.Reference // parsed reference XML
+	Reference *reference.Reference // parsed reference XML
 }

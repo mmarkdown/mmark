@@ -48,7 +48,7 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 				log.Printf("Failed to unmarshal reference: %q: %s", r.Anchor, e)
 				continue
 			}
-			r.Reference = x
+			r.Reference = &x
 		}
 
 		switch r.Type {

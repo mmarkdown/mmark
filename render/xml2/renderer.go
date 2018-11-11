@@ -116,6 +116,13 @@ func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
 		}
 	}
 
+	// if we're in a table <ttcol> or <c> only plain text is allowed.
+	if parent := node.Parent; parent != nil {
+		if _, isTableCell := parent.(*ast.TableCell); isTableCell {
+			return
+		}
+	}
+
 	if _, isCaption := node.GetParent().(*ast.Caption); isCaption {
 		r.outOneOf(w, entering, "", "")
 		return
@@ -164,7 +171,8 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	}
 
 	mast.AttributeInit(heading)
-	if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" {
+	// Notes don't support the anchor attribute .
+	if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" && tag != "<note" {
 		id := r.ensureUniqueHeadingID(heading.HeadingID)
 		mast.SetAttribute(heading, "id", []byte(id))
 	}
@@ -530,6 +538,14 @@ func (r *Renderer) code(w io.Writer, node *ast.Code) {
 		return
 	}
 
+	// if we're in a table <ttcol> or <c> only plain text is allowed.
+	if parent := node.Parent; parent != nil {
+		if _, isTableCell := parent.(*ast.TableCell); isTableCell {
+			html.EscapeHTML(w, node.Literal)
+			return
+		}
+	}
+
 	r.outs(w, `<spanx style="verb">`)
 	html.EscapeHTML(w, node.Literal)
 	r.outs(w, "</spanx>")
@@ -629,13 +645,16 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 		return
 	}
 
-	// Fake a list. TODO(miek): list in list checks, see? Make fake parent??
 	list := &ast.List{}
 	list.Attribute = block.Attribute
 	if list.Attribute == nil {
 		list.Attribute = &ast.Attribute{Attrs: make(map[string][]byte)}
 	}
 	list.Attribute.Attrs["style"] = []byte("empty")
+	// if in a list, as a parent listItem that is empty, so subsequent "in-list" checks work.
+	if _, inList := block.Parent.(*ast.ListItem); inList {
+		list.Parent = &ast.ListItem{}
+	}
 
 	listItem := &ast.ListItem{}
 	mast.MoveChildren(listItem, block)
@@ -691,6 +710,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node)
 	case *ast.Emph:
+
+		// if we're in a table <ttcol> or <c> only plain text is allowed.
+		if parent := node.Parent; parent != nil {
+			if _, isTableCell := parent.(*ast.TableCell); isTableCell {
+				return ast.GoToNext
+			}
+		}
+
 		if isHangText(node) {
 			if entering {
 				html.EscapeHTML(w, node.Literal)
@@ -705,6 +732,12 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Strong:
 		r.strong(w, node, entering)
 	case *ast.Del:
+		// if we're in a table <ttcol> or <c> only plain text is allowed.
+		if parent := node.Parent; parent != nil {
+			if _, isTableCell := parent.(*ast.TableCell); isTableCell {
+				return ast.GoToNext
+			}
+		}
 		// ala strikethrough, just keep the tildes
 		r.outOneOf(w, entering, "~", "~")
 	case *ast.Citation:
