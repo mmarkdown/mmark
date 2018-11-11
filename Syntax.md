@@ -173,6 +173,9 @@ Images:
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
 
+Comments:
+:   HTML comments are detected and translated into `<cref>`s.
+
 ### XML RFC 7749 Output
 
 Title Block:
@@ -214,6 +217,9 @@ Block quote:
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
+
+Comments:
+:   HTML comments are detected and translated into `<cref>`s.
 
 ### HTML5 Output
 

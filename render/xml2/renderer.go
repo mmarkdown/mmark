@@ -442,6 +442,12 @@ func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
 }
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
+	if text, ok := xml.IsComment(span.Literal); ok {
+		r.outs(w, "<cref>")
+		r.out(w, text)
+		r.outs(w, "</cref>")
+		return
+	}
 	if r.opts.Flags&SkipHTML == 0 {
 		html.EscapeHTML(w, span.Literal)
 	}
