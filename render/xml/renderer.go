@@ -529,6 +529,13 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 			break
 		}
 	}
+
+	// Remove the anchor from the artwork otherwise we have a duplicate ID.
+	for _, child := range captionFigure.GetChildren() {
+		if artwork, ok := child.(*ast.CodeBlock); ok {
+			mast.DeleteAttribute(artwork, "id")
+		}
+	}
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {

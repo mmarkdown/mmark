@@ -78,7 +78,8 @@ func SetAttribute(node ast.Node, key string, value []byte) {
 	}
 }
 
-// Attribute returns the attribute value under key.
+// Attribute returns the attribute value under key. Use AttributeClass to retrieve
+// a class.
 func Attribute(node ast.Node, key string) []byte {
 	a := AttributeFromNode(node)
 	if a == nil {
