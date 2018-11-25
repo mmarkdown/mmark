@@ -118,8 +118,20 @@ func anchorFromReference(data []byte) []byte {
 
 // ReferenceHook is the hook used to parse reference nodes.
 func ReferenceHook(data []byte) (ast.Node, []byte, int) {
-	if !bytes.HasPrefix(data, []byte("<reference ")) {
+	ref, ok := IsReference(data)
+	if !ok {
 		return nil, nil, 0
+	}
+
+	node := &ast.HTMLBlock{}
+	node.Literal = fmtReference(ref)
+	return node, nil, len(ref)
+}
+
+// IfReference returns wether data contains a reference.
+func IsReference(data []byte) ([]byte, bool) {
+	if !bytes.HasPrefix(data, []byte("<reference ")) {
+		return nil, false
 	}
 
 	i := 12
@@ -134,12 +146,9 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 
 	// no end-of-reference marker
 	if i > len(data) {
-		return nil, nil, 0
+		return nil, false
 	}
-
-	node := &ast.HTMLBlock{}
-	node.Literal = fmtReference(data[:i])
-	return node, nil, i
+	return data[:i], true
 }
 
 func fmtReference(data []byte) []byte {
