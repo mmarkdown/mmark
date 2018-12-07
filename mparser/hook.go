@@ -13,12 +13,17 @@ var UnsafeInclude parser.Flags = 1 << 3
 
 // Hook will call both TitleHook and ReferenceHook.
 func Hook(data []byte) (ast.Node, []byte, int) {
+	n, b, i = ReferenceHook(data)
+	if n != nil {
+		return n, b, i
+	}
+
 	n, b, i := TitleHook(data)
 	if n != nil {
 		return n, b, i
 	}
 
-	return ReferenceHook(data)
+	return nil, nil, 0
 }
 
 // ReadInclude is the hook to read includes.
