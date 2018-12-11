@@ -11,6 +11,17 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 )
 
+/*
+A lot of this code was lifted from blackfriday:
+//
+// Blackfriday Markdown Processor
+// Available at http://github.com/russross/blackfriday
+//
+// Copyright © 2011 Russ Ross <russ@russross.com>.
+// Distributed under the Simplified BSD License.
+// See README.md for details.
+/*/
+
 // Flags control optional behavior of XML3 renderer.
 type Flags int
 
@@ -46,10 +57,7 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
-	documentMatter ast.DocumentMatters // keep track of front/main/back matter
-	section        *ast.Heading        // current open section
-	title          bool                // did we output a title block
-	filter         mast.FilterFunc     // filter for attributes.
+	filter mast.FilterFunc // filter for attributes.
 
 	// Track heading IDs to prevent ID collision in a single generation.
 	headingIDs map[string]int
@@ -105,20 +113,10 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 }
 
 func (r *Renderer) strong(w io.Writer, node *ast.Strong, entering bool) {
-	// *iff* we have a text node as a child *and* that text is 2119, we output bcp14 tags, otherwise just string.
-	text := ast.GetFirstChild(node)
-	if t, ok := text.(*ast.Text); ok {
-		if Is2119(t.Literal) {
-			r.outOneOf(w, entering, "<bcp14>", "</bcp14>")
-			return
-		}
-	}
-
 	r.outOneOf(w, entering, "<strong>", "</strong>")
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
-	r.sectionClose(w, nil)
 
 	switch node.Matter {
 	case ast.DocumentMatterFront:
@@ -140,7 +138,6 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter) {
 		r.outs(w, "<back>")
 		r.cr(w)
 	}
-	r.documentMatter = node.Matter
 }
 
 func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
@@ -150,7 +147,7 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	// In XML2 output we can't have an anchor attribute on a note.
 	if !heading.IsSpecial {
 		if mast.Attribute(heading, "id") == nil && heading.HeadingID != "" {
-			id := r.ensureUniqueHeadingID(heading.HeadingID)
+			id := "4" //r.ensureUniqueHeadingID(heading.HeadingID)
 			mast.SetAttribute(heading, "id", []byte(id))
 		}
 	}
@@ -163,7 +160,6 @@ func (r *Renderer) headingEnter(w io.Writer, heading *ast.Heading) {
 	}
 
 	r.cr(w)
-	r.outTag(w, tag, html.BlockAttrs(heading))
 
 	if heading.IsSpecial && IsAbstract(heading.Literal) {
 		return
@@ -185,8 +181,6 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		r.headingExit(w, node)
 		return
 	}
-
-	r.sectionClose(w, node)
 
 	r.headingEnter(w, node)
 }
@@ -210,7 +204,6 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 		}
 
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
-		r.outTag(w, "<xref", attr)
 		r.outs(w, "</xref>")
 	}
 }
@@ -266,7 +259,6 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
-	r.outTag(w, openTag, html.BlockAttrs(nodeData))
 	r.cr(w)
 }
 
@@ -347,7 +339,6 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	mast.AttributeInit(codeBlock)
-	appendLanguageAttr(codeBlock, codeBlock.Info)
 
 	name := "artwork"
 	if codeBlock.Info != nil {
@@ -355,9 +346,8 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	}
 
 	r.cr(w)
-	r.outTag(w, "<"+name, html.BlockAttrs(codeBlock))
 	if r.opts.Comments != nil {
-		EscapeHTMLCallouts(w, codeBlock.Literal, r.opts.Comments)
+		//EscapeHTMLCallouts(w, codeBlock.Literal, r.opts.Comments)
 	} else {
 		html.EscapeHTML(w, codeBlock.Literal)
 	}
@@ -385,24 +375,13 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	if ast.GetPrevNode(tableCell) == nil {
 		r.cr(w)
 	}
-	r.outTag(w, openTag, html.BlockAttrs(tableCell))
 }
 
 func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
-	r.outOneOfCr(w, entering, "<tbody>", "</tbody>")
+	r.outOneOf(w, entering, "<tbody>", "</tbody>")
 }
 
-func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
-	if text, ok := IsComment(span.Literal); ok {
-		r.outs(w, "<cref>")
-		r.out(w, text)
-		r.outs(w, "</cref>")
-		return
-	}
-	if r.opts.Flags&SkipHTML == 0 {
-		html.EscapeHTML(w, span.Literal)
-	}
-}
+func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {}
 
 func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 	r.outs(w, "<em>")
@@ -412,7 +391,6 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
 	if entering {
-		r.outTag(w, "<xref", []string{"target=\"" + string(cr.Destination) + "\""})
 		return
 	}
 	r.outs(w, "</xref>")
@@ -481,7 +459,7 @@ func (r *Renderer) code(w io.Writer, node *ast.Code) {
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 	r.outs(w, `<artwork type="math">`+"\n")
 	if r.opts.Comments != nil {
-		EscapeHTMLCallouts(w, mathBlock.Literal, r.opts.Comments)
+		// EscapeHTMLCallouts(w, mathBlock.Literal, r.opts.Comments)
 	} else {
 		html.EscapeHTML(w, mathBlock.Literal)
 	}
@@ -512,7 +490,6 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 	}
 
 	r.outs(w, "<figure")
-	r.outAttr(w, html.BlockAttrs(captionFigure))
 	r.outs(w, ">")
 
 	// Now render the caption and then *remove* it from the tree.
@@ -578,7 +555,6 @@ func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool)
 	}
 
 	r.outs(w, "<blockquote")
-	r.outAttr(w, html.BlockAttrs(block))
 	defer r.outs(w, ">")
 
 	// Now render the caption if our parent is a ast.CaptionFigure
@@ -624,8 +600,6 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Document:
 		// do nothing
 	case *mast.Title:
-		r.titleBlock(w, node)
-		r.title = true
 	case *mast.Bibliography:
 		r.bibliography(w, node, entering)
 	case *mast.BibliographyItem:
@@ -688,18 +662,18 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.TableCell:
 		r.tableCell(w, node, entering)
 	case *ast.TableHeader:
-		r.outOneOfCr(w, entering, "<thead>", "</thead>")
+		r.outOneOf(w, entering, "<thead>", "</thead>")
 	case *ast.TableBody:
 		r.tableBody(w, node, entering)
 	case *ast.TableRow:
-		r.outOneOfCr(w, entering, "<tr>", "</tr>")
+		r.outOneOf(w, entering, "<tr>", "</tr>")
 	case *ast.TableFooter:
 		r.outOneOfCr(w, entering, "<tfoot>", "</tfoot>")
 	case *ast.BlockQuote:
 		r.blockQuote(w, node, entering)
 	case *ast.Aside:
 		tag := tagWithAttributes("<aside", html.BlockAttrs(node))
-		r.outOneOfCr(w, entering, tag, "</aside>")
+		r.outOneOf(w, entering, tag, "</aside>")
 	case *ast.CrossReference:
 		r.crossReference(w, node, entering)
 	case *ast.Index:
@@ -713,9 +687,6 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		html.EscapeHTML(w, node.Literal)
 		r.outOneOf(w, false, "<tt>", "</tt>")
 	case *ast.Image:
-		if r.opts.Flags&SkipImages != 0 {
-			return ast.SkipChildren
-		}
 		r.image(w, node, entering)
 	case *ast.Code:
 		r.code(w, node)
@@ -741,35 +712,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 
 // RenderHeader writes HTML document preamble and TOC if requested.
 func (r *Renderer) RenderHeader(w io.Writer, ast ast.Node) {
-	if r.opts.Flags&XMLFragment != 0 {
-		return
-	}
-
 	r.writeDocumentHeader(w)
 }
 
 // RenderFooter writes HTML document footer.
 func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
-	r.sectionClose(w, nil)
-
-	switch r.documentMatter {
-	case ast.DocumentMatterFront:
-		r.outs(w, "\n</front>\n")
-	case ast.DocumentMatterMain:
-		r.outs(w, "\n</middle>\n")
-	case ast.DocumentMatterBack:
-		r.outs(w, "\n</back>\n")
-	}
-
-	if r.title {
-		io.WriteString(w, "\n</rfc>")
-	}
 }
 
 func (r *Renderer) writeDocumentHeader(w io.Writer) {
-	if r.opts.Flags&XMLFragment != 0 {
-		return
-	}
 	r.outs(w, `<?xml version="1.0" encoding="utf-8"?>`)
 	r.cr(w)
 	r.outs(w, r.opts.Generator)
