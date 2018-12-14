@@ -13,6 +13,7 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
+	"github.com/mmarkdown/mmark/render/latex"
 	mmarkout "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
@@ -26,6 +27,7 @@ var (
 	flagBib      = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
 	flagFragment = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML     = flag.Bool("html", false, "create HTML output")
+	flagLatex    = flag.Bool("latex", false, "create LaTeX output")
 	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
 	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
 	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
@@ -156,6 +158,9 @@ func main() {
 		case *flagMarkdown:
 			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
 			renderer = mmarkout.NewRenderer(opts)
+		case *flagLatex:
+			opts := latex.RendererOptions{}
+			renderer = latex.NewRenderer(opts)
 		default:
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,

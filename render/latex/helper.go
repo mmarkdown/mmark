@@ -1,7 +1,6 @@
 package latex
 
 import (
-	"bytes"
 	"io"
 	"strings"
 )
@@ -18,25 +17,12 @@ var special = map[byte]struct{}{
 	'#':  struct{}{},
 }
 
-func escapeSpecialChars(out *bytes.Buffer, text []byte) {
+func escapeSpecialChars(out io.Writer, text []byte) {
 	for i := 0; i < len(text); i++ {
-		// directly copy normal characters
-		org := i
-
-		_, isSpc := special[text[i]]
-		for i < len(text) && !isSpc {
-			i++
+		if _, isSpc := special[text[i]]; isSpc {
+			out.Write([]byte("\\"))
 		}
-		if i > org {
-			out.Write(text[org:i])
-		}
-
-		// escape a character
-		if i >= len(text) {
-			break
-		}
-		out.WriteByte('\\')
-		out.WriteByte(text[i])
+		out.Write([]byte{text[i]})
 	}
 }
 
