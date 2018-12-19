@@ -195,33 +195,25 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 	buf.Truncate(r.paraStart)
 
-	// Now an indented list didn't get is marker yet, override the 3 spaces that have been
+	// Now an indented list didn't get is marker yet, override the initial spaces that have been
 	// created with the list marker, taking the current prefix into account.
 	listItem, inList := para.Parent.(*ast.ListItem)
 	firstPara := ast.GetPrevNode(para) // only the first para in the listItem needs a list marker
 	if inList && firstPara == nil {
-		plen := r.prefix.len() - 3
+		plen := r.prefix.len() - r.prefix.peek()
 		switch x := listItem.ListFlags; {
 		case x&ast.ListTypeOrdered != 0:
 			list := listItem.Parent.(*ast.List) // this must be always true
-			switch s := list.Start; {
-			case s == 0:
-				indented[plen+0] = '1'
-				indented[plen+1] = '.'
-				indented[plen+2] = ' '
-			case s < 10:
-				b := strconv.Itoa(s)
-				indented[plen+0] = b[0]
-				indented[plen+1] = '.'
-				indented[plen+2] = ' '
-			default:
-				// for s > 9 we don't have the space to plot things...
-				indented[plen+0] = '1'
-				indented[plen+1] = '.'
-				indented[plen+2] = ' '
+			pos := []byte(strconv.Itoa(list.Start))
+			for i := 0; i < len(pos); i++ {
+				indented[plen+i] = pos[i]
 			}
+			indented[plen+len(pos)] = '.'
+			indented[plen+len(pos)+1] = ' '
+
+			list.Start++
 		case x&ast.ListTypeTerm != 0:
-			indented = indented[plen+3:] // remove prefix.
+			indented = indented[plen+r.prefix.peek():] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:
 			indented[plen+0] = ':'
 			indented[plen+1] = ' '
@@ -247,7 +239,15 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
-		r.push(Space3)
+		if list.Start == 0 {
+			list.Start = 1
+		}
+		l := listPrefixLength(list, list.Start)
+		if list.ListFlags&ast.ListTypeOrdered != 0 {
+			r.push(Space(l))
+		} else {
+			r.push(Space(3))
+		}
 		return
 	}
 	r.pop()
@@ -336,7 +336,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 			r.cellStart = buf.Len() + 1
 		}
 		if r.col > 0 {
-			r.out(w, Space)
+			r.out(w, Space1)
 		}
 		return
 	}
@@ -346,7 +346,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 		cur = buf.Len()
 	}
 	size := r.colWidth[r.col]
-	fill := bytes.Repeat(Space, size-(cur-r.cellStart))
+	fill := bytes.Repeat(Space1, size-(cur-r.cellStart))
 	r.out(w, fill)
 	if r.col == len(r.colWidth)-1 {
 		r.endline(w)
@@ -770,8 +770,7 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 }
 
 var (
-	Space  = []byte(" ")
-	Space3 = []byte("   ")
+	Space1 = Space(1)
 	Aside  = []byte("A> ")
 	Quote  = []byte("> ")
 )

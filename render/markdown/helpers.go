@@ -1,6 +1,7 @@
 package markdown
 
 import (
+	"bytes"
 	"io"
 	"regexp"
 	"unicode"
@@ -79,9 +80,8 @@ func (r *Renderer) pop() []byte {
 	return last
 }
 
-func (r *Renderer) push(data []byte) {
-	r.prefix.push(data)
-}
+func (r *Renderer) push(data []byte) { r.prefix.push(data) }
+func (r *Renderer) peek() int        { return r.prefix.peek() }
 
 func (p *prefixStack) push(data []byte) { p.p = append(p.p, data) }
 
@@ -94,7 +94,16 @@ func (p *prefixStack) pop() []byte {
 	return last
 }
 
-// flatten stack in reverse order
+// peek returns the lenght of the last pushed element.
+func (p *prefixStack) peek() int {
+	if len(p.p) == 0 {
+		return 0
+	}
+	last := p.p[len(p.p)-1]
+	return len(last)
+}
+
+// flatten flattens the stack in reverse order.
 func (p *prefixStack) flatten() []byte {
 	ret := []byte{}
 	for _, b := range p.p {
@@ -109,3 +118,19 @@ func (p *prefixStack) len() (l int) {
 	}
 	return l
 }
+
+// listPrefixLength returns the length of the prefix we need for list in ast.Node
+func listPrefixLength(list *ast.List, start int) int {
+	numChild := len(list.Children) + start
+	switch {
+	case numChild < 10:
+		return 3
+	case numChild < 100:
+		return 4
+	case numChild < 1000:
+		return 5
+	}
+	return 6 // bit of a ridicules list
+}
+
+func Space(length int) []byte { return bytes.Repeat([]byte(" "), length) }

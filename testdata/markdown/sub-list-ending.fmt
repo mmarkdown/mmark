@@ -1,6 +1,6 @@
 1. Process all rule-list entries
 
-1. For each rule-list entry found
+2. For each rule-list entry found
 
    *  Item2
 
@@ -8,4 +8,4 @@
 
    *  Item4
 
-1. If a matching rule is found
+3. If a matching rule is found
