@@ -243,7 +243,11 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 			list.Start = 1
 		}
 		l := listPrefixLength(list, list.Start)
-		r.push(Space(l))
+		if list.ListFlags&ast.ListTypeOrdered != 0 {
+			r.push(Space(l))
+		} else {
+			r.push(Space(3))
+		}
 		return
 	}
 	r.pop()
