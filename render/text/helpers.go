@@ -13,9 +13,9 @@ func noopHeadingTransferFunc(data []byte) []byte { return data }
 
 func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
 	if outFirst {
-		r.outs(w, first)
+		io.WriteString(w, first)
 	} else {
-		r.outs(w, second)
+		io.WriteString(w, second)
 	}
 }
 

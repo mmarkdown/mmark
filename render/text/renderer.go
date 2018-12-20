@@ -69,7 +69,7 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	if opts.TextWidth == 0 {
 		opts.TextWidth = 80
 	}
-	return &Renderer{
+	r := &Renderer{
 		opts:                 opts,
 		prefix:               &prefixStack{p: [][]byte{}},
 		deferredFootBuf:      &bytes.Buffer{},
@@ -78,11 +78,13 @@ func NewRenderer(opts RendererOptions) *Renderer {
 		deferredLinkID:       make(map[string]struct{}),
 		headingTransformFunc: noopHeadingTransferFunc,
 	}
+	r.push(Space(3)) // default indent for all text, except heading.
+	return r
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
-	r.outs(w, `\`)
 	r.endline(w)
+	r.newline(w)
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
@@ -99,15 +101,29 @@ func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) 
 	}
 }
 
-func headingUpperCase(data []byte) []byte {
-	return bytes.ToUpper(data)
+func headingLevel1(data []byte) []byte {
+	return append(append([]byte(ansi.Bold), bytes.ToUpper(data)...), []byte(ansi.BoldOff)...)
+}
+
+func headingLevel2(data []byte) []byte {
+	x := append(append([]byte(ansi.Bold), data...), []byte(ansi.BoldOff)...)
+	return []byte(" " + ansi.Underline + string(x) + ansi.UnderlineOff)
+}
+
+func headingLevel3(data []byte) []byte {
+	x := append(append([]byte(ansi.Bold), data...), []byte(ansi.BoldOff)...)
+	return []byte("  " + string(x))
 }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if entering {
 		switch node.Level {
 		case 1:
-			r.headingTransformFunc = headingUpperCase
+			r.headingTransformFunc = headingLevel1
+		case 2:
+			r.headingTransformFunc = headingLevel2
+		case 3:
+			r.headingTransformFunc = headingLevel3
 		}
 		return
 	}
@@ -161,11 +177,10 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	b := buf.Bytes()[r.paraStart:end]
 
 	var indented []byte
-	// Scan for hardbreaks, if found, split the text up into multiple pieces, wrap each and put them
-	// back together with a newline in between.
 	p := bytes.Split(b, []byte("\\\n"))
 	for i := range p {
 		if len(indented) > 0 {
+			println("NEVER")
 			p1 := r.wrapText(p[i], r.prefix.flatten())
 			indented = append(indented, []byte("\\\n")...)
 			indented = append(indented, p1...)
@@ -186,6 +201,9 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		case x&ast.ListTypeOrdered != 0:
 			list := listItem.Parent.(*ast.List) // this must be always true
 			pos := []byte(strconv.Itoa(list.Start))
+			println(list.Start)
+			println(string(pos))
+			println(plen)
 			for i := 0; i < len(pos); i++ {
 				indented[plen+i] = pos[i]
 			}
@@ -200,7 +218,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = '*'
+			indented[plen+0] = 'o'
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
@@ -235,22 +253,13 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
-	r.outPrefix(w)
-	r.outs(w, "~~~")
-	if codeBlock.Info != nil {
-		r.outs(w, " ")
-		r.out(w, codeBlock.Info)
-	}
-
-	r.endline(w)
-	indented := r.indentText(codeBlock.Literal, r.prefix.flatten())
+	// Indent codeblock with 3 spaces
+	indented := r.indentText(codeBlock.Literal, append(r.prefix.flatten(), Space(3)...))
 	r.out(w, indented)
 	r.outPrefix(w)
-	r.outs(w, "~~~\n")
+	r.newline(w)
 
-	if _, ok := ast.GetNextNode(codeBlock).(*ast.Caption); !ok {
-		r.newline(w)
-	}
+	r.newline(w)
 	return
 }
 
@@ -558,30 +567,6 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		}
 	}
 
-	if attr := mast.AttributeFromNode(node); attr != nil && entering {
-		switch node.(type) {
-		case *ast.CaptionFigure:
-			// captionFigure also gets the attribute for a codeblock, don't output that.
-			if childs := node.GetChildren(); len(childs) > 0 {
-
-				switch childs[0].(type) {
-				case *ast.CodeBlock:
-				case *ast.BlockQuote:
-				default:
-					r.outPrefix(w)
-					w.Write((mast.AttributeBytes(attr)))
-					r.endline(w)
-				}
-			}
-
-		default:
-			r.outPrefix(w)
-			w.Write((mast.AttributeBytes(attr)))
-			r.endline(w)
-
-		}
-	}
-
 	switch node := node.(type) {
 	case *ast.Document:
 		// do nothing
@@ -604,11 +589,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
-		r.outOneOf(w, entering, ansi.Italics, ansi.ItalicsOff)
+		r.outOneOf(w, entering, ansi.Italics, ansi.Reset)
 	case *ast.Strong:
-		r.outOneOf(w, entering, ansi.Bold, ansi.BoldOff)
+		r.outOneOf(w, entering, ansi.Bold, ansi.Reset)
 	case *ast.Del:
-		r.outOneOf(w, entering, ansi.Strikethrough, ansi.StrikethroughOff)
+		r.outOneOf(w, entering, ansi.Strikethrough, ansi.Reset)
 	case *ast.Citation:
 		r.citation(w, node, entering)
 	case *ast.DocumentMatter:
