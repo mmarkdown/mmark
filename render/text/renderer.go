@@ -127,18 +127,10 @@ func (r *Renderer) horizontalRule(w io.Writer, node *ast.HorizontalRule) {
 }
 
 func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
-	r.outs(w, "[@")
+	r.outs(w, "[")
 	for i, dest := range node.Destination {
 		if i > 0 {
 			r.outs(w, ", ")
-		}
-		switch node.Type[i] {
-		case ast.CitationTypeInformative:
-			// skip outputting ? as it's the default
-		case ast.CitationTypeNormative:
-			r.outs(w, "!")
-		case ast.CitationTypeSuppressed:
-			r.outs(w, "-")
 		}
 		r.out(w, dest)
 
@@ -496,13 +488,17 @@ func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, enterin
 
 	})
 	if isImage && entering {
-		r.outs(w, "!---")
+		r.outs(w, "")
 		r.endline(w)
+	}
+	if !entering {
+		r.newline(w)
 	}
 }
 
 func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	if !entering {
+		r.endline(w)
 		r.newline(w)
 		return
 	}
@@ -510,19 +506,19 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
-		r.outs(w, "Quote: ")
+		r.outs(w, "")
 		return
 	case *ast.Table:
-		r.outs(w, "Table: ")
+		r.outs(w, "")
 		return
 	case *ast.CodeBlock:
-		r.outs(w, "Figure: ")
+		r.outs(w, "")
 		return
 	}
 	// If here, we're dealing with a subfigure captionFigure.
-	r.outs(w, "!---")
+	r.outs(w, "")
 	r.endline(w)
-	r.outs(w, "Figure: ")
+	r.outs(w, "")
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
