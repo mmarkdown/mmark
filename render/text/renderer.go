@@ -87,20 +87,6 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.newline(w)
 }
 
-func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
-	if !entering {
-		return
-	}
-	switch node.Matter {
-	case ast.DocumentMatterFront:
-		r.outs(w, "{frontmatter}\n\n")
-	case ast.DocumentMatterMain:
-		r.outs(w, "{mainmatter}\n\n")
-	case ast.DocumentMatterBack:
-		r.outs(w, "{backmatter}\n\n")
-	}
-}
-
 func headingLevel1(data []byte) []byte {
 	return append(append([]byte(ansi.Bold), bytes.ToUpper(data)...), []byte(ansi.BoldOff)...)
 }
@@ -206,18 +192,18 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			for i := 0; i < len(pos); i++ {
 				indented[plen+i] = pos[i]
 			}
-			indented[plen+len(pos)] = '.'
+			indented[plen+len(pos)] = 'o'
 			indented[plen+len(pos)+1] = ' '
 
 			list.Start++
 		case x&ast.ListTypeTerm != 0:
-			indented = indented[plen+r.prefix.peek():] // remove prefix.
+			indented = indented[plen+r.prefix.peek()-3:] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:
-			indented[plen+0] = ':'
+			indented[plen+0] = ' '
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = 'o'
+			indented[plen+0] = '·'
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
@@ -301,9 +287,9 @@ func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) 
 
 			switch r.colAlign[i] {
 			case ast.TableAlignmentLeft:
-				heading[0] = ':'
+				heading[0] = '-'
 			case ast.TableAlignmentRight:
-				heading[width] = ':'
+				heading[width] = '-'
 			}
 			r.out(w, heading)
 			if i == len(r.colWidth)-1 {
@@ -411,18 +397,20 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// Render the text here, because we need it before the link.
 
-	r.outs(w, "[")
+	io.WriteString(w, ansi.Underline)
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
 			return r.RenderNode(w, node, entering)
 		})
 	}
-	r.outs(w, "]")
+	io.WriteString(w, ansi.UnderlineOff)
 
 	if len(link.DeferredID) == 0 {
 
-		r.outs(w, "(")
+		r.outs(w, " (")
+		io.WriteString(w, ansi.Gray)
 		r.out(w, link.Destination)
+		io.WriteString(w, ansi.Reset)
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
@@ -596,7 +584,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Citation:
 		r.citation(w, node, entering)
 	case *ast.DocumentMatter:
-		r.matter(w, node, entering)
+		// don't output
 	case *ast.Heading:
 		r.heading(w, node, entering)
 	case *ast.HorizontalRule:
@@ -693,6 +681,7 @@ func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 	if !entering {
 		return
 	}
+
 	r.out(w, node.Literal)
 }
 
