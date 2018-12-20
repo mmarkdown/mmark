@@ -13,6 +13,7 @@ import (
 	"github.com/mmarkdown/mmark/render/man"
 	mmarkout "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
+	"github.com/mmarkdown/mmark/render/text"
 	"github.com/mmarkdown/mmark/render/xml"
 
 	"github.com/gomarkdown/markdown"
@@ -31,6 +32,7 @@ var (
 	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
 	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
 	flagMan      = flag.Bool("man", false, "generate manual pages (nroff)")
+	flagText     = flag.Bool("text", false, "generate text for ANSI escapes")
 	flagWrite    = flag.Bool("w", false, "write to source file when generating markdown")
 	flagWidth    = flag.Int("width", 100, "text width when generating markdown")
 	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
@@ -158,6 +160,9 @@ func main() {
 				opts.Flags |= man.ManFragment
 			}
 			renderer = man.NewRenderer(opts)
+		case *flagText:
+			opts := text.RendererOptions{TextWidth: *flagWidth}
+			renderer = text.NewRenderer(opts)
 		default:
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,

@@ -103,6 +103,10 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 :  output nroff (manual pages).
 
+**-text**
+
+:  output text with ANSI codes (aim to be somewhat similar to a manual page).
+
 **-unsafe**
 
 :  allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
