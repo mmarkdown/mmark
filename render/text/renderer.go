@@ -180,13 +180,15 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	p := bytes.Split(b, []byte("\\\n"))
 	for i := range p {
 		if len(indented) > 0 {
-			println("NEVER")
 			p1 := r.wrapText(p[i], r.prefix.flatten())
 			indented = append(indented, []byte("\\\n")...)
 			indented = append(indented, p1...)
 			continue
 		}
 		indented = r.wrapText(p[i], r.prefix.flatten())
+	}
+	if len(indented) == 0 {
+		indented = make([]byte, r.prefix.peek()+3)
 	}
 
 	buf.Truncate(r.paraStart)
@@ -201,9 +203,6 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		case x&ast.ListTypeOrdered != 0:
 			list := listItem.Parent.(*ast.List) // this must be always true
 			pos := []byte(strconv.Itoa(list.Start))
-			println(list.Start)
-			println(string(pos))
-			println(plen)
 			for i := 0; i < len(pos); i++ {
 				indented[plen+i] = pos[i]
 			}
