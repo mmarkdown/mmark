@@ -192,6 +192,9 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 		}
 		indented = r.wrapText(p[i], r.prefix.flatten())
 	}
+	if len(indented) == 0 {
+		indented = make([]byte, r.prefix.peek())
+	}
 
 	buf.Truncate(r.paraStart)
 
