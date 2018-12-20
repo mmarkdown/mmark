@@ -203,7 +203,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = '·'
+			indented[plen+0] = 'o'
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
