@@ -13,9 +13,9 @@ func noopHeadingTransferFunc(data []byte) []byte { return data }
 
 func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
 	if outFirst {
-		io.WriteString(w, first)
+		r.ansi.push(first)
 	} else {
-		io.WriteString(w, second)
+		r.ansi.pop()
 	}
 }
 
@@ -23,11 +23,13 @@ func (r *Renderer) outPrefix(w io.Writer) { r.out(w, r.prefix.flatten()); r.supp
 func (r *Renderer) endline(w io.Writer)   { r.outs(w, "\n"); r.suppress = false }
 
 func (r *Renderer) outs(w io.Writer, s string) {
+	r.ansi.print(w)
 	w.Write(r.headingTransformFunc([]byte(s)))
 	r.suppress = false
 }
 
 func (r *Renderer) out(w io.Writer, d []byte) {
+	r.ansi.print(w)
 	w.Write(r.headingTransformFunc(d))
 	r.suppress = false
 }
@@ -123,3 +125,22 @@ func listPrefixLength(list *ast.List, start int) int {
 }
 
 func Space(length int) []byte { return bytes.Repeat([]byte(" "), length) }
+
+type ansiStack []string
+
+func (a *ansiStack) push(code string) { *a = append(*a, code) }
+
+func (a *ansiStack) pop() string {
+	if len(*a) == 0 {
+		return ""
+	}
+	last := (*a)[len(*a)-1]
+	*a = (*a)[:len(*a)-1]
+	return last
+}
+
+func (a *ansiStack) print(w io.Writer) {
+	for _, code := range *a {
+		io.WriteString(w, code)
+	}
+}

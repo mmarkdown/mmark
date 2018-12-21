@@ -46,6 +46,7 @@ type Renderer struct {
 	headingStart int
 
 	prefix     *prefixStack // track current prefix, quote, aside, etc.
+	ansi       *ansiStack   // tracks colors and other codes
 	listMarker string
 
 	// tables
@@ -72,13 +73,15 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	r := &Renderer{
 		opts:                 opts,
 		prefix:               &prefixStack{p: [][]byte{}},
+		ansi:                 &ansiStack{},
 		deferredFootBuf:      &bytes.Buffer{},
 		deferredFootID:       make(map[string]struct{}),
 		deferredLinkBuf:      &bytes.Buffer{},
 		deferredLinkID:       make(map[string]struct{}),
 		headingTransformFunc: noopHeadingTransferFunc,
 	}
-	r.push(Space(3)) // default indent for all text, except heading.
+	r.push(Space(3))        // default indent for all text, except heading.
+	r.ansi.push(ansi.Reset) // default value that will never be popped.
 	return r
 }
 
@@ -87,31 +90,35 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.newline(w)
 }
 
-func headingLevel1(data []byte) []byte {
-	return append(append([]byte(ansi.Bold), bytes.ToUpper(data)...), []byte(ansi.BoldOff)...)
-}
-
-func headingLevel2(data []byte) []byte {
-	x := append(append([]byte(ansi.Bold), data...), []byte(ansi.BoldOff)...)
-	return []byte(" " + ansi.Underline + string(x) + ansi.UnderlineOff)
-}
-
-func headingLevel3(data []byte) []byte {
-	x := append(append([]byte(ansi.Bold), data...), []byte(ansi.BoldOff)...)
-	return []byte("  " + string(x))
+func (r *Renderer) headingLevel1(data []byte) []byte {
+	return bytes.ToUpper(data)
 }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if entering {
 		switch node.Level {
 		case 1:
-			r.headingTransformFunc = headingLevel1
+			r.headingTransformFunc = r.headingLevel1
+			r.ansi.push(ansi.Bold)
 		case 2:
-			r.headingTransformFunc = headingLevel2
+			r.headingTransformFunc = noopHeadingTransferFunc
+			r.ansi.push(ansi.Bold)
+			r.ansi.push(ansi.Underline)
 		case 3:
-			r.headingTransformFunc = headingLevel3
+			r.headingTransformFunc = noopHeadingTransferFunc
+			r.ansi.push(ansi.Bold)
 		}
 		return
+	}
+
+	switch node.Level {
+	case 1:
+		r.ansi.pop()
+	case 2:
+		r.ansi.pop()
+		r.ansi.pop()
+	case 3:
+		r.ansi.pop()
 	}
 
 	r.headingTransformFunc = noopHeadingTransferFunc
@@ -389,20 +396,20 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// Render the text here, because we need it before the link.
 
-	io.WriteString(w, ansi.Underline)
+	r.ansi.push(ansi.Underline)
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
 			return r.RenderNode(w, node, entering)
 		})
 	}
-	io.WriteString(w, ansi.UnderlineOff)
+	r.ansi.pop()
 
 	if len(link.DeferredID) == 0 {
 
 		r.outs(w, " (")
-		io.WriteString(w, ansi.Gray)
+		r.ansi.push(ansi.Gray)
 		r.out(w, link.Destination)
-		io.WriteString(w, ansi.Reset)
+		r.ansi.pop()
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
@@ -523,19 +530,23 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
 	if entering {
+		r.ansi.push(ansi.Italics)
 		r.push(Quote)
 		return
 	}
 	r.pop()
+	r.ansi.pop()
 	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 	if entering {
+		r.ansi.push(ansi.Bold)
 		r.push(Aside)
 		return
 	}
 	r.pop()
+	r.ansi.pop()
 	if !lastNode(block) {
 		r.newline(w)
 	}
@@ -572,11 +583,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
-		r.outOneOf(w, entering, ansi.Italics, ansi.Reset)
+		r.outOneOf(w, entering, ansi.Italics, "")
 	case *ast.Strong:
-		r.outOneOf(w, entering, ansi.Bold, ansi.Reset)
+		r.outOneOf(w, entering, ansi.Bold, "")
 	case *ast.Del:
-		r.outOneOf(w, entering, ansi.Strikethrough, ansi.Reset)
+		r.outOneOf(w, entering, ansi.Strikethrough, "")
 	case *ast.Citation:
 		r.citation(w, node, entering)
 	case *ast.DocumentMatter:
