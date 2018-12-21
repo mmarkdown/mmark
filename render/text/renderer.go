@@ -90,23 +90,27 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.newline(w)
 }
 
-func (r *Renderer) headingLevel1(data []byte) []byte {
-	return bytes.ToUpper(data)
-}
+func headingLevel1(data []byte) []byte { return bytes.ToUpper(data) }
+func headingLevel2(data []byte) []byte { return append(Space(1), data...) }
+func headingLevel3(data []byte) []byte { return append(Space(2), data...) }
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if entering {
 		switch node.Level {
 		case 1:
-			r.headingTransformFunc = r.headingLevel1
+			r.headingTransformFunc = headingLevel1
 			r.ansi.push(ansi.Bold)
 		case 2:
-			r.headingTransformFunc = noopHeadingTransferFunc
+			r.headingTransformFunc = headingLevel2
 			r.ansi.push(ansi.Bold)
-			r.ansi.push(ansi.Underline)
 		case 3:
-			r.headingTransformFunc = noopHeadingTransferFunc
+			r.headingTransformFunc = headingLevel3
 			r.ansi.push(ansi.Bold)
+		case 4:
+			r.ansi.push(ansi.Bold)
+			r.ansi.push(ansi.Italics)
+		case 5:
+			r.ansi.push(ansi.Italics)
 		}
 		return
 	}
@@ -116,8 +120,12 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		r.ansi.pop()
 	case 2:
 		r.ansi.pop()
-		r.ansi.pop()
 	case 3:
+		r.ansi.pop()
+	case 4:
+		r.ansi.pop()
+		r.ansi.pop()
+	case 5:
 		r.ansi.pop()
 	}
 
