@@ -387,6 +387,7 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 				return
 			}
 
+			r.deferredFootBuf.Write(Space(3))
 			r.deferredFootBuf.Write([]byte("[^"))
 			r.deferredFootBuf.Write(link.DeferredID)
 			r.deferredFootBuf.Write([]byte("]: "))
@@ -435,6 +436,7 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		return
 	}
 
+	r.out(r.deferredLinkBuf, Space(3))
 	r.outs(r.deferredLinkBuf, "[")
 	r.out(r.deferredLinkBuf, link.DeferredID)
 	r.outs(r.deferredLinkBuf, "]: ")
@@ -695,6 +697,19 @@ func (r *Renderer) callout(w io.Writer, node *ast.Callout, entering bool) {
 func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 	if !entering {
 		return
+	}
+	_, isTableCell := node.Parent.(*ast.TableCell)
+	if isTableCell {
+		allSpace := true
+		for i := range node.Literal {
+			if !isSpace(node.Literal[i]) {
+				allSpace = false
+				break
+			}
+		}
+		if allSpace {
+			return
+		}
 	}
 
 	r.out(w, node.Literal)

@@ -144,3 +144,7 @@ func (a *ansiStack) print(w io.Writer) {
 		io.WriteString(w, code)
 	}
 }
+
+func isSpace(c byte) bool {
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v'
+}
