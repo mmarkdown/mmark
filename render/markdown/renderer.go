@@ -731,6 +731,20 @@ func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 	if !entering {
 		return
 	}
+	_, isTableCell := node.Parent.(*ast.TableCell)
+	if isTableCell {
+		allSpace := true
+		for i := range node.Literal {
+			if !isSpace(node.Literal[i]) {
+				allSpace = false
+				break
+			}
+		}
+		if allSpace {
+			return
+		}
+	}
+
 	r.out(w, node.Literal)
 }
 

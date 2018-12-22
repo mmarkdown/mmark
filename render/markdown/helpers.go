@@ -134,3 +134,7 @@ func listPrefixLength(list *ast.List, start int) int {
 }
 
 func Space(length int) []byte { return bytes.Repeat([]byte(" "), length) }
+
+func isSpace(c byte) bool {
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v'
+}
