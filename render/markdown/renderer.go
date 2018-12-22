@@ -454,15 +454,16 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		return
 	}
 
-	r.outs(r.deferredLinkBuf, "[")
-	r.out(r.deferredLinkBuf, link.DeferredID)
-	r.outs(r.deferredLinkBuf, "]: ")
-	r.out(r.deferredLinkBuf, link.Destination)
+	io.WriteString(r.deferredLinkBuf, "[")
+	r.deferredLinkBuf.Write(link.DeferredID)
+	io.WriteString(r.deferredLinkBuf, "]: ")
+	r.deferredLinkBuf.Write(link.Destination)
 	if len(link.Title) > 0 {
-		r.outs(r.deferredLinkBuf, ` "`)
-		r.out(r.deferredLinkBuf, link.Title)
-		r.outs(r.deferredLinkBuf, `"`)
+		io.WriteString(r.deferredLinkBuf, ` "`)
+		r.deferredLinkBuf.Write(link.Title)
+		io.WriteString(r.deferredLinkBuf, `"`)
 	}
+	io.WriteString(r.deferredLinkBuf, "\n")
 
 	r.deferredLinkID[string(link.DeferredID)] = struct{}{}
 }
