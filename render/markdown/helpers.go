@@ -124,13 +124,13 @@ func listPrefixLength(list *ast.List, start int) int {
 	numChild := len(list.Children) + start
 	switch {
 	case numChild < 10:
-		return 3
-	case numChild < 100:
 		return 4
-	case numChild < 1000:
+	case numChild < 100:
 		return 5
+	case numChild < 1000:
+		return 6
 	}
-	return 6 // bit of a ridicules list
+	return 7 // bit of a ridicules list
 }
 
 func Space(length int) []byte { return bytes.Repeat([]byte(" "), length) }

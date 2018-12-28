@@ -249,7 +249,7 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		if list.ListFlags&ast.ListTypeOrdered != 0 {
 			r.push(Space(l))
 		} else {
-			r.push(Space(3))
+			r.push(Space(4))
 		}
 		return
 	}
@@ -339,7 +339,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 			r.cellStart = buf.Len() + 1
 		}
 		if r.col > 0 {
-			r.out(w, Space1)
+			r.out(w, Space(1))
 		}
 		return
 	}
@@ -349,7 +349,7 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 		cur = buf.Len()
 	}
 	size := r.colWidth[r.col]
-	fill := bytes.Repeat(Space1, size-(cur-r.cellStart))
+	fill := bytes.Repeat(Space(1), size-(cur-r.cellStart))
 	r.out(w, fill)
 	if r.col == len(r.colWidth)-1 {
 		r.endline(w)
@@ -788,7 +788,6 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 }
 
 var (
-	Space1 = Space(1)
-	Aside  = []byte("A> ")
-	Quote  = []byte("> ")
+	Aside = []byte("A> ")
+	Quote = []byte("> ")
 )
