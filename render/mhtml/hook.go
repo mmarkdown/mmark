@@ -99,6 +99,10 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	io.WriteString(w, `<dt class="bibliography-cite" id="`+string(bib.Anchor)+`">`+fmt.Sprintf("[%s]", bib.Anchor)+"</dt>\n")
 	io.WriteString(w, `<dd>`)
+	defer io.WriteString(w, "</dd>\n")
+	if bib.Reference == nil {
+		return
+	}
 	io.WriteString(w, `<span class="bibliography-author">`+bib.Reference.Front.Author.Fullname+"</span>\n")
 	io.WriteString(w, `<span class="bibliography-title">`+bib.Reference.Front.Title+"</span>\n")
 	if bib.Reference.Format != nil && bib.Reference.Format.Target != "" {
@@ -107,7 +111,6 @@ func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	if bib.Reference.Front.Date.Year != "" {
 		io.WriteString(w, `<date class="bibliography-date">`+bib.Reference.Front.Date.Year+"</date>\n")
 	}
-	io.WriteString(w, "</dd>\n")
 }
 
 func firstSubItem(node ast.Node) bool {
