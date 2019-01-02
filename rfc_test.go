@@ -1,5 +1,3 @@
-// +build xml2rfc
-
 package main
 
 import (
@@ -11,22 +9,30 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
-	"github.com/mmarkdown/mmark/xml"
-	"github.com/mmarkdown/mmark/xml2"
+	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
+	"github.com/mmarkdown/mmark/render/mhtml"
+	"github.com/mmarkdown/mmark/render/xml"
+	"github.com/mmarkdown/mmark/render/xml2"
+)
+
+var (
+	testFiles = []string{
+		"2100.md",
+		"3514.md",
+		"5841.md",
+		"7511.md",
+		"8341.md",
+	}
+	dir      = "rfc"
+	doXMLRFC = false // xml2rfc is broken as we need a very new version of it (in travis)
 )
 
 // TestRFC3 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
-func TestRFC3(t *testing.T) { // currently broken because of xml2rfc --debug foo
-	dir := "rfc"
-	testFiles := []string{
-		"2100.md",
-		"3514.md",
-		"7511.md",
-	}
-
+func TestRFC3(t *testing.T) {
 	for _, f := range testFiles {
 		base := f[:len(f)-3]
 
@@ -39,22 +45,39 @@ func TestRFC3(t *testing.T) { // currently broken because of xml2rfc --debug foo
 }
 
 // TestRFC2 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
-func TestRFC2(t *testing.T) { // currently broken because of xml2rfc --debug foo
-	dir := "rfc"
-	testFiles := []string{
-		"2100.md",
-		"3514.md",
-		"7511.md",
-	}
-
+func TestRFC2(t *testing.T) {
 	for _, f := range testFiles {
 		base := f[:len(f)-3]
 
-		opts2 := xml2.RendererOptions{
+		opts := xml2.RendererOptions{
 			Flags: xml2.CommonFlags | xml2.XMLFragment,
 		}
-		renderer2 := xml2.NewRenderer(opts2)
-		doRenderTest(t, dir, base, renderer2)
+		renderer := xml2.NewRenderer(opts)
+		doRenderTest(t, dir, base, renderer)
+	}
+}
+
+// TestHTML parses the RFC in the rfc/ directory to HTMl.
+func TestHTML(t *testing.T) {
+	for _, f := range testFiles {
+		base := f[:len(f)-3]
+
+		opts := html.RendererOptions{
+			RenderNodeHook: mhtml.RenderHook,
+		}
+		renderer := html.NewRenderer(opts)
+		doRenderTest(t, dir, base, renderer)
+	}
+}
+
+// TestMarkdown parses the RFC in the rfc/ directory to markdown.
+func TestMarkdown(t *testing.T) {
+	for _, f := range testFiles {
+		base := f[:len(f)-3]
+
+		opts := mmarkdown.RendererOptions{}
+		renderer := mmarkdown.NewRenderer(opts)
+		doRenderTest(t, dir, base, renderer)
 	}
 }
 
@@ -68,7 +91,7 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 
 	init := mparser.NewInitial(filename)
 
-	p := parser.NewWithExtensions(Extensions)
+	p := parser.NewWithExtensions(mparser.Extensions)
 	p.Opts = parser.ParserOptions{
 		ParserHook: func(data []byte) (ast.Node, []byte, int) {
 			node, data, consumed := mparser.Hook(data)
@@ -81,10 +104,13 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 	}
 
 	doc := markdown.Parse(input, p)
-	addBibliography(doc)
-	addIndex(doc)
+	mparser.AddBibliography(doc)
+	mparser.AddIndex(doc)
 
 	rfcdata := markdown.Render(doc, renderer)
+	if !doXMLRFC {
+		return
+	}
 
 	switch renderer.(type) {
 	case *xml.Renderer:
