@@ -1,8 +1,8 @@
-*   `len(slice) == n`
+ *  `len(slice) == n`
 
-*   `cap(slice) == m`
+ *  `cap(slice) == m`
 
-*   `len(array) == cap(array) == m`
+ *  `len(array) == cap(array) == m`
 
 !---
 ![Array versus slice](fig/array-vs-slice.png)\

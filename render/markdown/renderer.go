@@ -217,19 +217,20 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 			list.Start++
 		case x&ast.ListTypeTerm != 0:
+			// This does too much.
 			indented = indented[plen+r.prefix.peek():] // remove prefix.
 		case x&ast.ListTypeDefinition != 0:
 			indented[plen+0] = ':'
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
+			indented[plen+0] = ' '
 			if r.listLevel%2 == 0 {
-				indented[plen+0] = '*'
+				indented[plen+1] = '*'
 			} else {
-				indented[plen+0] = '-'
+				indented[plen+1] = '-'
 			}
 
-			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
 	}
