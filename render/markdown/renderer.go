@@ -43,8 +43,7 @@ type Renderer struct {
 	paraStart    int
 	headingStart int
 
-	prefix     *prefixStack // track current prefix, quote, aside, etc.
-	listMarker string
+	prefix *prefixStack // track current prefix, quote, aside, etc.
 
 	// tables
 	cellStart int
@@ -60,6 +59,8 @@ type Renderer struct {
 
 	deferredLinkBuf *bytes.Buffer // deferred footnote buffer. Appended to the doc at the end.
 	deferredLinkID  map[string]struct{}
+
+	listLevel int
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -222,7 +223,12 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = '*'
+			if r.listLevel%2 == 0 {
+				indented[plen+0] = '*'
+			} else {
+				indented[plen+0] = '-'
+			}
+
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
@@ -242,6 +248,10 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	if entering {
+		parent, isNested := list.Parent.(*ast.ListItem)
+		if isNested && parent.ListFlags&ast.ListTypeOrdered == 0 && parent.ListFlags&ast.ListTypeTerm == 0 && parent.ListFlags&ast.ListTypeDefinition == 0 {
+			r.listLevel++
+		}
 		if list.Start == 0 {
 			list.Start = 1
 		}
@@ -254,6 +264,10 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		return
 	}
 	r.pop()
+	parent, isNested := list.Parent.(*ast.ListItem)
+	if isNested && parent.ListFlags&ast.ListTypeOrdered == 0 && parent.ListFlags&ast.ListTypeTerm == 0 && parent.ListFlags&ast.ListTypeDefinition == 0 {
+		r.listLevel--
+	}
 }
 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
