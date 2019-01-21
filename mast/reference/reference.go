@@ -19,9 +19,9 @@ type Date struct {
 
 // Front the reference <front>.
 type Front struct {
-	Title  string `xml:"title"`
-	Author Author `xml:"author"`
-	Date   Date   `xml:"date"`
+	Title   string   `xml:"title"`
+	Authors []Author `xml:"author"`
+	Date    Date     `xml:"date"`
 }
 
 // Format is the reference <format>.
