@@ -87,7 +87,7 @@ func main() {
 		if !*flagHTML {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
-		p.Opts = parser.ParserOptions{
+		p.Opts = parser.Options{
 			ParserHook: func(data []byte) (ast.Node, []byte, int) {
 				node, data, consumed := mparser.Hook(data)
 				if t, ok := node.(*mast.Title); ok {
