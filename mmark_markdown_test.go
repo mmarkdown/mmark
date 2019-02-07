@@ -55,7 +55,7 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 
 	p := parser.NewWithExtensions(mparser.Extensions &^ parser.Includes)
 
-	p.Opts = parser.ParserOptions{
+	p.Opts = parser.Options{
 		ParserHook: mparser.TitleHook,
 	}
 
