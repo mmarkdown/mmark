@@ -79,7 +79,7 @@ func doTest(t *testing.T, dir, basename string, renderer markdown.Renderer) {
 	p := parser.NewWithExtensions(mparser.Extensions)
 
 	init := mparser.NewInitial(filename)
-	p.Opts = parser.ParserOptions{
+	p.Opts = parser.Options{
 		ParserHook:    mparser.TitleHook,
 		ReadIncludeFn: init.ReadInclude,
 	}

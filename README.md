@@ -113,7 +113,7 @@ standard input, this can be set to `""`.
 p := parser.NewWithExtensions(mparser.Extensions)
 init := mparser.NewInitial(fileName)
 documentTitle := "" // hack to get document title from TOML title block and then set it here.
-p.Opts = parser.ParserOptions{
+p.Opts = parser.Options{
     ParserHook: func(data []byte) (ast.Node, []byte, int) {
         node, data, consumed := mparser.Hook(data)
         if t, ok := node.(*mast.Title); ok {
