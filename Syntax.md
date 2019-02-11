@@ -28,14 +28,15 @@ Biggest changes:
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
 will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
-this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version
-2) and ponder LaTeX support. Also with code upstreamed (to
+this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc
+version 2) and Markdown output (use mmark is a markdown formatter). Also with code upstreamed (to
 [gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
 
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
 be to write a "check-the-code" tool that syntax checks all code in code blocks. Eventually these
-could be build into the `mmark` binary itself.
+could be build into the `mmark` binary itself. See some [fun
+ideas](https://github.com/mmarkdown/filter) here.
 
 # Mmark V2 Syntax
 
@@ -79,7 +80,8 @@ Drafts and even complete books. It <strike>steals</strike> borrows syntax elemen
 
 Mmark adds:
 
-* (Extended) [title block](#title-block) to specify authors and IETF specific bits.
+* (Extended) [title block](#title-block) to specify authors and IETF specific bits in
+  [TOML](https://en.wikipedia.org/wiki/TOML) format.
 * [Special sections](#special-sections), for abstracts, prefaces or notes.
 * [Including other files](#including-files) with the option to specify line ranges, regular
   expressions and/or prefixing each line with a custom string.
@@ -226,6 +228,10 @@ Comments:
 Title Block:
 :   From the title block only the title is used, in the `<title>` tag.
 
+### Markdown Output
+
+This outputs markdown again, but pretty printed.
+
 ## Block Elements
 
 ### Title Block
@@ -255,27 +261,27 @@ title = "Foo Bar"
 The difference between the two is:
 
 * `%%%`: block is assumed to be encoded in TOML and *parsed*.
-* `---`: block is not parsed just outputted as-is again (for markdown output), all other format
+* `---`: block is not parsed just outputted as-is again (for markdown output), all other formats
   ignore the contents.
 
 #### Elements of the Title Block
 
 An I-D needs to have a Title Block with the following items filled out:
 
-* title - the main title of the document.
-* abbrev - abbreviation of the title.
-* updates/obsoletes - array of integers.
-* seriesInfo, containing
-   * name - `RFC` or `Internet-Draft` or `DOI`
-   * value - draft name or RFC number
-   * stream - `IETF` (default), `IAB`, `IRTF` or `independent`.
-   * status - `standard`, `informational`, `experimental`, `bcp`, `fyi`, or `full-standard`.
-* ipr - usually just set `trust200902`.
-* area - usually just `Internet`.
-* workgroup - the workgroup the document is created for.
-* keyword - array with keywords (optional).
-* author(s) - define all the authors.
-* date - the date for this I-D/RFC.
+* `title` - the main title of the document.
+* `abbrev` - abbreviation of the title.
+* `updates/obsoletes` - array of integers.
+* `seriesInfo`, containing (this might change with the new *new* XMLv3 output)
+   * `name` - `RFC` or `Internet-Draft` or `DOI`
+   * `value` - draft name or RFC number
+   * `stream` - `IETF` (default), `IAB`, `IRTF` or `independent`.
+   * `status` - `standard`, `informational`, `experimental`, `bcp`, `fyi`, or `full-standard`.
+* `ipr` - usually just set `trust200902`.
+* `area` - usually just `Internet`.
+* `workgroup` - the workgroup the document is created for.
+* `keyword` - array with keywords (optional).
+* `author(s)` - define all the authors.
+* `date` - the date for this I-D/RFC.
 
 An example would be:
 
@@ -287,7 +293,7 @@ updates = [1925, 7511]
 ipr= "trust200902"
 area = "Internet"
 workgroup = ""
-keyword = ["markdown", "xml", "Mmark"]
+keyword = ["markdown", "xml", "mmark"]
 
 [seriesInfo]
 status = "informational"
@@ -475,6 +481,10 @@ Gets expanded into:
 </blockquote>
 ~~~
 
+### Paragraphs
+
+Text that is separated from the rest of the content with empty lines.
+
 ## Inline Elements
 
 ### Indices
@@ -491,8 +501,8 @@ Mmark uses the citation syntax from Pandoc: `[@RFC2535]`, the citation can eithe
 a normative reference for RFC 2535. To suppress a citation use `[@-RFC1000]`. It will still add the
 citation to the references, but does not show up in the document as a citation.
 
-The first seen modifier determines the type (suppressed, normative or informative).
-Multiple citation can separated with a semicolon: `[@RFC1034;@RFC1035]`.
+The first seen modifier determines the type (suppressed, normative or informative). Multiple
+citation can separated with a semicolon: `[@RFC1034;@RFC1035]`.
 
 If you reference an RFC, I-D or W3C document the reference will be added automatically (no need to
 muck about with an `<reference>` block). This is to say:
