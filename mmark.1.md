@@ -2,7 +2,7 @@
 title: 'MMARK(1)'
 author:
     - Mmark Authors
-date: August 2018
+date: February 2019
 ---
 
 # NAME
@@ -26,9 +26,9 @@ The syntax is detailed at [https://mmark.nl/syntax](https://mmark.nl/syntax).
 
 Compared to other markdown variants mmark adds:
 
-*  (Extended) Title blokto specify authors and IETF specific bits.
+*  (Extended) Title block to specify authors and IETF specific bits.
 
-*  Special sections for abstracts, prefaces or notes.
+*  (Special) sections for abstracts, prefaces or notes.
 
 *  Including other files with the option to specify line ranges, regular expressions and/or
    prefixing each line with a custom string.
@@ -133,4 +133,5 @@ markdown files.
 
 # ALSO SEE
 
-RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.nl](https://mmark.nl).
+RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.nl](https://mmark.nl). The syntax
+used by mmark is explained in the [syntax page](https://mmark.nl/post/syntax/).
