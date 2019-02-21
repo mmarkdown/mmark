@@ -16,7 +16,7 @@ func TestReferenceOrganization(t *testing.T) {
     </front>
 </reference>
 `)
-	expect := `<reference anchor="IANA" target="https://www.iana.org/assignments/media-types/media-types.xhtml"><front><title>IANA Media Types</title><author><organization></organization></author><date year="2019" month="February"></date></front></reference>`
+	expect := `<reference anchor="IANA" target="https://www.iana.org/assignments/media-types/media-types.xhtml"><front><title>IANA Media Types</title><author><organization>IANA</organization></author><date year="2019" month="February"></date></front></reference>`
 
 	var x Reference
 	if err := xml.Unmarshal(in, &x); err != nil {

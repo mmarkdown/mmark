@@ -14,7 +14,8 @@ type Author struct {
 }
 
 type Organization struct {
-	Abbrev string `xml:"organization,attr,omitempty"`
+	Abbrev string `xml:"abbrev,attr,omitempty"`
+	Value  string `xml:",chardata"`
 }
 
 // this is copied from ../title.go; it might make sense to unify them, both especially, it we
