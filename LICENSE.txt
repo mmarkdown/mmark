@@ -1,8 +1,6 @@
-Markdown is distributed under the Simplified BSD License:
+Mmark is distributed under the Simplified BSD License:
 
-Copyright © 2011 Russ Ross
-Copyright © 2018 Krzysztof Kowalczyk
-Copyright © 2018 Authors
+Copyright © 2018 Miek Gieben
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
