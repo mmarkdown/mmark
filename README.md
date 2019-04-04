@@ -1,235 +1,155 @@
-%%%
-title = "coredns-kubernetes 7"
-date = "2019-04-04T19:23:50+01:00"
-area = "coredns-plugin"
-workgroup = "CoreDNS"
-%%%
+---
+title: "About"
+date: 2018-07-22T14:05:51+01:00
+aliases: [/about/]
+---
 
-# kubernetes
+[![Build Status](https://img.shields.io/travis/mmarkdown/mmark/master.svg?label=build)](https://travis-ci.org/mmarkdown/mmark)
 
-## Name
+Mmark is a powerful markdown processor written in Go, geared towards writing IETF documents. It is,
+however, *also* suited for writing complete books and other technical documentation, like the
+[Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo), and
+[I-D text output](https://miek.nl/go/learninggo-2.txt)).
 
-*kubernetes* - enables the reading zone data from a Kubernetes cluster.
+It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
+[RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
+RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 output, markdown and manual pages.
 
-## Description
+Example RFCs in Mmark format can be [found in the Github
+repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
-This plugin implements the [Kubernetes DNS-Based Service Discovery
-Specification](https://github.com/kubernetes/dns/blob/master/docs/specification.md).
+Mmark uses [gomarkdown](https://github.com/gomarkdown/markdown) which is a fork of
+[blackfriday](https://github.com/russross/blackfriday/). See its
+[README.md](https://github.com/gomarkdown/markdown/blob/master/README.md) for more documentation.
 
-CoreDNS running the kubernetes plugin can be used as a replacement for kube-dns in a kubernetes
-cluster.  See the [deployment](https://github.com/coredns/deployment) repository for details on [how
-to deploy CoreDNS in Kubernetes](https://github.com/coredns/deployment/tree/master/kubernetes).
-
-[stubDomains and upstreamNameservers](https://kubernetes.io/blog/2017/04/configuring-private-dns-zones-upstream-nameservers-kubernetes/)
-are implemented via the *forward* plugin and kubernetes *upstream*. See the examples below.
-
-This plugin can only be used once per Server Block.
+If you like Go and parsing text, drop me (<mailto:miek@miek.nl>) a line if you want to be part of
+the *Mmarkdown* Github org, and help develop Mmark!
 
 ## Syntax
 
-~~~
-kubernetes [ZONES...]
-~~~
+Mmark's syntax and the extra features compared to plain Markdown are detailed in
+[syntax.md](https://mmark.nl/syntax).
 
-With only the directive specified, the *kubernetes* plugin will default to the zone specified in
-the server's block. It will handle all queries in that zone and connect to Kubernetes in-cluster. It
-will not provide PTR records for services or A records for pods. If **ZONES** is used it specifies
-all the zones the plugin should be authoritative for.
+Mmark adds the following syntax elements to
+[gomarkdown/markdown](https://github.com/gomarkdown/markdown/blob/master/README.md):
 
-```
-kubernetes [ZONES...] {
-    resyncperiod DURATION
-    endpoint URL
-    tls CERT KEY CACERT
-    kubeconfig KUBECONFIG CONTEXT
-    namespaces NAMESPACE...
-    labels EXPRESSION
-    pods POD-MODE
-    endpoint_pod_names
-    upstream [ADDRESS...]
-    ttl TTL
-    noendpoints
-    transfer to ADDRESS...
-    fallthrough [ZONES...]
-    ignore empty_service
-}
-```
+* (Extended) [title block](https://mmark.nl/syntax#title-block).
+* [Special sections](https://mmark.nl/syntax#special-sections).
+* [Including other files](https://mmark.nl/syntax#including-files) with the option to specify line ranges, regular
+  expressions and/or prefix each line with a string. By default only files on the same level, or
+  below are allowed to be included (see the `-unsafe` flag).
+* [Document divisions](https://mmark.nl/syntax#document-divisions).
+* [Captions](https://mmark.nl/syntax#captions) for code, tables and quotes
+* [Asides](https://mmark.nl/syntax#asides).
+* [Figures and Subfigures](https://mmark.nl/syntax#figures-and-subfigures) - bundle (sub)figures
+  into a larger figure.
+* [Block Level Attributes](https://mmark.nl/syntax#block-level-attributes) that allow to specify attributes, classes and
+  IDs for elements.
+* [Indices](https://mmark.nl/syntax#indices) to mark an item (and/or a subitem) to be referenced in the document index.
+* [Citations](https://mmark.nl/syntax#citations) and adding [XML References](https://mmark.nl/syntax#xml-references)
+* [In document cross references](https://mmark.nl/syntax#cross-references), short form of referencing a section in the
+  document.
+* [Super- and Subscript](https://mmark.nl/syntax#super-and-subscript).
+* [Callouts](https://mmark.nl/syntax#callouts) in code and text.
+* [BCP14](https://mmark.nl/syntax#bcp14) (RFC 2119) keyword detection.
 
-* `resyncperiod` specifies the Kubernetes data API **DURATION** period. By
-  default resync is disabled (DURATION is zero).
-* `endpoint` specifies the **URL** for a remote k8s API endpoint.
-   If omitted, it will connect to k8s in-cluster using the cluster service account.
-* `tls` **CERT** **KEY** **CACERT** are the TLS cert, key and the CA cert file names for remote k8s connection.
-   This option is ignored if connecting in-cluster (i.e. endpoint is not specified).
-* `kubeconfig` **KUBECONFIG** **CONTEXT** authenticates the connection to a remote k8s cluster using a kubeconfig file. It supports TLS, username and password, or token-based authentication. This option is ignored if connecting in-cluster (i.e., the endpoint is not specified).
-* `namespaces` **NAMESPACE [NAMESPACE...]** only exposes the k8s namespaces listed.
-   If this option is omitted all namespaces are exposed
-* `namespace_labels` **EXPRESSION** only expose the records for Kubernetes namespaces that match this label selector.
-   The label selector syntax is described in the
-   [Kubernetes User Guide - Labels](http://kubernetes.io/docs/user-guide/labels/). An example that
-   only exposes namespaces labeled as "istio-injection=enabled", would use:
-   `labels istio-injection=enabled`.
-* `labels` **EXPRESSION** only exposes the records for Kubernetes objects that match this label selector.
-   The label selector syntax is described in the
-   [Kubernetes User Guide - Labels](https://kubernetes.io/docs/user-guide/labels/). An example that
-   only exposes objects labeled as "application=nginx" in the "staging" or "qa" environments, would
-   use: `labels environment in (staging, qa),application=nginx`.
-* `pods` **POD-MODE** sets the mode for handling IP-based pod A records, e.g.
-   `1-2-3-4.ns.pod.cluster.local. in A 1.2.3.4`.
-   This option is provided to facilitate use of SSL certs when connecting directly to pods. Valid
-   values for **POD-MODE**:
+## Usage
 
-   * `disabled`: Default. Do not process pod requests, always returning `NXDOMAIN`
-   * `insecure`: Always return an A record with IP from request (without checking k8s).  This option
-     is vulnerable to abuse if used maliciously in conjunction with wildcard SSL certs.  This
-     option is provided for backward compatibility with kube-dns.
-   * `verified`: Return an A record if there exists a pod in same namespace with matching IP.  This
-     option requires substantially more memory than in insecure mode, since it will maintain a watch
-     on all pods.
+You can [download a binary](https://github.com/mmarkdown/mmark/releases) or optionally build mmark
+your self. You'll need a working [Go environment](https://golang.org), then check out the code and:
 
-* `endpoint_pod_names` uses the pod name of the pod targeted by the endpoint as
-   the endpoint name in A records, e.g.,
-   `endpoint-name.my-service.namespace.svc.cluster.local. in A 1.2.3.4`
-   By default, the endpoint-name name selection is as follows: Use the hostname
-   of the endpoint, or if hostname is not set, use the dashed form of the endpoint
-   IP address (e.g., `1-2-3-4.my-service.namespace.svc.cluster.local.`)
-   If this directive is included, then name selection for endpoints changes as
-   follows: Use the hostname of the endpoint, or if hostname is not set, use the
-   pod name of the pod targeted by the endpoint. If there is no pod targeted by
-   the endpoint, use the dashed IP address form.
-* `upstream` [**ADDRESS**...] defines the upstream resolvers used for resolving services
-  that point to external hosts (aka External Services, aka CNAMEs).  If no **ADDRESS** is given, CoreDNS
-  will resolve External Services against itself. **ADDRESS** can be an IP, an IP:port, or a path
-  to a file structured like resolv.conf.
-* `ttl` allows you to set a custom TTL for responses. The default is 5 seconds.  The minimum TTL allowed is
-  0 seconds, and the maximum is capped at 3600 seconds. Setting TTL to 0 will prevent records from being cached.
-* `noendpoints` will turn off the serving of endpoint records by disabling the watch on endpoints.
-  All endpoint queries and headless service queries will result in an NXDOMAIN.
-* `transfer` enables zone transfers. It may be specified multiples times. `To` signals the direction
-  (only `to` is allowed). **ADDRESS** must be denoted in CIDR notation (127.0.0.1/32 etc.) or just as
-  plain addresses. The special wildcard `*` means: the entire internet.
-  Sending DNS notifies is not supported.
-  [Deprecated](https://github.com/kubernetes/dns/blob/master/docs/specification.md#26---deprecated-records) pod records in the subdomain `pod.cluster.local` are not transferred.
-* `fallthrough` **[ZONES...]** If a query for a record in the zones for which the plugin is authoritative
-  results in NXDOMAIN, normally that is what the response will be. However, if you specify this option,
-  the query will instead be passed on down the plugin chain, which can include another plugin to handle
-  the query. If **[ZONES...]** is omitted, then fallthrough happens for all zones for which the plugin
-  is authoritative. If specific zones are listed (for example `in-addr.arpa` and `ip6.arpa`), then only
-  queries for those zones will be subject to fallthrough.
-* `ignore empty_service` returns NXDOMAIN for services without any ready endpoint addresses (e.g., ready pods).
-  This allows the querying pod to continue searching for the service in the search path.
-  The search path could, for example, include another Kubernetes cluster.
+    % go get && go build
+    % ./mmark -version
+    2.0.0
 
-## Ready
+To output XML2RFC v3 xml just give it a markdown file and:
 
-This plugin reports readiness to the ready plugin. This will happen after it has synced to the
-Kubernetes API.
+    % ./mmark rfc/3514.md
 
-## Examples
+Making a draft in text form (v3 output)
 
-Handle all queries in the `cluster.local` zone. Connect to Kubernetes in-cluster. Also handle all
-`in-addr.arpa` `PTR` requests for `10.0.0.0/17` . Verify the existence of pods when answering pod
-requests. Resolve upstream records against `10.102.3.10`. Note we show the entire server block here:
+    % ./mmark rfc/3514.md > x.xml
+    % xml2rfc --v3 --text x.xml
 
-~~~ txt
-10.0.0.0/17 cluster.local {
-    kubernetes {
-        pods verified
-        upstream 10.102.3.10:53
-    }
-}
+Making a draft in text form (v2 output)
+
+    % ./mmark -2 rfc/3514.md > x.xml
+    % xml2rfc --text x.xml
+
+Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`. And
+outputting markdown is done with the `-markdown` switch (optionally you can use `-width` to set the
+text width).
+
+[1]: https://daringfireball.net/projects/markdown/ "Markdown"
+[2]: https://golang.org/ "Go Language"
+
+## Example RFC
+
+The rfc/ directory contains a couple of example RFCs that can be build via the v2 or v3 tool chain.
+The build the text files, just run:
+
+~~~ sh
+cd rfc
+make txt
 ~~~
 
-Or you can selectively expose some namespaces:
-
-~~~ txt
-kubernetes cluster.local {
-    namespaces test staging
-}
+For v2 (i.e. the current (2018) way of making RFC), just run:
+~~~ sh
+cd rfc
+make TWO="yes" txt
 ~~~
 
-Connect to Kubernetes with CoreDNS running outside the cluster:
+Official RFCs are in rfc/orig (so you can compare the text output from mmark).
 
-~~~ txt
-kubernetes cluster.local {
-    endpoint https://k8s-endpoint:8443
-    tls cert key cacert
-}
-~~~
+## Using Mmark as a library
 
-## stubDomains and upstreamNameservers
+By default Mmark gives you a binary you can run, if you want to include the parser and renderers in
+your own code you'll have to lift some of it out of `mmark.go`.
 
-Here we use the *forward* plugin to implement a stubDomain that forwards `example.local` to the nameserver `10.100.0.10:53`.
-The *upstream* option in the *kubernetes* plugin means that ExternalName services (CNAMEs) will be resolved using the respective proxy.
-Also configured is an upstreamNameserver `8.8.8.8:53` that will be used for resolving names that do not fall in `cluster.local`
-or `example.local`.
+Create a parser with the correct options and flags. The that `init` is used to track file includes.
+In this snippet we set if to `fileName` which is the file we're currently reading. If reading from
+standard input, this can be set to `""`.
 
-~~~ txt
-cluster.local:53 {
-    kubernetes cluster.local {
-        upstream
-    }
-}
-example.local {
-    forward . 10.100.0.10:53
-}
-
-. {
-    forward . 8.8.8.8:53
-}
-~~~
-
-The configuration above represents the following Kube-DNS stubDomains and upstreamNameservers configuration.
-
-~~~ txt
-stubDomains: |
-   {“example.local”: [“10.100.0.10:53”]}
-upstreamNameservers: |
-   [“8.8.8.8:53”]
-~~~
-
-## AutoPath
-
-The *kubernetes* plugin can be used in conjunction with the *autopath* plugin.  Using this
-feature enables server-side domain search path completion in Kubernetes clusters.  Note: `pods` must
-be set to `verified` for this to function properly.
-
-    cluster.local {
-        autopath @kubernetes
-        kubernetes {
-            pods verified
+~~~ go
+p := parser.NewWithExtensions(mparser.Extensions)
+init := mparser.NewInitial(fileName)
+documentTitle := "" // hack to get document title from TOML title block and then set it here.
+p.Opts = parser.Options{
+    ParserHook: func(data []byte) (ast.Node, []byte, int) {
+        node, data, consumed := mparser.Hook(data)
+        if t, ok := node.(*mast.Title); ok {
+            if !t.IsTriggerDash() {
+                documentTitle = t.TitleData.Title
+            }
         }
-    }
+        return node, data, consumed
+    },
+    ReadIncludeFn: init.ReadInclude,
+    Flags:         parserFlags,
+}
+~~~
 
-## Federation
+Then parser the document (`d` is a `[]byte` containing the document text):
 
-The *kubernetes* plugin can be used in conjunction with the *federation* plugin.  Using this
-feature enables serving federated domains from the Kubernetes clusters.
+~~~ go
+doc := markdown.Parse(d, p)
+mparser.AddBibliography(doc)
+mparser.AddIndex(doc)
+~~~
 
-    cluster.local {
-        federation {
-            prod prod.example.org
-            staging staging.example.org
-        }
-        kubernetes
-    }
+After this `doc` is ready to be rendered. Create a renderer, with a bunch of options.
 
+~~~ go
+opts := html.RendererOptions{
+    Comments:       [][]byte{[]byte("//"), []byte("#")}, // used for callouts.
+	RenderNodeHook: mhtml.RenderHook,
+	Flags:          html.CommonFlags | html.FootnoteNoHRTag | html.FootnoteReturnLinks| html.CompletePage,
+	Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl`,
+}
+opts.Title = documentTitle // hack to add-in discovered title
 
-## Wildcards
+renderer := html.NewRenderer(opts)
+~~~
 
-Some query labels accept a wildcard value to match any value.  If a label is a valid wildcard (\*,
-or the word "any"), then that label will match all values.  The labels that accept wildcards are:
-
- * _endpoint_ in an `A` record request: _endpoint_.service.namespace.svc.zone, e.g., `*.nginx.ns.svc.cluster.local`
- * _service_ in an `A` record request: _service_.namespace.svc.zone, e.g., `*.ns.svc.cluster.local`
- * _namespace_ in an `A` record request: service._namespace_.svc.zone, e.g., `nginx.*.svc.cluster.local`
- * _port and/or protocol_ in an `SRV` request: __port_.__protocol_.service.namespace.svc.zone.,
-   e.g., `_http.*.service.ns.svc.cluster.local`
- * multiple wildcards are allowed in a single query, e.g., `A` Request `*.*.svc.zone.` or `SRV` request `*.*.*.*.svc.zone.`
-
- For example, wildcards can be used to resolve all Endpoints for a Service as `A` records. e.g.: `*.service.ns.svc.myzone.local` will return the Endpoint IPs in the Service `service` in namespace `default`:
- ```
-*.service.default.svc.cluster.local. 5	IN A	192.168.10.10
-*.service.default.svc.cluster.local. 5	IN A	192.168.25.15
-```
- This response can be randomized using the `loadbalance` plugin
+Next we we only need to generate the HTML: `x := markdown.Render(doc, renderer)`. Now `x` contains
+a `[]byte` with the HTML.

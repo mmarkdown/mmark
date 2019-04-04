@@ -232,15 +232,15 @@ Title Block:
 
 This outputs markdown again, but pretty printed.
 
-### Manual Pages
+### Manual Page Output
 
 Title Block:
-:  From the title block the following elements are used in the `.TH` tag:
+:   The title block needs a few elements to correctly generate a manual page
 
-   *  "title": as the title, it should have the section as a number on the end
-   * "date": used as the date in "Month Year" format
-   * "area": which be used as the page's section.
-   * "workgroup: which will be used as the organization.
+    * "title", title needs to end in a digit to signal the section.
+    * "date", date of the man page.
+    * "area", what is it, e.g. "User Commands"
+    * "workgroup", who wrote this e.g.  "Mmark Markdown"
 
 ## Block Elements
 

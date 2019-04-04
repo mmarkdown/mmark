@@ -8,9 +8,8 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/mmarkdown/mmark/mparser"
-
 	"github.com/google/go-cmp/cmp"
+	"github.com/mmarkdown/mmark/mparser"
 	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 )
 
