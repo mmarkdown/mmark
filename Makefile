@@ -8,7 +8,7 @@ mmark:
 	go build
 
 mmark.1: mmark.1.md mmark.1.docheader
-       ( cat mmark.1.docheader ; tail +8 mmark.1.md ) | ./mmark -man > mmark.1
+	( cat mmark.1.docheader ; tail +8 mmark.1.md ) | ./mmark -man > mmark.1
 
 .PHONY: clean
 clean:
@@ -39,7 +39,6 @@ tar:
 	tar -zcf release/mmark_$(VERSION)_linux_arm.tgz -C build/linux/arm mmark
 	tar -zcf release/mmark_$(VERSION)_darwin_amd64.tgz -C build/darwin/amd64 mmark
 	tar -zcf release/mmark_$(VERSION)_windows_amd64.tgz -C build/windows/amd64 mmark.exe
-
 
 .PHONY: release
 release:
