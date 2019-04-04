@@ -9,13 +9,13 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mparser"
+	"github.com/mmarkdown/mmark/render/man"
 
 	"github.com/google/go-cmp/cmp"
-	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 )
 
-func TestMmarkMarkdown(t *testing.T) {
-	dir := "testdata/markdown"
+func TestMmarkMan(t *testing.T) {
+	dir := "testdata/man"
 	testFiles, err := ioutil.ReadDir(dir)
 	if err != nil {
 		t.Fatalf("could not read %s: %q", dir, err)
@@ -29,17 +29,15 @@ func TestMmarkMarkdown(t *testing.T) {
 			continue
 		}
 		base := f.Name()[:len(f.Name())-3]
-		opts := mmarkdown.RendererOptions{
-			TextWidth: 100,
-		}
+		opts := man.RendererOptions{}
 
-		renderer := mmarkdown.NewRenderer(opts)
+		renderer := man.NewRenderer(opts)
 
-		doTestMarkdown(t, dir, base, renderer)
+		doTestMan(t, dir, base, renderer)
 	}
 }
 
-func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Renderer) {
+func doTestMan(t *testing.T, dir, basename string, renderer markdown.Renderer) {
 	filename := filepath.Join(dir, basename+".md")
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -54,12 +52,7 @@ func doTestMarkdown(t *testing.T, dir, basename string, renderer markdown.Render
 	}
 	expected = bytes.TrimSpace(expected)
 
-	p := parser.NewWithExtensions(mparser.Extensions &^ parser.Includes)
-
-	p.Opts = parser.Options{
-		ParserHook: mparser.TitleHook,
-	}
-
+	p := parser.NewWithExtensions(mparser.Extensions)
 	doc := markdown.Parse(input, p)
 	actual := markdown.Render(doc, renderer)
 	actual = bytes.TrimSpace(actual)
