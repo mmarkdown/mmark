@@ -7,8 +7,8 @@ mmark:
 	@echo $(VERSION)
 	go build
 
-mmark.1: mmark.1.md
-	pandoc mmark.1.md -s -t man > mmark.1
+mmark.1: mmark.1.md mmark.1.docheader
+       ( cat mmark.1.docheader ; tail +8 mmark.1.md ) | ./mmark -man > mmark.1
 
 .PHONY: clean
 clean:
