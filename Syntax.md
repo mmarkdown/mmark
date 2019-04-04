@@ -232,6 +232,16 @@ Title Block:
 
 This outputs markdown again, but pretty printed.
 
+### Manual Pages
+
+Title Block:
+:  From the title block the following elements are used in the `.TH` tag:
+
+   *  "title": as the title, it should have the section as a number on the end
+   * "date": used as the date in "Month Year" format
+   * "area": which be used as the page's section.
+   * "workgroup: which will be used as the organization.
+
 ## Block Elements
 
 ### Title Block
