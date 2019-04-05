@@ -59,6 +59,10 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 		return
 	}
 
+	if len(node.Title) == 0 {
+		node.Title = "No Title Given 1"
+	}
+
 	// track back to first space and assume the rest is the section, don't parse it as a number
 	i := len(node.Title) - 1
 	for i > 0 && node.Title[i-1] != ' ' {
@@ -148,13 +152,11 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 		if list.ListFlags&ast.ListTypeOrdered == 0 && list.ListFlags&ast.ListTypeTerm == 0 && list.ListFlags&ast.ListTypeDefinition == 0 {
 			r.listLevel++
 		}
-		r.outs(w, "\n.RS\n")
 		return
 	}
 	if list.ListFlags&ast.ListTypeOrdered == 0 && list.ListFlags&ast.ListTypeTerm == 0 && list.ListFlags&ast.ListTypeDefinition == 0 {
 		r.listLevel--
 	}
-	r.outs(w, "\n.RE\n")
 }
 
 func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
