@@ -27,6 +27,12 @@ func needsBackslash(c byte) bool {
 func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
 	for i := 0; i < len(text); i++ {
 		// escape apostrophe or period after newline (making this first char on the line)
+		if i == 0 && (text[i] == '\'' || text[i] == '.') {
+			r.outs(w, "\\&")
+			r.out(w, []byte{text[i]})
+			continue
+		}
+
 		if i > 0 && text[i-1] == '\n' && (text[i] == '\'' || text[i] == '.') {
 			r.outs(w, "\\&")
 			r.out(w, []byte{text[i]})

@@ -207,7 +207,6 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
 	if entering {
 		r.outs(w, "\n.PP\n.RS\n\n.nf\n")
-		//r.out(w, codeBlock.Literal)
 		escapeSpecialChars(r, w, codeBlock.Literal)
 		r.outs(w, "\n.fi\n.RE\n")
 	}
