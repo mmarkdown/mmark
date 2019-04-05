@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
@@ -38,7 +39,8 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
-	listLevel int
+	listLevel    int
+	allListLevel int
 }
 
 // NewRenderer creates and configures an Renderer object, which satisfies the Renderer interface.
@@ -61,6 +63,10 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 
 	if len(node.Title) == 0 {
 		node.Title = "No Title Given 1"
+	}
+
+	if node.Date.IsZero() {
+		node.Date = time.Now().UTC()
 	}
 
 	// track back to first space and assume the rest is the section, don't parse it as a number
@@ -149,11 +155,23 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 	// needs other types of lists as well, now just the simple one
 	if entering {
+		r.allListLevel++
 		if list.ListFlags&ast.ListTypeOrdered == 0 && list.ListFlags&ast.ListTypeTerm == 0 && list.ListFlags&ast.ListTypeDefinition == 0 {
 			r.listLevel++
 		}
+		if r.allListLevel > 1 {
+			r.outs(w, "\n.RS\n")
+		} else {
+			r.outs(w, "\n")
+		}
 		return
 	}
+	if r.allListLevel > 1 {
+		r.outs(w, "\n.RE\n")
+	} else {
+		r.outs(w, "\n")
+	}
+	r.allListLevel--
 	if list.ListFlags&ast.ListTypeOrdered == 0 && list.ListFlags&ast.ListTypeTerm == 0 && list.ListFlags&ast.ListTypeDefinition == 0 {
 		r.listLevel--
 	}
