@@ -6,13 +6,13 @@
 aaa
 
 .RS
-.IP \(em 4
+.IP \(en 4
 b
-.IP \(em 4
+.IP \(en 4
 c
-.IP \(em 4
+.IP \(en 4
 d
-.IP \(em 4
+.IP \(en 4
 e
 
 .RE
