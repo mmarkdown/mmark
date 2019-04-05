@@ -61,10 +61,6 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 		return
 	}
 
-	if len(node.Title) == 0 {
-		node.Title = "No Title Given 1"
-	}
-
 	if node.Date.IsZero() {
 		node.Date = time.Now().UTC()
 	}
@@ -78,9 +74,10 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 		// maybe error later
 		i = len(node.Title)
 	}
-	section := node.Title[i:]
-	r.outs(w, fmt.Sprintf(".TH %q", strings.ToUpper(node.Title[:i-1])))
-	r.outs(w, fmt.Sprintf(" %q", section))
+	if i > 0 {
+		r.outs(w, fmt.Sprintf(".TH %q", strings.ToUpper(node.Title[:i-1])))
+		r.outs(w, fmt.Sprintf(" %q", node.Title[i:]))
+	}
 	r.outs(w, fmt.Sprintf(" %q", node.Date.Format("January 2006")))
 	r.outs(w, fmt.Sprintf(" %q", node.Area))
 	r.outs(w, fmt.Sprintf(" %q", node.Workgroup))
