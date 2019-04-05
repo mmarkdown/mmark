@@ -175,11 +175,11 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 			r.outs(w, ".TP\n")
 
 		case x&ast.ListTypeDefinition != 0:
-			r.outs(w, "\n")
+			r.outs(w, "")
 
 		default:
 			if r.listLevel%2 == 0 {
-				r.outs(w, ".IP \\(em 4\n")
+				r.outs(w, ".IP \\(en 4\n")
 			} else {
 				r.outs(w, ".IP \\(bu 4\n")
 			}
