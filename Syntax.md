@@ -237,10 +237,14 @@ This outputs markdown again, but pretty printed.
 Title Block:
 :   The title block needs a few elements to correctly generate a manual page
 
-    * `title`, title needs to end in a digit to signal the section.
+    * `title`, title needs to *end in a digit* to signal the *section*.
     * `date`, date of the man page.
     * `area`, what is it, e.g. "User Commands"
     * `workgroup`, who wrote this e.g.  "Mmark Markdown"
+
+Images:
+:   Not supported.
+
 
 ## Block Elements
 
