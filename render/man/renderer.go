@@ -286,6 +286,7 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {}
 
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering bool) {
+	// may indent it?
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
@@ -418,11 +419,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Link:
 		r.link(w, node, entering)
 	case *ast.Math:
-		r.outOneOf(w, true, "$", "$")
 		if entering {
 			r.out(w, node.Literal)
 		}
-		r.outOneOf(w, false, "$", "$")
 	case *ast.Image:
 		r.image(w, node, entering)
 	case *ast.Code:
