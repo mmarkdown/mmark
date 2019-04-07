@@ -91,7 +91,6 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		io.WriteString(w, ` <a class="index-return" href="#`+string(node.Destination)+`">`)
 		io.WriteString(w, IndexReturnLinkContents)
 		return ast.GoToNext, true
-
 	}
 	return ast.GoToNext, false
 }

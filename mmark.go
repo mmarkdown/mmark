@@ -86,7 +86,7 @@ func main() {
 		p := parser.NewWithExtensions(mparser.Extensions)
 		parserFlags := parser.FlagsNone
 		documentTitle := "" // hack to get document title from toml title block and then set it here.
-		if !*flagHTML {
+		if !*flagHTML && !*flagMan {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
 		p.Opts = parser.Options{
@@ -160,7 +160,7 @@ func main() {
 			renderer = mmarkout.NewRenderer(opts)
 		case *flagMan:
 			opts := man.RendererOptions{}
-			if !*flagFragment {
+			if *flagFragment {
 				opts.Flags |= man.ManFragment
 			}
 			renderer = man.NewRenderer(opts)
