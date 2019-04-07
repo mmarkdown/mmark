@@ -20,7 +20,7 @@ is, however, *also* suited for writing complete books and other technical docume
 
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 and markdown output.
+RFC 7991), RFC 7749 (xml2rfc version 2), HTML5, manual pages and markdown output.
 
 The syntax is detailed at [https://mmark.nl/syntax](https://mmark.nl/syntax).
 
@@ -104,6 +104,10 @@ markdown files.
 **-markdown**
 
 :  output (normalized) markdown.
+
+**-man**
+
+:  output troff (manual pages).
 
 **-unsafe**
 
