@@ -160,6 +160,9 @@ func main() {
 			renderer = mmarkout.NewRenderer(opts)
 		case *flagMan:
 			opts := man.RendererOptions{}
+			if !*flagFragment {
+				opts.Flags |= man.ManFragment
+			}
 			renderer = man.NewRenderer(opts)
 		default:
 			opts := xml.RendererOptions{

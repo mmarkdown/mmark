@@ -29,7 +29,7 @@ func TestMmarkMan(t *testing.T) {
 			continue
 		}
 		base := f.Name()[:len(f.Name())-3]
-		opts := man.RendererOptions{}
+		opts := man.RendererOptions{Flags: man.ManFragment}
 
 		renderer := man.NewRenderer(opts)
 
