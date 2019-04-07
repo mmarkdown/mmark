@@ -213,11 +213,36 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 	}
 }
 
-func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {}
+func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
+	if entering {
+		r.outs(w, "\n.RS\n.TS\nallbox;\n")
+		columns := countColumns(tab)
+		r.outs(w, strings.Repeat("l ", columns)+"\n")
+		r.outs(w, strings.Repeat("l ", columns)+".\n")
+		return
+	}
+	r.outs(w, ".TE\n.RE\n\n")
+}
 
-func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) {}
+func (r *Renderer) tableRow(w io.Writer, tableRow *ast.TableRow, entering bool) {
+	if !entering {
+		r.outs(w, "\n")
+	}
+}
 
-func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering bool) {}
+func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering bool) {
+	if tableCell.IsHeader {
+		r.outOneOf(w, entering, "\\fB", "\\fP")
+	}
+	parent := tableCell.Parent
+	if tableCell == ast.GetFirstChild(parent) {
+		return
+	}
+	if entering {
+		r.outs(w, "\t")
+		return
+	}
+}
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {}
 
@@ -239,9 +264,37 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {}
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering bool) {
 }
 
-func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {}
+func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
+	// not used.
+}
 
-func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {}
+func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
+	what := ast.GetFirstChild(caption.Parent)
+
+	if !entering {
+		switch what.(type) {
+		case *ast.Table:
+			r.outs(w, "\n.RE\n")
+		case *ast.CodeBlock:
+			r.outs(w, "\n.RE\n")
+		case *ast.BlockQuote:
+			r.outs(w, "\n.RE\n")
+		}
+		return
+	}
+	// get parent, get first child for type
+	switch what.(type) {
+	case *ast.Table:
+		r.outs(w, "\n.RS\n")
+		r.outs(w, "Table: ")
+	case *ast.CodeBlock:
+		r.outs(w, "\n.RS\n")
+		r.outs(w, "Figure: ")
+	case *ast.BlockQuote:
+		r.outs(w, "\n.RS\n")
+		r.outs(w, "\\(en ")
+	}
+}
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
 	if entering {
@@ -303,7 +356,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.heading(w, node, entering)
 	case *ast.HorizontalRule:
 		if entering {
-			r.outs(w, "\n.ti 0\n\\l'\\n(.lu'\n")
+			r.outs(w, "\n.ti 0\n\\l'\\n(.l─'\n")
 		}
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)

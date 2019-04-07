@@ -2,6 +2,8 @@ package man
 
 import (
 	"io"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
@@ -44,4 +46,22 @@ func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
 		}
 		r.out(w, []byte{text[i]})
 	}
+}
+
+func countColumns(node ast.Node) int {
+	columns := 0
+	ast.WalkFunc(node, func(node ast.Node, entering bool) ast.WalkStatus {
+		switch node.(type) {
+		case *ast.TableRow:
+			if !entering {
+				return ast.Terminate
+			}
+		case *ast.TableCell:
+			if entering {
+				columns++
+			}
+		}
+		return ast.GoToNext
+	})
+	return columns
 }
