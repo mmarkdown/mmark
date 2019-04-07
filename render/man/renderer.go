@@ -181,6 +181,7 @@ func (r *Renderer) list(w io.Writer, list *ast.List, entering bool) {
 
 func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) {
 	if entering {
+		// footnotes
 		if listItem.RefLink != nil {
 			// get number in the list
 			children := listItem.Parent.GetChildren()
@@ -203,7 +204,8 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 					break
 				}
 			}
-			r.outs(w, fmt.Sprintf(".IP %d\\. 4\n", i+1))
+			start := listItem.GetParent().(*ast.List).Start
+			r.outs(w, fmt.Sprintf(".IP %d\\. 4\n", start+i+1))
 
 		case x&ast.ListTypeTerm != 0:
 			r.outs(w, ".TP\n")
