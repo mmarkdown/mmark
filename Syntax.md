@@ -237,13 +237,17 @@ This outputs markdown again, but pretty printed.
 Title Block:
 :   The title block needs a few elements to correctly generate a manual page
 
-    * `title`, title needs to *end in a digit* to signal the *section*.
-    * `date`, date of the man page.
-    * `area`, what is it, e.g. "User Commands"
-    * `workgroup`, who wrote this e.g.  "Mmark Markdown"
+    * `title`, title needs to *end in a digit* to signal the *section*, default to "1" is nothing is
+      found.
+    * `area`, what is it, e.g. "User Commands".
+    * `workgroup`, who wrote this e.g.  "Mmark Markdown".
+    * `date`, date of the man page, optional, default to "today".
 
 Images:
 :   Not supported.
+
+References and citations:
+:   Not supported (they may in the future).
 
 
 ## Block Elements
@@ -296,6 +300,9 @@ An I-D needs to have a Title Block with the following items filled out:
 * `keyword` - array with keywords (optional).
 * `author(s)` - define all the authors.
 * `date` - the date for this I-D/RFC.
+
+For a manual page the `title`, `area` and `workgroup` are mandatory, if `date` is not specified,
+"today" is assumed.
 
 An example would be:
 

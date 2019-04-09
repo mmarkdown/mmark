@@ -75,6 +75,10 @@ The HTML5 renderer outputs HTML.
 Mmark can also be "translated" into markdown again. This is a useful feature for auto-formatting
 markdown files.
 
+## Manual Pages
+
+The man renderer outputs nroff that can be viewed via man(1).
+
 # OPTIONS
 
 **-ast**
@@ -107,7 +111,7 @@ markdown files.
 
 **-man**
 
-:  output troff (manual pages).
+:  output nroff (manual pages).
 
 **-unsafe**
 

@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,14 +73,24 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 	for i > 0 && node.Title[i-1] != ' ' {
 		i--
 	}
+	section := 1
+	title := node.Title
+	switch {
+	case i > 0:
+		d, err := strconv.Atoi(node.Title[i:])
+		if err != nil {
+			log.Printf("No section number found at end of title, defaulting to 1")
+		} else {
+			section = d
+			title = node.Title[:i-1]
+		}
+	}
 	if i == 0 {
-		// maybe error later
-		i = len(node.Title)
+		log.Printf("No section number found at end of title, defaulting to 1")
 	}
-	if i > 0 {
-		r.outs(w, fmt.Sprintf(".TH %q", strings.ToUpper(node.Title[:i-1])))
-		r.outs(w, fmt.Sprintf(" %q", node.Title[i:]))
-	}
+
+	r.outs(w, fmt.Sprintf(".TH %q", strings.ToUpper(title)))
+	r.outs(w, fmt.Sprintf(" %d", section))
 	r.outs(w, fmt.Sprintf(" %q", node.Date.Format("January 2006")))
 	r.outs(w, fmt.Sprintf(" %q", node.Area))
 	r.outs(w, fmt.Sprintf(" %q", node.Workgroup))
