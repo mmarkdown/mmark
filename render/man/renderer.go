@@ -110,18 +110,10 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 }
 
 func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
-	r.outs(w, "[@")
+	r.outs(w, "[")
 	for i, dest := range node.Destination {
 		if i > 0 {
 			r.outs(w, ", ")
-		}
-		switch node.Type[i] {
-		case ast.CitationTypeInformative:
-			// skip outputting ? as it's the default
-		case ast.CitationTypeNormative:
-			r.outs(w, "!")
-		case ast.CitationTypeSuppressed:
-			r.outs(w, "-")
 		}
 		r.out(w, dest)
 
@@ -276,7 +268,12 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {}
 
-func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {}
+func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
+	if !entering {
+		return
+	}
+	r.out(w, bytes.ToUpper(cr.Destination))
+}
 
 func (r *Renderer) index(w io.Writer, index *ast.Index, entering bool) {}
 
