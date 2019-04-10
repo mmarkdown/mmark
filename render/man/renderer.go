@@ -457,7 +457,14 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	return ast.GoToNext
 }
 
-func (r *Renderer) callout(w io.Writer, node *ast.Callout, entering bool) {}
+func (r *Renderer) callout(w io.Writer, node *ast.Callout, entering bool) {
+	if entering {
+		r.outs(w, "\\fB\\&<")
+		r.out(w, node.ID)
+		r.outs(w, "\\&>\\fP")
+		return
+	}
+}
 
 func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 	if !entering {
