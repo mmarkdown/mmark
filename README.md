@@ -11,6 +11,9 @@ however, *also* suited for writing complete books and other technical documentat
 [Learning Go book](https://miek.nl/go) ([mmark source](https://github.com/miekg/learninggo), and
 [I-D text output](https://miek.nl/go/learninggo-2.txt)).
 
+Also see [this repository](https://github.com/danyork/writing-internet-drafts-in-markdown) on how to
+write RFC using Markdown.
+
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 output, markdown and manual pages.
@@ -153,3 +156,8 @@ renderer := html.NewRenderer(opts)
 
 Next we we only need to generate the HTML: `x := markdown.Render(doc, renderer)`. Now `x` contains
 a `[]byte` with the HTML.
+
+## Also See
+
+[Kramdown-rfc2629](https://github.com/cabo/kramdown-rfc2629) is another tool to process markdown and
+output XML2RFC XML.
