@@ -462,9 +462,9 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 	dest := image.Destination
 	r.outs(w, `<artwork src="`)
-	// type= will be the extension of dest.
+	// type= will be the alt text
 	html.EscapeHTML(w, dest)
-	r.outs(w, `" alt="`)
+	r.outs(w, `" type="`)
 }
 
 func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {

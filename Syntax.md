@@ -169,8 +169,10 @@ Footnotes:
 
 Images:
 :   Images are supported (but for text output only(?) SVG graphcs are allowed. We convert this to
-    an `<artwork>` with `src` set to the image URL of path. I.e. `![alt](img.jpg "title")` becomes
-    `<artwork src="img.jpg" alt="alt" name="title"/>`.
+    an `<artwork>` with `src` set to the image URL of path. I.e. `![svg](img.svg "title")` becomes
+    `<artwork src="img.svg" type="svg" name="title"/>`. Note the first `svg` (the alt text) is used
+    as the `type=` attribute. Also note that an image like this will be wrapped in `<t>` which is
+    not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure.
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
@@ -179,6 +181,9 @@ Comments:
 :   HTML comments are detected and translated into `<cref>`s.
 
 ### XML RFC 7749 Output
+
+When the RFC editor drops support for this format it will be removed from Mmark as well. This is
+expected to happen in 2019.
 
 Title Block:
 :   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
