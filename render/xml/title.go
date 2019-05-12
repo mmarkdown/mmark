@@ -40,15 +40,15 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 
 	// rfc tag
 	attrs := Attributes(
-		[]string{"version", "ipr", "submissionType", "category", "xml:lang", "consensus", "xmlns:xi"},
-		[]string{"3", d.Ipr, "IETF", StatusToCategory[d.SeriesInfo.Status], "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
+		[]string{"version", "ipr", "docName", "submissionType", "category", "xml:lang", "consensus", "xmlns:xi"},
+		[]string{"3", d.Ipr, t.SeriesInfo.Value, "IETF", StatusToCategory[d.SeriesInfo.Status], "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
 	)
 	attrs = append(attrs, Attributes(
 		[]string{"updates", "obsoletes"},
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes)},
 	)...)
 	// number is deprecated, but xml2rfc want's it here to generate an actual RFC.
-	// But only if number is a integer (what a mess).
+	// But only if number is a integer...
 	if _, err := strconv.Atoi(t.SeriesInfo.Value); err == nil {
 		attrs = append(attrs, Attributes(
 			[]string{"number"},
