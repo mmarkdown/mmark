@@ -22,7 +22,7 @@ Mmark provides an advanced markdown dialect that processes file(s) to produce in
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), RFC 7749 (xml2rfc version 2), HTML5, manual pages and markdown output.
 
-The syntax is detailed at [https://mmark.nl/syntax](https://mmark.nl/syntax).
+The syntax is detailed at [https://mmark.miek.nl/syntax](https://mmark.miek.nl/syntax).
 
 Compared to other markdown variants mmark adds:
 
@@ -141,5 +141,5 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 # ALSO SEE
 
-RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.nl](https://mmark.nl). The syntax
-used by mmark is explained in the [syntax page](https://mmark.nl/post/syntax/).
+RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.miek.nl](https://mmark.miek.nl). The syntax
+used by mmark is explained in the [syntax page](https://mmark.miek.nl/post/syntax/).

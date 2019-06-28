@@ -783,4 +783,4 @@ func tagWithAttributes(name string, attrs []string) string {
 	return s + ">"
 }
 
-const Generator = `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl" -->`
+const Generator = `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->`

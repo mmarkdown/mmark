@@ -31,30 +31,30 @@ the *Mmarkdown* Github org, and help develop Mmark!
 ## Syntax
 
 Mmark's syntax and the extra features compared to plain Markdown are detailed in
-[syntax.md](https://mmark.nl/syntax).
+[syntax.md](https://mmark.miek.nl/syntax).
 
 Mmark adds the following syntax elements to
 [gomarkdown/markdown](https://github.com/gomarkdown/markdown/blob/master/README.md):
 
-* (Extended) [title block](https://mmark.nl/syntax#title-block).
-* [Special sections](https://mmark.nl/syntax#special-sections).
-* [Including other files](https://mmark.nl/syntax#including-files) with the option to specify line ranges, regular
+* (Extended) [title block](https://mmark.miek.nl/syntax#title-block).
+* [Special sections](https://mmark.miek.nl/syntax#special-sections).
+* [Including other files](https://mmark.miek.nl/syntax#including-files) with the option to specify line ranges, regular
   expressions and/or prefix each line with a string. By default only files on the same level, or
   below are allowed to be included (see the `-unsafe` flag).
-* [Document divisions](https://mmark.nl/syntax#document-divisions).
-* [Captions](https://mmark.nl/syntax#captions) for code, tables and quotes
-* [Asides](https://mmark.nl/syntax#asides).
-* [Figures and Subfigures](https://mmark.nl/syntax#figures-and-subfigures) - bundle (sub)figures
+* [Document divisions](https://mmark.miek.nl/syntax#document-divisions).
+* [Captions](https://mmark.miek.nl/syntax#captions) for code, tables and quotes
+* [Asides](https://mmark.miek.nl/syntax#asides).
+* [Figures and Subfigures](https://mmark.miek.nl/syntax#figures-and-subfigures) - bundle (sub)figures
   into a larger figure.
-* [Block Level Attributes](https://mmark.nl/syntax#block-level-attributes) that allow to specify attributes, classes and
+* [Block Level Attributes](https://mmark.miek.nl/syntax#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
-* [Indices](https://mmark.nl/syntax#indices) to mark an item (and/or a subitem) to be referenced in the document index.
-* [Citations](https://mmark.nl/syntax#citations) and adding [XML References](https://mmark.nl/syntax#xml-references)
-* [In document cross references](https://mmark.nl/syntax#cross-references), short form of referencing a section in the
+* [Indices](https://mmark.miek.nl/syntax#indices) to mark an item (and/or a subitem) to be referenced in the document index.
+* [Citations](https://mmark.miek.nl/syntax#citations) and adding [XML References](https://mmark.miek.nl/syntax#xml-references)
+* [In document cross references](https://mmark.miek.nl/syntax#cross-references), short form of referencing a section in the
   document.
-* [Super- and Subscript](https://mmark.nl/syntax#super-and-subscript).
-* [Callouts](https://mmark.nl/syntax#callouts) in code and text.
-* [BCP14](https://mmark.nl/syntax#bcp14) (RFC 2119) keyword detection.
+* [Super- and Subscript](https://mmark.miek.nl/syntax#super-and-subscript).
+* [Callouts](https://mmark.miek.nl/syntax#callouts) in code and text.
+* [BCP14](https://mmark.miek.nl/syntax#bcp14) (RFC 2119) keyword detection.
 
 ## Usage
 
@@ -147,7 +147,7 @@ opts := html.RendererOptions{
     Comments:       [][]byte{[]byte("//"), []byte("#")}, // used for callouts.
 	RenderNodeHook: mhtml.RenderHook,
 	Flags:          html.CommonFlags | html.FootnoteNoHRTag | html.FootnoteReturnLinks| html.CompletePage,
-	Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl`,
+	Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl`,
 }
 opts.Title = documentTitle // hack to add-in discovered title
 
