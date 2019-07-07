@@ -1,0 +1,236 @@
+<!doctype html5>
+<html>
+
+<head>
+<title>mmark</title>
+<script src="./js.js"></script><!-- XXX-RLB awkward naming here -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script>
+
+const DEFAULT_DOC_URL = "./default.md"; // Document to load by default
+const SAVE_TIMEOUT    = 300;            // Milliseconds to wait before updating
+
+function xform() {
+  let doc = mmark.NewDocument($("#md").val());
+
+  // TODO XML
+  // TODO TXT
+
+  let html = doc.ToHTML();
+  let htmlBlob = new Blob([html], {type: "text/html"});
+  let htmlBlobURL = URL.createObjectURL(htmlBlob);
+  $("#html").attr("src", htmlBlobURL);
+}
+
+let state = {
+  timer: null,
+  maybeXform: function() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      xform();
+    }, SAVE_TIMEOUT);
+  },
+};
+
+$(document).ready(async () => {
+  // Load a default document on the Markdown side
+  let docResp = await fetch(DEFAULT_DOC_URL);
+  let docText = await docResp.text();
+  $("#md").val(docText);
+
+  // And transform it to populate the output side
+  xform()
+
+  // Automatically run the transform after a keypress, throttled with a timer
+  $("#md").keyup(() => { state.maybeXform(); })
+});
+
+</script>
+<style type="text/css">
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  text-align: left;
+  font-size: 12pt;
+  font-family: Menlo, Courier, monospace;
+}
+
+#container {
+  width: 77em;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 100%;
+  text-align: center;
+  padding-top: 1ex;
+}
+
+.tabbox {
+  display: block;
+  float: left;
+  width: 38em;
+}
+
+.tabs {
+  width: 36em;
+  float: none;
+  list-style: none;
+  position: relative;
+}
+
+.tabs li {
+  float: left;
+  display: block;
+  margin-top: 1em;
+}
+
+.tabs input[type="radio"] {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+.tabs label {
+  display: block;
+  padding: .5ex 2ex;
+  font-weight: bold;
+  background: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.tabs label:hover {
+  background: gray;
+}
+
+.tabs .tab-content {
+  z-index: 2;
+  display: none;
+  width: 100%;
+  padding: 1ex;
+  position: absolute;
+  left: 0;
+  background: black;
+}
+
+.tabs [id^="tab"]:checked + label {
+  color:white;
+  background: black;
+}
+
+.tabs [id^="tab"]:checked ~ [id^="tab-content"] {
+  display: block;
+}
+
+.tabs [id^="md-tab"]:checked + label {
+  color:white;
+  background: black;
+}
+
+.tabs [id^="md-tab"]:checked ~ [id^="md-tab-content"] {
+  display: block;
+}
+
+.docDisplay {
+  width: 74ch;
+  height: 56em;
+  font-size: 12px;
+  display: block;
+  float: left;
+  border: 1px solid black;
+}
+
+textarea.docDisplay {
+  color: black;
+  background: white;
+  font-family: Menlo, Courier, monospace;
+}
+
+pre.docDisplay {
+  color: #333;
+  background: #eee;
+  overflow: scroll;
+}
+
+iframe.docDisplay {
+  background: white;
+}
+
+/** Download buttons **/
+.download {
+  display: block;
+  float: right;
+  background: #3498DB;
+  color: white;
+  padding: .5ex;
+  margin: 0;
+  font-size: 120%;
+  cursor: pointer;
+}
+</style>
+
+<!-- Github icon font -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+<div id="container">
+  <div class="tabbox">
+    <ul class="tabs">
+      <li>
+        <input type="radio" name="md-tabs" id="md-tab" checked />
+        <label for="md-tab">MD</label>
+        <div id="md-tab-content" class="tab-content">
+          <textarea id="md" class="docDisplay"></textarea>
+          <div id="download-md" class="download">
+            <i class="fa fa-cloud-download"></i>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="tabbox">
+    <ul class="tabs">
+      <li>
+        <input type="radio" name="tabs" id="tab2" />
+        <label for="tab2">XML</label>
+        <div id="tab-content2" class="tab-content">
+          <pre class="docDisplay"><code class="xml" id="xml"></code></pre>
+          <div id="download-xml" class="download">
+            <i class="fa fa-cloud-download"></i>
+          </div>
+        </div>
+      </li>
+      <li>
+        <input type="radio" name="tabs" id="tab3" />
+        <label for="tab3">TXT</label>
+        <div id="tab-content3" class="tab-content">
+          <pre id="txt" class="docDisplay"></pre>
+          <div id="download-txt" class="download">
+            <i class="fa fa-cloud-download"></i>
+          </div>
+        </div>
+      </li>
+      <li>
+        <input type="radio" name="tabs" id="tab4" checked />
+        <label for="tab4">HTML</label>
+        <div id="tab-content4" class="tab-content">
+          <iframe id="html" class="docDisplay"></iframe>
+          <div id="download-html" class="download">
+            <i class="fa fa-cloud-download"></i>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>
