@@ -37,16 +37,27 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	if d == nil {
 		return
 	}
+	if d.SubmissionType == "" {
+		d.SubmissionType = "IETF"
+	}
 
 	// rfc tag
 	attrs := Attributes(
-		[]string{"version", "ipr", "docName", "submissionType", "category", "xml:lang", "consensus", "xmlns:xi"},
-		[]string{"3", d.Ipr, t.SeriesInfo.Value, "IETF", StatusToCategory[d.SeriesInfo.Status], "en", fmt.Sprintf("%t", d.Consensus), "http://www.w3.org/2001/XInclude"},
+		[]string{"version", "ipr", "docName", "submissionType", "category", "xml:lang", "xmlns:xi"},
+		[]string{"3", d.Ipr, t.SeriesInfo.Value, d.SubmissionType, StatusToCategory[d.SeriesInfo.Status], "en", "http://www.w3.org/2001/XInclude"},
 	)
 	attrs = append(attrs, Attributes(
 		[]string{"updates", "obsoletes"},
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes)},
 	)...)
+	// Only for IETF stream add the consensus attribute.
+	if d.SubmissionType == "IETF" {
+		attrs = append(attrs, Attributes(
+			[]string{"Consensus"},
+			[]string{fmt.Sprintf("%t", d.Consensus)},
+		)...)
+	}
+
 	// number is deprecated, but xml2rfc want's it here to generate an actual RFC.
 	// But only if number is a integer...
 	if _, err := strconv.Atoi(t.SeriesInfo.Value); err == nil {
