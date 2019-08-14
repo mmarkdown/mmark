@@ -40,7 +40,7 @@ type TitleData struct {
 	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int
 	Updates        []int
-	SubmissionType string // IETF, IAB, IRTF or independent
+	SubmissionType string // IETF, IAB, IRTF or independent, defaults to IETF.
 
 	Date      time.Time
 	Area      string
@@ -54,7 +54,7 @@ type SeriesInfo struct {
 	Name   string // name of the document, values are "RFC", "Internet-Draft", and "DOI"
 	Value  string // either draft name, or number
 	Status string // The status of this document, values: "standard", "informational", "experimental", "bcp", "fyi", and "full-standard"
-	Stream string // "IETF" (default),"IAB", "IRTF" or "independent"
+	Stream string // "IETF" (default), "IAB", "IRTF" or "independent"
 }
 
 // Author denotes an RFC author.
