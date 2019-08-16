@@ -11,6 +11,11 @@ func New(language string) Lang {
 			Bibliography: "Bibliography",
 			Index:        "Index",
 		},
+		"nl": Term{
+			Footnotes:    "Voetnoten",
+			Bibliography: "Bibliografie",
+			Index:        "Index",
+		},
 	}
 
 	return l
