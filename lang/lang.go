@@ -16,6 +16,11 @@ func New(language string) Lang {
 			Bibliography: "Bibliografie",
 			Index:        "Index",
 		},
+		"de": Term{
+			Footnotes:    "Fußnoten",
+			Bibliography: "Literaturverzeichnis",
+			Index:        "Index",
+		},
 		"ja": Term{
 			Footnotes:    "脚注",
 			Bibliography: "参考文献",
