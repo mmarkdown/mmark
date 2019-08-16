@@ -6,9 +6,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mmarkdown/mmark/mast"
+
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
-	"github.com/mmarkdown/mmark/mast"
 )
 
 // Flags control optional behavior of XML3 renderer.

@@ -7,16 +7,18 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/html"
-	"github.com/gomarkdown/markdown/parser"
+	"github.com/mmarkdown/mmark/lang"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
 	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
 	"github.com/mmarkdown/mmark/render/xml2"
+
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 var (
@@ -62,8 +64,9 @@ func TestHTML(t *testing.T) {
 	for _, f := range testFiles {
 		base := f[:len(f)-3]
 
+		mhtmlOpts := mhtml.RenderOptions{Language: lang.New("en")}
 		opts := html.RendererOptions{
-			RenderNodeHook: mhtml.RenderHook,
+			RenderNodeHook: mhtmlOpts.RenderHook,
 		}
 		renderer := html.NewRenderer(opts)
 		doRenderTest(t, dir, base, renderer)

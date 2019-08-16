@@ -305,6 +305,10 @@ An I-D needs to have a Title Block with the following items filled out:
 * `keyword` - array with keywords (optional).
 * `author(s)` - define all the authors.
 * `date` - the date for this I-D/RFC.
+* `language` - the language for this document, this uses localized names for `Index`, `Footnotes`
+  and `References`, etc. Valid values are from [BCP47](https://tools.ietf.org/html/bcp47). This
+  defaults to `en` (English). See the [current
+  list](https://github.com/mmarkdown/mmark/blob/master/lang/lang.go).
 
 For a manual page the `title`, `area` and `workgroup` are mandatory, if `date` is not specified,
 "today" is assumed.
