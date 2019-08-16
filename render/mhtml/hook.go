@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/lang"
 	"github.com/mmarkdown/mmark/mast"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 var (
@@ -13,21 +15,27 @@ var (
 	IndexReturnLinkContents = "<sup>[go]</sup>"
 )
 
+// RenderOptions are options for RenderHook.
+type RenderOptions struct {
+	Language lang.Lang
+}
+
 // RenderHook is used to render mmark specific AST nodes.
-func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+func (r RenderOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node := node.(type) {
 	case *ast.Footnotes:
 		if !entering {
 			io.WriteString(w, "</h1>\n")
 			return ast.GoToNext, true
 		}
-		io.WriteString(w, `<h1 id="footnote-section">Footnotes`)
+		io.WriteString(w, `<h1 id="footnote-section">`)
+		io.WriteString(w, r.Language.Footnotes())
 	case *mast.Bibliography:
 		if !entering {
 			io.WriteString(w, "</dl>\n")
 			return ast.GoToNext, true
 		}
-		io.WriteString(w, "<h1 id=\"bibliography-section\">Bibliography</h1>\n<div class=\"bibliography\">\n")
+		io.WriteString(w, "<h1 id=\"bibliography-section\">"+r.Language.Bibliography()+"</h1>\n<div class=\"bibliography\">\n")
 		io.WriteString(w, "<dl>\n")
 		return ast.GoToNext, true
 	case *mast.BibliographyItem:
@@ -44,7 +52,7 @@ func RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 			io.WriteString(w, "\n</div>\n")
 			return ast.GoToNext, true
 		}
-		io.WriteString(w, "<h1 id=\"index-section\">Index</h1>\n<div class=\"index\">\n")
+		io.WriteString(w, "<h1 id=\"index-section\">"+r.Language.Index()+"</h1>\n<div class=\"index\">\n")
 		return ast.GoToNext, true
 	case *mast.IndexLetter:
 		if !entering {

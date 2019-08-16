@@ -5,9 +5,10 @@ import (
 	"encoding/xml"
 	"log"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mast/reference"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 // CitationToBibliography walks the AST and gets all the citations on HTML blocks and groups them into

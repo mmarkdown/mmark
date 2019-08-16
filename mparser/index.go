@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 // IndexToDocumentIndex crawls the entire doc searching for indices, it will then return

@@ -11,6 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/mmarkdown/mmark/lang"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/render/man"
@@ -85,7 +86,8 @@ func main() {
 
 		p := parser.NewWithExtensions(mparser.Extensions)
 		parserFlags := parser.FlagsNone
-		documentTitle := "" // hack to get document title from toml title block and then set it here.
+		documentTitle := ""    // hack to get document title from toml title block and then set it here.
+		documentLanguage := "" // get document language from title block if it is set.
 		if !*flagHTML && !*flagMan {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
@@ -95,6 +97,7 @@ func main() {
 				if t, ok := node.(*mast.Title); ok {
 					if !t.IsTriggerDash() {
 						documentTitle = t.TitleData.Title
+						documentLanguage = t.TitleData.Language
 					}
 				}
 				return node, data, consumed
@@ -121,10 +124,12 @@ func main() {
 
 		switch {
 		case *flagHTML:
+			mhtmlOpts := mhtml.RenderOptions{
+				Language: lang.New(documentLanguage),
+			}
 			opts := html.RendererOptions{
-				// TODO(miek): make this an option.
-				Comments:       [][]byte{[]byte("//"), []byte("#")},
-				RenderNodeHook: mhtml.RenderHook,
+				Comments:       [][]byte{[]byte("//"), []byte("#")}, // TODO(miek): make this an option.
+				RenderNodeHook: mhtmlOpts.RenderHook,
 				Flags:          html.CommonFlags | html.FootnoteNoHRTag | html.FootnoteReturnLinks,
 				Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl`,
 			}

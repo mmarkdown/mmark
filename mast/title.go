@@ -47,6 +47,8 @@ type TitleData struct {
 	Workgroup string
 	Keyword   []string
 	Author    []Author
+
+	Language string
 }
 
 // SeriesInfo holds details on the Internet-Draft or RFC, see https://tools.ietf.org/html/rfc7991#section-2.47
