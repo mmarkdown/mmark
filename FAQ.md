@@ -5,11 +5,11 @@ aliases: [/faq/]
 toc: true
 ---
 
-Mmark FAQ.
+Mmark Frequently Asked Questions.
 
-## How Do I Create an Independent IETF submission
+# How Do I Create an Independent IETF submission?
 
-Use the following as starting point for you title block, `ipr` and `submissiontype` or the important
+Use the following as starting point for your title block, `ipr` and `submissiontype` or the important
 settings here.
 
 ~~~ toml
