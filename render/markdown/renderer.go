@@ -83,6 +83,10 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.endline(w)
 }
 
+func (r *Renderer) nonBlockingSpace(w io.Writer, node *ast.NonBlockingSpace) {
+	r.outs(w, `\ `)
+}
+
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
 	if !entering {
 		return
@@ -638,6 +642,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Softbreak:
 	case *ast.Hardbreak:
 		r.hardBreak(w, node)
+	case *ast.NonBlockingSpace:
+		r.nonBlockingSpace(w, node)
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
