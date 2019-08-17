@@ -1,10 +1,15 @@
 package lang
 
+import (
+	"strings"
+)
+
 // New returns a new and initialized Lang.
 func New(language string) Lang {
-	l := Lang{language: language}
+	l := Lang{language: strings.ToLower(language)} // case insensitivity
 
 	// Add all lanaguages here, the keys should be named according to BCP47.
+	// The keys must be in all lower case for normalized lookup.
 	l.m = map[string]Term{
 		"en": Term{
 			Footnotes:    "Footnotes",
