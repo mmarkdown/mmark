@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -29,8 +30,7 @@ var (
 		"7511.md",
 		"8341.md",
 	}
-	dir      = "rfc"
-	doXMLRFC = false // xml2rfc is broken as we need a very new version of it (in travis)
+	dir = "rfc"
 )
 
 // TestRFC3 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
@@ -42,7 +42,12 @@ func TestRFC3(t *testing.T) {
 			Flags: xml.CommonFlags | xml.XMLFragment,
 		}
 		renderer := xml.NewRenderer(opts)
-		doRenderTest(t, dir, base, renderer)
+		t.Run("rfc3:"+dir+"/"+base, func(t *testing.T) {
+			err := doRenderTest(dir, base, renderer)
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
 
@@ -55,7 +60,12 @@ func TestRFC2(t *testing.T) {
 			Flags: xml2.CommonFlags | xml2.XMLFragment,
 		}
 		renderer := xml2.NewRenderer(opts)
-		doRenderTest(t, dir, base, renderer)
+		t.Run("rfc2:"+dir+"/"+base, func(t *testing.T) {
+			err := doRenderTest(dir, base, renderer)
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
 
@@ -69,7 +79,12 @@ func TestHTML(t *testing.T) {
 			RenderNodeHook: mhtmlOpts.RenderHook,
 		}
 		renderer := html.NewRenderer(opts)
-		doRenderTest(t, dir, base, renderer)
+		t.Run("html:"+dir+"/"+base, func(t *testing.T) {
+			err := doRenderTest(dir, base, renderer)
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
 
@@ -80,16 +95,20 @@ func TestMarkdown(t *testing.T) {
 
 		opts := mmarkdown.RendererOptions{}
 		renderer := mmarkdown.NewRenderer(opts)
-		doRenderTest(t, dir, base, renderer)
+		t.Run("markdown:"+dir+"/"+base, func(t *testing.T) {
+			err := doRenderTest(dir, base, renderer)
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
 
-func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer) {
+func doRenderTest(dir, basename string, renderer markdown.Renderer) error {
 	filename := filepath.Join(dir, basename+".md")
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
-		t.Errorf("couldn't open '%s', error: %v\n", filename, err)
-		return
+		return fmt.Errorf("couldn't open '%s', error: %v\n", filename, err)
 	}
 
 	init := mparser.NewInitial(filename)
@@ -111,29 +130,26 @@ func doRenderTest(t *testing.T, dir, basename string, renderer markdown.Renderer
 	mparser.AddIndex(doc)
 
 	rfcdata := markdown.Render(doc, renderer)
-	if !doXMLRFC {
-		return
-	}
 
 	switch renderer.(type) {
 	case *xml.Renderer:
 		out, err := runXML2RFC([]string{"--v3"}, rfcdata)
 		if err != nil {
-			t.Errorf("failed to parse XML3 output for %q: %s\n%s", filename, err, out)
-		} else {
-			t.Logf("successfully parsed %s for XML3 output:\n%s", filename, out)
+			return fmt.Errorf("failed to parse XML3 output for %q: %s\n%s", filename, err, out)
 		}
 	case *xml2.Renderer:
 		out, err := runXML2RFC(nil, rfcdata)
 		if err != nil {
-			t.Errorf("failed to parse XML2 output for %q: %s\n%s", filename, err, out)
-		} else {
-			t.Logf("successfully parsed %s for XML2 output:\n%s", filename, out)
+			return fmt.Errorf("failed to parse XML2 output for %q: %s\n%s", filename, err, out)
 		}
 	}
+	return nil
 }
 
 func runXML2RFC(options []string, rfc []byte) ([]byte, error) {
+	if _, err := exec.LookPath("xml2rfc"); err != nil {
+		return nil, nil
+	}
 	ioutil.WriteFile("x.xml", rfc, 0600)
 	defer os.Remove("x.xml")
 	defer os.Remove("x.txt") // if we are lucky.
