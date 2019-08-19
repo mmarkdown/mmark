@@ -366,6 +366,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
+	case *mast.ReferenceBlock:
+		// ignore
 	case *ast.Footnotes:
 		r.footnotes(w, node, entering)
 	case *ast.Text:

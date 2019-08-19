@@ -124,12 +124,12 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 		return nil, nil, 0
 	}
 
-	node := &ast.HTMLBlock{}
+	node := &mast.ReferenceBlock{}
 	node.Literal = fmtReference(ref)
 	return node, nil, len(ref)
 }
 
-// IfReference returns wether data contains a reference.
+// IsReference returns wether data contains a reference.
 func IsReference(data []byte) ([]byte, bool) {
 	if !bytes.HasPrefix(data, []byte("<reference ")) {
 		return nil, false
