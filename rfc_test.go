@@ -30,7 +30,6 @@ var (
 		"7511.md",
 		"8341.md",
 	}
-	dir = "rfc"
 )
 
 // TestRFC3 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
@@ -42,8 +41,8 @@ func TestRFC3(t *testing.T) {
 			Flags: xml.CommonFlags | xml.XMLFragment,
 		}
 		renderer := xml.NewRenderer(opts)
-		t.Run("rfc3:"+dir+"/"+base, func(t *testing.T) {
-			err := doRenderTest(dir, base, renderer)
+		t.Run("rfc3/"+base, func(t *testing.T) {
+			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)
 			}
@@ -60,8 +59,8 @@ func TestRFC2(t *testing.T) {
 			Flags: xml2.CommonFlags | xml2.XMLFragment,
 		}
 		renderer := xml2.NewRenderer(opts)
-		t.Run("rfc2:"+dir+"/"+base, func(t *testing.T) {
-			err := doRenderTest(dir, base, renderer)
+		t.Run("rfc2/"+base, func(t *testing.T) {
+			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)
 			}
@@ -79,8 +78,8 @@ func TestHTML(t *testing.T) {
 			RenderNodeHook: mhtmlOpts.RenderHook,
 		}
 		renderer := html.NewRenderer(opts)
-		t.Run("html:"+dir+"/"+base, func(t *testing.T) {
-			err := doRenderTest(dir, base, renderer)
+		t.Run("html/"+base, func(t *testing.T) {
+			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)
 			}
@@ -95,8 +94,8 @@ func TestMarkdown(t *testing.T) {
 
 		opts := mmarkdown.RendererOptions{}
 		renderer := mmarkdown.NewRenderer(opts)
-		t.Run("markdown:"+dir+"/"+base, func(t *testing.T) {
-			err := doRenderTest(dir, base, renderer)
+		t.Run("markdown/"+base, func(t *testing.T) {
+			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)
 			}
@@ -104,8 +103,8 @@ func TestMarkdown(t *testing.T) {
 	}
 }
 
-func doRenderTest(dir, basename string, renderer markdown.Renderer) error {
-	filename := filepath.Join(dir, basename+".md")
+func doRenderTest(basename string, renderer markdown.Renderer) error {
+	filename := filepath.Join("rfc", basename+".md")
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return fmt.Errorf("couldn't open '%s', error: %v\n", filename, err)
