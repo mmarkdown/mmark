@@ -18,7 +18,6 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 	raw := map[string][]byte{}
 
 	// Gather all citations.
-	// Gather all reference HTML Blocks to see if we have XML we can output.
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
 		switch c := node.(type) {
 		case *ast.Citation:
@@ -32,7 +31,7 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 
 				seen[string(d)] = ref
 			}
-		case *ast.HTMLBlock:
+		case *mast.ReferenceBlock:
 			anchor := anchorFromReference(c.Literal)
 			if anchor != nil {
 				raw[string(bytes.ToLower(anchor))] = c.Literal

@@ -53,7 +53,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	// Only for IETF stream add the consensus attribute.
 	if d.SubmissionType == "IETF" {
 		attrs = append(attrs, Attributes(
-			[]string{"Consensus"},
+			[]string{"consensus"},
 			[]string{fmt.Sprintf("%t", d.Consensus)},
 		)...)
 	}
