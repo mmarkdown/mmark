@@ -99,6 +99,9 @@ func (r RenderOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (as
 		io.WriteString(w, ` <a class="index-return" href="#`+string(node.Destination)+`">`)
 		io.WriteString(w, IndexReturnLinkContents)
 		return ast.GoToNext, true
+	case *mast.ReferenceBlock:
+		// ignore these for HTML output as this is XML and not used at all.
+		return ast.GoToNext, true
 	}
 	return ast.GoToNext, false
 }

@@ -635,6 +635,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
+	case *mast.ReferenceBlock:
+		r.out(w, node.Literal)
+		r.endline(w)
+		r.newline(w)
 	case *ast.Footnotes:
 		// do nothing, we're not outputing a footnote list
 	case *ast.Text:
