@@ -642,6 +642,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.cr(w)
 	case *ast.Hardbreak:
 		r.hardBreak(w, node)
+	case *ast.NonBlockingSpace:
+		// skip
 	case *ast.Callout:
 		r.callout(w, node)
 	case *ast.Emph:
