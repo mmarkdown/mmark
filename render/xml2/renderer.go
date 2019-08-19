@@ -710,6 +710,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.ReferenceBlock:
 		r.out(w, node.Literal)
 		r.cr(w)
+		r.cr(w)
 	case *ast.Text:
 		r.text(w, node)
 	case *ast.Softbreak:
