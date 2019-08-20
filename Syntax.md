@@ -242,17 +242,17 @@ This outputs markdown again, but pretty printed.
 Title Block:
 :   The title block needs a few elements to correctly generate a manual page
 
-    * `title`, title needs to *end in a digit* to signal the *section*, default to "1" is nothing is
+    * `title`, title needs to *end in a digit* to signal the *section*, defaults to "1" if nothing is
       found.
     * `area`, what is it, e.g. "User Commands".
     * `workgroup`, who wrote this e.g.  "Mmark Markdown".
-    * `date`, date of the man page, optional, default to "today".
+    * `date`, date of the man page, optional, defaults to "today".
 
 Images:
 :   Not supported.
 
 References and citations:
-:   Not supported (they may in the future).
+:   Supported, a "Bibliography" section is added.
 
 
 ## Block Elements
