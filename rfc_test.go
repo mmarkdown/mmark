@@ -14,7 +14,6 @@ import (
 	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
-	"github.com/mmarkdown/mmark/render/xml2"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -42,24 +41,6 @@ func TestRFC3(t *testing.T) {
 		}
 		renderer := xml.NewRenderer(opts)
 		t.Run("rfc3/"+base, func(t *testing.T) {
-			err := doRenderTest(base, renderer)
-			if err != nil {
-				t.Error(err)
-			}
-		})
-	}
-}
-
-// TestRFC2 parses the RFC in the rfc/ directory and runs xml2rfc on them to see if they parse OK.
-func TestRFC2(t *testing.T) {
-	for _, f := range testFiles {
-		base := f[:len(f)-3]
-
-		opts := xml2.RendererOptions{
-			Flags: xml2.CommonFlags | xml2.XMLFragment,
-		}
-		renderer := xml2.NewRenderer(opts)
-		t.Run("rfc2/"+base, func(t *testing.T) {
 			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)
@@ -135,11 +116,6 @@ func doRenderTest(basename string, renderer markdown.Renderer) error {
 		out, err := runXML2RFC([]string{"--v3"}, rfcdata)
 		if err != nil {
 			return fmt.Errorf("failed to parse XML3 output for %q: %s\n%s", filename, err, out)
-		}
-	case *xml2.Renderer:
-		out, err := runXML2RFC(nil, rfcdata)
-		if err != nil {
-			return fmt.Errorf("failed to parse XML2 output for %q: %s\n%s", filename, err, out)
 		}
 	}
 	return nil
