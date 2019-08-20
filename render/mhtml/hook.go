@@ -16,12 +16,12 @@ var (
 )
 
 // RenderOptions are options for RenderHook.
-type RenderOptions struct {
+type RendererOptions struct {
 	Language lang.Lang
 }
 
 // RenderHook is used to render mmark specific AST nodes.
-func (r RenderOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+func (r RendererOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node := node.(type) {
 	case *ast.Footnotes:
 		if !entering {
@@ -117,8 +117,8 @@ func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 		io.WriteString(w, `<span class="bibliography-author">`+author.Fullname+"</span>\n")
 	}
 	io.WriteString(w, `<span class="bibliography-title">`+bib.Reference.Front.Title+"</span>\n")
-	if bib.Reference.Format != nil && bib.Reference.Format.Target != "" {
-		io.WriteString(w, `<a class="bliography-target" href="`+bib.Reference.Format.Target+"\">"+bib.Reference.Format.Target+"</a>\n")
+	if bib.Reference.Target != "" {
+		io.WriteString(w, `<a class="bliography-target" href="`+bib.Reference.Target+"\">"+bib.Reference.Target+"</a>\n")
 	}
 	if bib.Reference.Front.Date.Year != "" {
 		io.WriteString(w, `<date class="bibliography-date">`+bib.Reference.Front.Date.Year+"</date>\n")

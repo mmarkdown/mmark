@@ -124,7 +124,7 @@ func main() {
 
 		switch {
 		case *flagHTML:
-			mhtmlOpts := mhtml.RenderOptions{
+			mhtmlOpts := mhtml.RendererOptions{
 				Language: lang.New(documentLanguage),
 			}
 			opts := html.RendererOptions{
@@ -164,7 +164,7 @@ func main() {
 			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
 			renderer = mmarkout.NewRenderer(opts)
 		case *flagMan:
-			opts := man.RendererOptions{}
+			opts := man.RendererOptions{Language: lang.New(documentLanguage)}
 			if *flagFragment {
 				opts.Flags |= man.ManFragment
 			}
