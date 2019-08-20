@@ -13,9 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mmarkdown/mmark/lang"
+	"github.com/mmarkdown/mmark/mast"
+
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
-	"github.com/mmarkdown/mmark/mast"
 )
 
 // Flags control optional behavior of Markdown renderer.
@@ -33,6 +35,8 @@ const (
 // the behavior of various parts of Markdown renderer.
 type RendererOptions struct {
 	Flags Flags // Flags allow customizing this renderer's behavior
+
+	Language lang.Lang // Output language for the document.
 
 	// if set, called at the start of RenderNode(). Allows replacing rendering of some nodes
 	RenderNodeHook html.RenderNodeFunc
@@ -191,8 +195,7 @@ func (r *Renderer) listItem(w io.Writer, listItem *ast.ListItem, entering bool) 
 			children := listItem.Parent.GetChildren()
 			for i := range children {
 				if listItem == children[i] {
-					r.outs(w, fmt.Sprintf("\n.SS [%d]", i+1))
-					r.outs(w, "\n.PP\n")
+					r.outs(w, fmt.Sprintf("\n.IP [%d]\n", i+1))
 				}
 			}
 			return
@@ -364,7 +367,13 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.Title:
 		r.title(w, node, entering)
 	case *mast.Bibliography:
+		if entering {
+			r.outs(w, "\n.SH \"")
+			r.outs(w, strings.ToUpper(r.opts.Language.Bibliography()))
+			r.outs(w, "\"\n")
+		}
 	case *mast.BibliographyItem:
+		r.bibliographyItem(w, node, entering)
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
 	case *mast.ReferenceBlock:
 		// ignore
@@ -491,7 +500,7 @@ func (r *Renderer) footnotes(w io.Writer, node ast.Node, entering bool) {
 	if !entering {
 		return
 	}
-	r.outs(w, "\n.SH \"NOTES\"\n")
+	r.outs(w, "\n.SH \""+strings.ToUpper(r.opts.Language.Footnotes())+"\"\n")
 }
 
 func (r *Renderer) RenderHeader(w io.Writer, _ ast.Node) {
@@ -502,3 +511,37 @@ func (r *Renderer) RenderHeader(w io.Writer, _ ast.Node) {
 }
 
 func (r *Renderer) RenderFooter(w io.Writer, node ast.Node) {}
+
+func (r *Renderer) bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
+	if !entering {
+		return
+	}
+	if bib.Reference == nil {
+		return
+	}
+	r.outs(w, ".TP\n")
+	r.outs(w, fmt.Sprintf("[%s]\n", bib.Anchor))
+	for _, author := range bib.Reference.Front.Authors {
+		writeNonEmptyString(w, author.Fullname)
+		if author.Organization != nil {
+			writeNonEmptyString(w, author.Organization.Value)
+		}
+	}
+
+	writeNonEmptyString(w, bib.Reference.Front.Title)
+	if bib.Reference.Target != "" {
+		r.outs(w, "\\[la]")
+		r.outs(w, bib.Reference.Target)
+		r.outs(w, "\\[ra]")
+	}
+	writeNonEmptyString(w, bib.Reference.Front.Date.Year)
+	r.outs(w, "\n")
+}
+
+func writeNonEmptyString(w io.Writer, s string) {
+	if s == "" {
+		return
+	}
+	io.WriteString(w, s)
+	io.WriteString(w, "\n")
+}

@@ -73,7 +73,7 @@ func TestHTML(t *testing.T) {
 	for _, f := range testFiles {
 		base := f[:len(f)-3]
 
-		mhtmlOpts := mhtml.RenderOptions{Language: lang.New("en")}
+		mhtmlOpts := mhtml.RendererOptions{Language: lang.New("en")}
 		opts := html.RendererOptions{
 			RenderNodeHook: mhtmlOpts.RenderHook,
 		}
