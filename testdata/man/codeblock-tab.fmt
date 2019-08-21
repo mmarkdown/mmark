@@ -1,0 +1,14 @@
+
+.PP
+.RS
+
+.nf
+cluster.local:53 {
+    kubernetes cluster.local {
+    upstream
+    }
+}
+
+.fi
+.RE
+
