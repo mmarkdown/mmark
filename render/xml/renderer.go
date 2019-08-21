@@ -397,14 +397,20 @@ func (r *Renderer) tableBody(w io.Writer, node *ast.TableBody, entering bool) {
 }
 
 func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
-	if text, ok := IsComment(span.Literal); ok {
-		r.outs(w, "<cref>")
-		r.out(w, text)
-		r.outs(w, "</cref>")
+	if _, ok := IsComment(span.Literal); ok {
 		return
 	}
 	if r.opts.Flags&SkipHTML == 0 {
 		html.EscapeHTML(w, span.Literal)
+	}
+}
+
+func (r *Renderer) htmlBlock(w io.Writer, block *ast.HTMLBlock) {
+	if _, ok := IsComment(block.Literal); ok {
+		return
+	}
+	if r.opts.Flags&SkipHTML == 0 {
+		html.EscapeHTML(w, block.Literal)
 	}
 }
 
@@ -669,7 +675,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.HTMLSpan:
 		r.htmlSpan(w, node)
 	case *ast.HTMLBlock:
-		r.out(w, node.Literal)
+		r.htmlBlock(w, node)
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:
