@@ -41,7 +41,8 @@ func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
 			continue
 		}
 		if text[i] == '\t' {
-			r.outs(w, " ")
+			r.outs(w, "    ")
+			continue
 		}
 
 		if needsBackslash(text[i]) {
