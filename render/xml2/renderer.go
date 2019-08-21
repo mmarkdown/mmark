@@ -453,6 +453,14 @@ func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 	}
 }
 
+func (r *Renderer) htmlBlock(w io.Writer, block *ast.HTMLBlock) {
+	if _, ok := xml.IsComment(block.Literal); ok {
+		return
+	}
+	if r.opts.Flags&SkipHTML == 0 {
+		html.EscapeHTML(w, block.Literal)
+	}
+}
 func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 	r.outs(w, `<spanx style="emph">`)
 	r.out(w, callout.ID)
@@ -763,9 +771,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
 	case *ast.HTMLSpan:
-		r.htmlSpan(w, node) // only html comments are allowed.
+		r.htmlSpan(w, node)
 	case *ast.HTMLBlock:
-		r.out(w, node.Literal)
+		r.htmlBlock(w, node)
 	case *ast.List:
 		r.list(w, node, entering)
 	case *ast.ListItem:

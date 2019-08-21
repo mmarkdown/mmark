@@ -63,6 +63,7 @@ For the rest we build up on <https://github.com/gomarkdown/markdown> and support
 * *Smartypants*, expand `--` and `---` into ndash and mdashes.
 * *SuperSubscript*, parse super- and subscript: H~2~O is water and 2^10^ is 1024.
 * *Tables*, parse tables.
+* *NonBlockingSpace*, convert "backslash space" into a non blocking space.
 
 Mmark adds numerous enhancements to make it suitable for writing ([IETF](https://ietf.org)) Internet
 Drafts and even complete books. It <strike>steals</strike> borrows syntax elements from [pandoc],
@@ -178,7 +179,8 @@ Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
 
 Comments:
-:   HTML comments are detected and translated into `<cref>`s.
+:   HTML comments are detected and discarded. These can be useful to make the parser parse certain
+    contstructs as a block element without meddling with the output.
 
 ### XML RFC 7749 Output
 
@@ -226,7 +228,7 @@ Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
 
 Comments:
-:   HTML comments are detected and translated into `<cref>`s.
+:   HTML comments are detected and discarded.
 
 ### HTML5 Output
 
@@ -656,7 +658,7 @@ Syntax that is *not* supported anymore:
 * The different list syntaxes have been dropped, use a [Block Level
   Attribute](#block-level-attributes) to tweak the output.
 * Tasks lists and example lists.
-* Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the
-  flag `renderer.SkipHTML`.
+* Comment detection, i.e. to support `cref`: dropped. Comments are copied depending on the output
+  renderer.
 * Parts
 * Extended table syntax.
