@@ -256,6 +256,9 @@ Images:
 References and citations:
 :   Supported, a "Bibliography" section is added.
 
+Code Block:
+:   Tabs are converted into spaces.
+
 
 ## Block Elements
 
