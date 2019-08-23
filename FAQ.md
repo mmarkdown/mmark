@@ -7,7 +7,7 @@ toc: true
 
 Mmark Frequently Asked Questions.
 
-# How Do I Create an Independent IETF submission?
+# How Do I Create an Independent IETF Document?
 
 Use the following as starting point for your title block, `ipr` and `submissiontype` or the important
 settings here.
@@ -25,3 +25,8 @@ value = "draft-00"
 stream = "independent"
 status = "informational"
 ~~~
+
+# How Do I Create an IRTF Document?
+
+Set `submissiontype` and `stream` in `seriesInfo` to *IRTF*. Items like `workgroup` function as they
+do for normal Internet-Draft documents.
