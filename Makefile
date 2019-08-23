@@ -7,8 +7,19 @@ mmark:
 	@echo $(VERSION)
 	go build
 
-mmark.1: mmark.1.md mmark.1.docheader
+define DOCHEADER
+%%%
+title = "mmark"
+date = "2019-04-04T19:23:50+01:00"
+area = "User Commands"
+workgroup = "Mmark Markdown"
+%%%
+endef
+
+mmark.1: mmark.1.md
+	$(file > mmark.1.docheader,$(DOCHEADER))
 	( cat mmark.1.docheader ; tail +8 mmark.1.md ) | ./mmark -man > mmark.1
+	rm -f mmark.1.docheader
 
 .PHONY: clean
 clean:
