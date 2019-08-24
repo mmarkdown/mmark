@@ -62,3 +62,8 @@ release:
 	      --data-binary "@release/$$asset" \
 	      "https://uploads.github.com/repos/$(GITHUB)/$(NAME)/releases/$(RELEASE)/assets?name=$${asset}&access_token=${GITHUB_ACCESS_TOKEN}" ; \
 	done
+
+.PHONY: debian
+debian: mmark.1 mmark
+	export MY_APP_VERSION=$(VERSION)
+	nfpm -f .nfpm.yaml pkg -t mmark.deb

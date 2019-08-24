@@ -1,0 +1,17 @@
+name: "mmark"
+arch: "amd64"
+platform: "linux"
+version: "v${MY_APP_VERSION}"
+section: "default"
+priority: "extra"
+provides:
+- yamlfmt
+maintainer: "Miek Gieben <miek@miek.nl>"
+description: |
+  Mmark is a powerful markdown parser.
+homepage: "https://mmark.miek.nl"
+license: "MIT"
+bindir: "/usr/bin"
+files:
+  ./mmark: "/usr/bin/mmark"
+  ./mmark.1: "/usr/share/man/man1/mmark.1"
