@@ -28,9 +28,9 @@ Biggest changes:
 
 It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
 will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
-this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc
-version 2) and Markdown output (use mmark is a markdown formatter). Also with code upstreamed (to
-[gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
+this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version 2
+- now deprecated) and Markdown output (use mmark is a markdown formatter). Also with code upstreamed
+(to [gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
 
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
@@ -185,50 +185,7 @@ Comments:
 ### XML RFC 7749 Output
 
 When the RFC editor drops support for this format it will be removed from Mmark as well. This is
-expected to happen in 2019.
-
-Title Block:
-:   Identical to RFC 7991, Mmark will take care to translate this into something xml2rfc (v2) can
-    understand. An Mmark document will generate valid RFC 7991 and 7749 XML, unless [block
-    level attributes](#block-level-attributes) are used that are speficic to each format.
-    *Area* defaults to "Internet" and *Ipr* defaults to `trust200902`.
-
-    Not giving a date will output `<date/>` which mean the current date will be applied *when
-    xml2rfc is run*.
-
-BCP 14/RFC 2119 Keywords:
-:   If an RFC 2119 word is found enclosed in `**` it will be rendered normally i.e. `**MUST**`
-    becomes `MUST`.
-
-Artwork/Source code:
-:   There is no such distinction so these will be rendered in the same way regardless. If you need a
-    caption you can just give it one. If you want the *final* output to prefix `Figure N` or `Table
-    N` is **also** needs to have an anchor; this is done with a block level attribute: `{#figX}`. If
-    you *only* want `Figure N`, only give it an anchor.
-
-Block Level Attributes:
-:   We use the attributes as specified in RFC 7749, e.g. to speficify an empty list style use:
-    `{style="empty"}` before the list. Any attributes that are not allowed are filtered out, so
-    `{style="empty" empty="true"}`, will make a document both RFC 7749 and RFC 7991 compliant.
-
-Asides:
-:   Basically not supported, will be rendered as a plain paragraph.
-
-Footnotes:
-:   Are discarded from the final output, don't use them.
-
-Images:
-:   Images are not supported and we fake an artwork with some of the meta date. Using the example from
-    RFC 7991 output would just yields: `<artwork>img.jpg "alt" "title"</artwork>`.
-
-Block quote:
-:   Supported by faking an list with style empty.
-
-Horizontal Line:
-:   Outputs a paragraph with 60 dashes `-`.
-
-Comments:
-:   HTML comments are detected and discarded.
+expected to happen in 2019. This has been implemented in October 2019.
 
 ### HTML5 Output
 
@@ -632,9 +589,7 @@ detected by Mmark.
 ### BCP14
 
 Phrases that are defined in RFC 2119 (i.e. MUST, SHOULD, etc) are detected when being type set as
-strong elements: `**MUST**`, in the RFC 7991 output these will typeset as `<bcp14>MUST</bcp14>`. In
-RFC 7749 output it will just be `MUST`. Not that these can't span lines, e.g., `**MUST NOT**`, must
-be on a single line.
+strong elements: `**MUST**`, in the RFC 7991 output these will typeset as `<bcp14>MUST</bcp14>`.
 
 # Changes from version 1
 

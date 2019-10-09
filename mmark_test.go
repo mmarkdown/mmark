@@ -10,7 +10,6 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/render/xml"
-	"github.com/mmarkdown/mmark/render/xml2"
 )
 
 func TestMmarkXML(t *testing.T) {
@@ -32,30 +31,6 @@ func TestMmarkXML(t *testing.T) {
 			Flags: xml.CommonFlags | xml.XMLFragment,
 		}
 		renderer := xml.NewRenderer(opts)
-
-		doTest(t, dir, base, renderer)
-	}
-}
-
-func TestMmarkXML2(t *testing.T) {
-	dir := "testdata/2"
-	testFiles, err := ioutil.ReadDir(dir)
-	if err != nil {
-		t.Fatalf("could not read %s: %q", dir, err)
-	}
-	for _, f := range testFiles {
-		if f.IsDir() {
-			continue
-		}
-
-		if filepath.Ext(f.Name()) != ".md" {
-			continue
-		}
-		base := f.Name()[:len(f.Name())-3]
-		opts := xml2.RendererOptions{
-			Flags: xml2.CommonFlags | xml2.XMLFragment,
-		}
-		renderer := xml2.NewRenderer(opts)
 
 		doTest(t, dir, base, renderer)
 	}

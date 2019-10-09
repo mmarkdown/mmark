@@ -16,7 +16,7 @@ write RFC using Markdown.
 
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2), HTML5 output, markdown and manual pages.
+RFC 7991), RFC 7749 (xml2rfc version 2 - now deprecated), HTML5 output, markdown and manual pages.
 
 Example RFCs in Mmark format can be [found in the Github
 repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
@@ -74,14 +74,8 @@ Making a draft in text form (v3 output)
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Making a draft in text form (v2 output)
-
-    % ./mmark -2 rfc/3514.md > x.xml
-    % xml2rfc --text x.xml
-
-Outputting HTML5 is done with the `-html` switch. Outputting RFC 7749 is done with `-2`. And
-outputting markdown is done with the `-markdown` switch (optionally you can use `-width` to set the
-text width).
+Outputting HTML5 is done with the `-html` switch. Outputting markdown is done with the `-markdown`
+switch (optionally you can use `-width` to set the text width).
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
@@ -94,12 +88,6 @@ The build the text files, just run:
 ~~~ sh
 cd rfc
 make txt
-~~~
-
-For v2 (i.e. the current (2018) way of making RFC), just run:
-~~~ sh
-cd rfc
-make TWO="yes" txt
 ~~~
 
 Official RFCs are in rfc/orig (so you can compare the text output from mmark).

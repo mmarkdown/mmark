@@ -2,7 +2,7 @@
 title: 'MMARK(1)'
 author:
     - Mmark Authors
-date: February 2019
+date: October 2019
 ---
 
 # NAME
@@ -20,7 +20,7 @@ is, however, *also* suited for writing complete books and other technical docume
 
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2), HTML5, manual pages and markdown output.
+RFC 7991), HTML5, manual pages and markdown output.
 
 The syntax is detailed at [https://mmark.miek.nl/syntax](https://mmark.miek.nl/syntax).
 
@@ -56,15 +56,9 @@ Compared to other markdown variants mmark adds:
 
 *  BCP14 (RFC 2119) keyword detection.
 
-## RFC 7749
-
-This is currently the XML format used by the RFC editor for accepting Internet-Drafts. Some of these
-turn into RFCs. For getting text output you'll need xml2rfc for the actual conversion.
-
 ## RFC 7991
 
-This is the future XML format used by the RFC editor for accepting Internet-Drafts. A valid markdown
-document can be turned in RFC 7749 or RFC 7991 XML.
+This is the XML format used by the RFC editor for accepting Internet-Drafts.
 
 ## HTML5
 
@@ -100,10 +94,6 @@ The man renderer outputs nroff that can be viewed via man(1).
 **-html**
 
 :  create HTML output.
-
-**-2**
-
-:  generate RFC 7749 XML.
 
 **-markdown**
 
@@ -141,5 +131,6 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 # ALSO SEE
 
-RFC 7991 and RFC 7749. The main site for Mmark is [https://mmark.miek.nl](https://mmark.miek.nl). The syntax
-used by mmark is explained in the [syntax page](https://mmark.miek.nl/post/syntax/).
+RFC 7991 and (maybe) RFC 7749. The main site for Mmark is
+[https://mmark.miek.nl](https://mmark.miek.nl). The syntax used by mmark is explained in the [syntax
+page](https://mmark.miek.nl/post/syntax/).
