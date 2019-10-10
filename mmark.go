@@ -18,7 +18,6 @@ import (
 	mmarkout "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
-	"github.com/mmarkdown/mmark/render/xml2"
 )
 
 var (
@@ -29,7 +28,6 @@ var (
 	flagFragment = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML     = flag.Bool("html", false, "create HTML output")
 	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
-	flagTwo      = flag.Bool("2", false, "generate RFC 7749 XML")
 	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
 	flagMan      = flag.Bool("man", false, "generate manual pages (nroff)")
 	flagWrite    = flag.Bool("w", false, "write to source file when generating markdown")
@@ -150,16 +148,6 @@ func main() {
 			}
 
 			renderer = html.NewRenderer(opts)
-		case *flagTwo:
-			opts := xml2.RendererOptions{
-				Flags:    xml2.CommonFlags,
-				Comments: [][]byte{[]byte("//"), []byte("#")},
-			}
-			if *flagFragment {
-				opts.Flags |= xml2.XMLFragment
-			}
-
-			renderer = xml2.NewRenderer(opts)
 		case *flagMarkdown:
 			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
 			renderer = mmarkout.NewRenderer(opts)
