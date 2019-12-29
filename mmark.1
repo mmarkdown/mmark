@@ -6,11 +6,6 @@
 mmark – generate XML, HTML or markdown from mmark markdown documents.
 
 .SH "SYNOPSIS"
-mmark \[en] generate XML, HTML or markdown from mmark markdown
-.SH SYNOPSIS
-mmark \[en] generate XML, HTML or markdown from mmark markdown
-documents.
-.SH SYNOPSIS
 .PP
 \fBmmark\fP [\fBOPTIONS\fP] [\fIFILE...\fP]
 
@@ -23,10 +18,9 @@ is, however, \fIalso\fP suited for writing complete books and other technical do
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 RFC 7991
 \[la]https://tools.ietf.org/html/rfc7991\[ra] format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2), HTML5, manual pages and markdown output.
+RFC 7991), HTML5, manual pages and markdown output.
 
 .PP
-<<<<<<< HEAD
 The syntax is detailed at https://mmark.miek.nl/syntax
 \[la]https://mmark.miek.nl/syntax\[ra].
 
@@ -65,15 +59,9 @@ Callouts in code and text.
 BCP14 (RFC 2119) keyword detection.
 
 
-.SH "RFC 7749"
-.PP
-This is currently the XML format used by the RFC editor for accepting Internet-Drafts. Some of these
-turn into RFCs. For getting text output you'll need xml2rfc for the actual conversion.
-
 .SH "RFC 7991"
 .PP
-This is the future XML format used by the RFC editor for accepting Internet-Drafts. A valid markdown
-document can be turned in RFC 7749 or RFC 7991 XML.
+This is the XML format used by the RFC editor for accepting Internet-Drafts.
 
 .SH "HTML5"
 .PP
@@ -89,66 +77,6 @@ markdown files.
 The man renderer outputs nroff that can be viewed via man(1).
 
 .SH "OPTIONS"
-||||||| merged common ancestors
-The syntax is detailed at <https://mmark.nl/syntax>.
-.SH OPTIONS
-=======
-The syntax is detailed at <https://mmark.nl/syntax>.
-.PP
-Compared to other markdown variants mmark adds:
-.IP \[bu] 2
-(Extended) Title blokto specify authors and IETF specific bits.
-.IP \[bu] 2
-Special sections for abstracts, prefaces or notes.
-.IP \[bu] 2
-Including other files with the option to specify line ranges, regular
-expressions and/or prefixing each line with a custom string.
-.IP \[bu] 2
-Document divisions: front matter, main matter and back matter.
-.IP \[bu] 2
-Captions for code, tables, quotes and subfigures.
-.IP \[bu] 2
-Asides for small notes.
-.IP \[bu] 2
-Figures and Subfigures that allow for grouping images into subfigures as
-well as giving a single image metadata (a link, attributes, etc.).
-.IP \[bu] 2
-Block Level Attributes that allow to specify attributes, classes and IDs
-for elements.
-.IP \[bu] 2
-Indices to mark an item (and/or a subitem) to be referenced in the
-document index.
-.IP \[bu] 2
-Citations and adding XML References (those used by the IETF).
-.IP \[bu] 2
-Cross references: short form of referencing a section in the document.
-.IP \[bu] 2
-Super\- and Subscript.
-.IP \[bu] 2
-Callouts in code and text.
-.IP \[bu] 2
-BCP14 (RFC 2119) keyword detection.
-.SS RFC 7749
-.PP
-This is currently the XML format used by the RFC editor for accepting
-Internet\-Drafts.
-Some of these turn into RFCs.
-For getting text output you\[aq]ll need xml2rfc for the actual
-conversion.
-.SS RFC 7991
-.PP
-This is the future XML format used by the RFC editor for accepting
-Internet\-Drafts.
-A valid markdown document can be turned in RFC 7749 or RFC 7991 XML.
-.SS HTML5
-.PP
-The HTML5 renderer outputs HTML.
-.SS Markdown
-.PP
-Mmark can also be "translated" into markdown again.
-This is a useful feature for auto\-formatting markdown files.
-.SH OPTIONS
->>>>>>> Fix links
 .TP
 \fB-ast\fP
 print abstract syntax tree and exit.
@@ -165,38 +93,18 @@ link to HTML to be included in head (only used with -html).
 \fB-html\fP
 create HTML output.
 .TP
-\fB-2\fP
-generate RFC 7749 XML.
-.TP
 \fB-markdown\fP
 output (normalized) markdown.
 .TP
-<<<<<<< HEAD
 \fB-man\fP
 output nroff (manual pages).
+.TP
+\fB-text\fP
+output text with ANSI codes (aim to be somewhat similar to a manual page).
 .TP
 \fB-unsafe\fP
 allow includes from anywhere in the filesystem, otherwise they are only allowed \fIunder\fP the
 current document.
-||||||| merged common ancestors
-.B \f[B]\-unsafe\f[]
-allow includes from anywhere in the filesystem, otherwise they are only
-allowed \f[I]under\f[] the current document.
-.RS
-.RE
-=======
-.B \f[B]\-text\f[]
-output text with ANSI codes (aim to be somewhat similar to a manual
-page).
-.RS
-.RE
-.TP
-.B \f[B]\-unsafe\f[]
-allow includes from anywhere in the filesystem, otherwise they are only
-allowed \f[I]under\f[] the current document.
-.RS
-.RE
->>>>>>> Fix links
 .TP
 \fB-textwidth integer\fP
 set the text width when generating markdown, defaults to 100 characters.
@@ -217,20 +125,9 @@ show mmark's version.
 
 .SH "ALSO SEE"
 .PP
-<<<<<<< HEAD
-RFC 7991 and RFC 7749. The main site for Mmark is https://mmark.miek.nl
-\[la]https://mmark.miek.nl\[ra]. The syntax
-used by mmark is explained in the syntax page
+RFC 7991 and (maybe) RFC 7749. The main site for Mmark is
+https://mmark.miek.nl
+\[la]https://mmark.miek.nl\[ra]. The syntax used by mmark is explained in the syntax
+page
 \[la]https://mmark.miek.nl/post/syntax/\[ra].
 
-||||||| merged common ancestors
-RFC 7991 and RFC 7749.
-The main site for Mmark is <https://mmark.nl>
-.SH AUTHORS
-Mmark Authors.
-=======
-RFC 7991 and RFC 7749.
-The main site for Mmark is mmark.nl (https://mmark.nl).
-.SH AUTHORS
-Mmark Authors.
->>>>>>> Fix links
