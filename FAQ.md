@@ -9,7 +9,7 @@ Mmark Frequently Asked Questions.
 
 # How Do I Create an Independent IETF Document?
 
-Use the following as starting point for your title block, `ipr` and `submissiontype` or the important
+Use the following as starting point for your title block, `ipr` and `submissiontype` are the important
 settings here.
 
 ~~~ toml
