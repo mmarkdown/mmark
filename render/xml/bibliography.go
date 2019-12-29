@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {

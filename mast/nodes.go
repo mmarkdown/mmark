@@ -155,7 +155,7 @@ func AttributeFilter(node ast.Node, filter func(key string) bool) {
 	if !filter("class") {
 		a.Classes = nil
 	}
-	for k, _ := range a.Attrs {
+	for k := range a.Attrs {
 		if !filter(k) {
 			delete(a.Attrs, k)
 		}

@@ -7,10 +7,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/html"
-	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/lang"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
@@ -18,6 +14,11 @@ import (
 	mmarkout "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
+
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 var (

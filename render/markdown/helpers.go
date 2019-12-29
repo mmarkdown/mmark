@@ -6,8 +6,9 @@ import (
 	"regexp"
 	"unicode"
 
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/internal/text"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {

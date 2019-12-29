@@ -11,32 +11,32 @@ func New(language string) Lang {
 	// Add all lanaguages here, the keys should be named according to BCP47.
 	// The keys must be in all lower case for normalized lookup.
 	l.m = map[string]Term{
-		"en": Term{
+		"en": {
 			Footnotes:    "Footnotes",
 			Bibliography: "Bibliography",
 			Index:        "Index",
 		},
-		"nl": Term{
+		"nl": {
 			Footnotes:    "Voetnoten",
 			Bibliography: "Bibliografie",
 			Index:        "Index",
 		},
-		"de": Term{
+		"de": {
 			Footnotes:    "Fußnoten",
 			Bibliography: "Literaturverzeichnis",
 			Index:        "Index",
 		},
-		"ja": Term{
+		"ja": {
 			Footnotes:    "脚注",
 			Bibliography: "参考文献",
 			Index:        "索引",
 		},
-		"zh-cn": Term{
+		"zh-cn": {
 			Footnotes:    "注释",
 			Bibliography: "参考文献",
 			Index:        "索引",
 		},
-		"zh-tw": Term{
+		"zh-tw": {
 			Footnotes:    "註釋",
 			Bibliography: "參考文獻",
 			Index:        "索引",

@@ -1,8 +1,9 @@
 package mast
 
 import (
-	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/mast/reference"
+
+	"github.com/gomarkdown/markdown/ast"
 )
 
 // Bibliography represents markdown bibliography node.
