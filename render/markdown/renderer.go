@@ -302,7 +302,10 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 	} else {
 		r.colWidth = []int{}
 		r.colAlign = []ast.CellAlignFlags{}
-		r.newline(w)
+		if _, inCaption := tab.Parent.(*ast.CaptionFigure); !inCaption {
+			// The caption must be attached to the table.
+			r.newline(w)
+		}
 	}
 }
 
