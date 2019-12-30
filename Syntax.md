@@ -119,7 +119,7 @@ Because markdown is not perfect, there are some gotchas you have to be aware of:
 ### RFC 7991 XML Output
 
 This is the output format used for generating Internet-Drafts and RFCs. The generated XML needs to
-be processed by another tool (xml2rfc) to generate to official (final) output. The XML from *Mmark*
+be processed by another tool (xml2rfc) to generate to official (final) output. The XML from *mmark*
 can be used directly to upload to the IETF tools website.
 
 Title Block:
@@ -185,7 +185,7 @@ Comments:
 ### XML RFC 7749 Output
 
 When the RFC editor drops support for this format it will be removed from Mmark as well. This is
-expected to happen in 2019. This has been implemented in October 2019.
+expected to happen in 2019. **This has been implemented in October 2019**.
 
 ### HTML5 Output
 
@@ -476,6 +476,31 @@ Gets expanded into:
 ### Paragraphs
 
 Text that is separated from the rest of the content with empty lines.
+
+### Tables
+
+Tables can be entered by using a simple syntax:
+
+~~~
+Name    | Age
+--------|------
+Bob     | 27
+Alice   | 23
+~~~
+
+Table footers are supported as well and can be added with equal signs (=):
+
+~~~
+Name    | Age
+--------|------
+Bob     | 27
+Alice   | 23
+========|======
+Total   | 50
+~~~
+
+The pipe symbol (`|`) to mark columns does not need to be aligned. Each row must be on a single
+line.
 
 ## Inline Elements
 
