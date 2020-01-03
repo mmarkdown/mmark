@@ -382,8 +382,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 		return
 	}
 
-	// Render the text here, because we need it before the link.
-
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
 			return r.RenderNode(w, node, entering)
@@ -391,15 +389,12 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	}
 
 	if len(link.DeferredID) == 0 {
-
-		r.outs(w, " (")
-		r.out(w, link.Destination)
+		// destination is already outputed from the children walk previously
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
 			r.outs(w, `"`)
 		}
-		r.outs(w, ")")
 		return
 	}
 
