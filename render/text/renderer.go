@@ -11,7 +11,6 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/render/text/ansi"
 )
 
 // Flags control optional behavior of Markdown renderer.
@@ -46,7 +45,6 @@ type Renderer struct {
 	headingStart int
 
 	prefix     *prefixStack // track current prefix, quote, aside, etc.
-	ansi       *ansiStack   // tracks colors and other codes
 	listMarker string
 
 	// tables
@@ -73,15 +71,13 @@ func NewRenderer(opts RendererOptions) *Renderer {
 	r := &Renderer{
 		opts:                 opts,
 		prefix:               &prefixStack{p: [][]byte{}},
-		ansi:                 &ansiStack{},
 		deferredFootBuf:      &bytes.Buffer{},
 		deferredFootID:       make(map[string]struct{}),
 		deferredLinkBuf:      &bytes.Buffer{},
 		deferredLinkID:       make(map[string]struct{}),
 		headingTransformFunc: noopHeadingTransferFunc,
 	}
-	r.push(Space(3))        // default indent for all text, except heading.
-	r.ansi.push(ansi.Reset) // default value that will never be popped.
+	r.push(Space(2)) // default indent for all text, except heading.
 	return r
 }
 
@@ -90,48 +86,31 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 	r.newline(w)
 }
 
-func headingLevel1(data []byte) []byte { return bytes.ToUpper(data) }
-func headingLevel2(data []byte) []byte { return append(Space(1), data...) }
-func headingLevel3(data []byte) []byte { return append(Space(2), data...) }
-
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if entering {
 		switch node.Level {
 		case 1:
-			r.headingTransformFunc = headingLevel1
-			r.ansi.push(ansi.Bold)
+			r.headingTransformFunc = func(data []byte) []byte {
+				x := r.centerText(bytes.ToUpper(data))
+				return x
+			}
 		case 2:
-			r.headingTransformFunc = headingLevel2
-			r.ansi.push(ansi.Bold)
-		case 3:
-			r.headingTransformFunc = headingLevel3
-			r.ansi.push(ansi.Bold)
-		case 4:
-			r.ansi.push(ansi.Bold)
-			r.ansi.push(ansi.Italics)
-		case 5:
-			r.ansi.push(ansi.Italics)
+			r.headingTransformFunc = func(data []byte) []byte {
+				x := r.centerText(data)
+				return x
+			}
+		default:
+			r.headingTransformFunc = noopHeadingTransferFunc
 		}
 		return
-	}
-
-	switch node.Level {
-	case 1:
-		r.ansi.pop()
-	case 2:
-		r.ansi.pop()
-	case 3:
-		r.ansi.pop()
-	case 4:
-		r.ansi.pop()
-		r.ansi.pop()
-	case 5:
-		r.ansi.pop()
 	}
 
 	r.headingTransformFunc = noopHeadingTransferFunc
 	r.endline(w)
 	r.newline(w)
+	if node.Level == 1 {
+		r.newline(w)
+	}
 	return
 }
 
@@ -405,20 +384,16 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// Render the text here, because we need it before the link.
 
-	r.ansi.push(ansi.Underline)
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
 			return r.RenderNode(w, node, entering)
 		})
 	}
-	r.ansi.pop()
 
 	if len(link.DeferredID) == 0 {
 
 		r.outs(w, " (")
-		r.ansi.push(ansi.Gray)
 		r.out(w, link.Destination)
-		r.ansi.pop()
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
@@ -540,23 +515,19 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
 	if entering {
-		r.ansi.push(ansi.Italics)
 		r.push(Quote)
 		return
 	}
 	r.pop()
-	r.ansi.pop()
 	r.newline(w)
 }
 
 func (r *Renderer) aside(w io.Writer, block *ast.Aside, entering bool) {
 	if entering {
-		r.ansi.push(ansi.Bold)
 		r.push(Aside)
 		return
 	}
 	r.pop()
-	r.ansi.pop()
 	if !lastNode(block) {
 		r.newline(w)
 	}
@@ -593,11 +564,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
-		r.outOneOf(w, entering, ansi.Italics, "")
+		r.out(w, node.Literal)
 	case *ast.Strong:
-		r.outOneOf(w, entering, ansi.Bold, "")
+		r.out(w, node.Literal)
 	case *ast.Del:
-		r.outOneOf(w, entering, ansi.Strikethrough, "")
+		r.out(w, node.Literal)
 	case *ast.Citation:
 		r.citation(w, node, entering)
 	case *ast.DocumentMatter:

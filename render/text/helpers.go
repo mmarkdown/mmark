@@ -12,24 +12,17 @@ import (
 func noopHeadingTransferFunc(data []byte) []byte { return data }
 
 func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
-	if outFirst {
-		r.ansi.push(first)
-	} else {
-		r.ansi.pop()
-	}
 }
 
 func (r *Renderer) outPrefix(w io.Writer) { r.out(w, r.prefix.flatten()); r.suppress = false }
 func (r *Renderer) endline(w io.Writer)   { r.outs(w, "\n"); r.suppress = false }
 
 func (r *Renderer) outs(w io.Writer, s string) {
-	r.ansi.print(w)
 	w.Write(r.headingTransformFunc([]byte(s)))
 	r.suppress = false
 }
 
 func (r *Renderer) out(w io.Writer, d []byte) {
-	r.ansi.print(w)
 	w.Write(r.headingTransformFunc(d))
 	r.suppress = false
 }
