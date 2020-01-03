@@ -178,7 +178,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			for i := 0; i < len(pos); i++ {
 				indented[plen+i] = pos[i]
 			}
-			indented[plen+len(pos)] = 'o'
+			indented[plen+len(pos)] = '.'
 			indented[plen+len(pos)+1] = ' '
 
 			list.Start++
@@ -501,7 +501,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 		r.outs(w, "")
 		return
 	case *ast.Table:
-		r.outs(w, "")
+		r.outs(w, "Table: ")
 		return
 	case *ast.CodeBlock:
 		r.outs(w, "")
@@ -552,8 +552,13 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.outs(w, "\n")
 		r.newline(w)
 	case *mast.Bibliography:
+		// discard
 	case *mast.BibliographyItem:
+		// discard
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
+		// discard
+	case *mast.ReferenceBlock:
+		// discard
 	case *ast.Footnotes:
 		// do nothing, we're not outputing a footnote list
 	case *ast.Text:
@@ -726,6 +731,6 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 
 var (
 	Space1 = Space(1)
-	Aside  = []byte("A> ")
-	Quote  = []byte("> ")
+	Aside  = []byte("| ")
+	Quote  = []byte("| ")
 )
