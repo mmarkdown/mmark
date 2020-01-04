@@ -389,7 +389,6 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	}
 
 	if len(link.DeferredID) == 0 {
-		// destination is already outputed from the children walk previously
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
@@ -493,13 +492,13 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	r.outPrefix(w)
 	switch ast.GetPrevNode(caption).(type) {
 	case *ast.BlockQuote:
-		r.outs(w, "")
+		r.outs(w, "Quote: ")
 		return
 	case *ast.Table:
 		r.outs(w, "Table: ")
 		return
 	case *ast.CodeBlock:
-		r.outs(w, "")
+		r.outs(w, "Figure: ")
 		return
 	}
 	// If here, we're dealing with a subfigure captionFigure.
