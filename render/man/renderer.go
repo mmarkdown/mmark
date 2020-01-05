@@ -386,7 +386,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Hardbreak:
 		r.hardBreak(w, node)
 	case *ast.NonBlockingSpace:
-		// skip
+		r.outs(w, "\\0")
 	case *ast.Callout:
 		r.callout(w, node, entering)
 	case *ast.Emph:
@@ -453,17 +453,17 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.MathBlock:
 		r.mathBlock(w, node, entering)
 	case *ast.Subscript:
-		r.outOneOf(w, true, "~", "~")
+		r.outOneOf(w, true, "\\d", "\\u")
 		if entering {
 			r.out(w, node.Literal)
 		}
-		r.outOneOf(w, false, "~", "~")
+		r.outOneOf(w, false, "\\d", "\\u")
 	case *ast.Superscript:
-		r.outOneOf(w, true, "^", "^")
+		r.outOneOf(w, true, "\\u", "\\d")
 		if entering {
 			r.out(w, node.Literal)
 		}
-		r.outOneOf(w, false, "^", "^")
+		r.outOneOf(w, false, "\\u", "\\d")
 	default:
 		panic(fmt.Sprintf("Unknown node %T", node))
 	}
