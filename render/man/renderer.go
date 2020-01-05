@@ -283,7 +283,7 @@ func (r *Renderer) index(w io.Writer, index *ast.Index, entering bool) {}
 func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	if link.Footnote != nil {
 		if entering {
-			r.outs(w, fmt.Sprintf("[%d]", link.NoteID))
+			r.outs(w, fmt.Sprintf("\\u[%d]\\d", link.NoteID))
 		}
 		return
 	}
