@@ -119,6 +119,25 @@ func main() {
 			return
 		}
 
+		if *flagMan {
+			title := false
+			// If there isn't a title block the resulting manual page does not start
+			// with .TH, this messes up the entire rendering. Walk to AST to check for
+			// a title block, and if none is found inject an empty one.
+			ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
+				if _, ok := node.(*mast.Title); ok {
+					title = true
+					return ast.Terminate
+				}
+				return ast.GoToNext
+			})
+			if !title {
+				t := &mast.Title{TitleData: &mast.TitleData{Title: "User Commands 1"}}
+				c := doc.GetChildren()
+				newc := append([]ast.Node{t}, c...)
+				doc.SetChildren(newc) // t must be the first element.
+			}
+		}
 		var renderer markdown.Renderer
 
 		switch {
