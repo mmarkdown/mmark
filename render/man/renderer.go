@@ -60,7 +60,7 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 }
 
 func (r *Renderer) matter(w io.Writer, node *ast.DocumentMatter, entering bool) {
-	// TODO
+	// TODO: what should this output?
 }
 
 func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
