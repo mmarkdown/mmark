@@ -448,16 +448,27 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	// Render the text here, because we need it before the link.
 
-	r.outs(w, "[")
+	// if the text of the link and the title are identical just assume it was a
+	// inline link and output it as <link>.
+	tmp := &bytes.Buffer{}
+
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
-			return r.RenderNode(w, node, entering)
+			return r.RenderNode(tmp, node, entering)
 		})
 	}
+	if bytes.Equal(tmp.Bytes(), link.Destination) && len(link.Title) == 0 {
+		r.outs(w, "<")
+		io.Copy(w, tmp)
+		r.outs(w, ">")
+		return
+	}
+
+	r.outs(w, "[")
+	io.Copy(w, tmp)
 	r.outs(w, "]")
 
 	if len(link.DeferredID) == 0 {
-
 		r.outs(w, "(")
 		r.out(w, link.Destination)
 		if len(link.Title) > 0 {
