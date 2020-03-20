@@ -224,10 +224,6 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 		if p.ListFlags&ast.ListTypeTerm != 0 {
 			return
 		}
-		if p.ListFlags&ast.ListItemContainsBlock == 0 {
-			// no block level elements, don't output a paragraph
-			return
-		}
 	}
 	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
 		return
@@ -239,10 +235,6 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
 	if p, ok := para.Parent.(*ast.ListItem); ok {
 		if p.ListFlags&ast.ListTypeTerm != 0 {
-			return
-		}
-		if p.ListFlags&ast.ListItemContainsBlock == 0 {
-			// no block level elements, don't output a paragraph
 			return
 		}
 	}
