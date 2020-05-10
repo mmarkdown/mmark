@@ -225,8 +225,20 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 			return
 		}
 		if p.ListFlags&ast.ListItemContainsBlock == 0 {
-			// no block level elements, don't output a paragraph
-			return
+			// No block level elements, don't output a paragraph. However a list in a list
+			// doesn't show up as a block level element, so we check for that as well. In that
+			// case we do need to output a para tag.
+			listInList := false
+			ast.WalkFunc(p, func(node ast.Node, entering bool) ast.WalkStatus {
+				if _, ok := node.(*ast.List); ok {
+					listInList = true
+					return ast.Terminate
+				}
+				return ast.GoToNext
+			})
+			if !listInList {
+				return
+			}
 		}
 	}
 	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
@@ -242,8 +254,18 @@ func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
 			return
 		}
 		if p.ListFlags&ast.ListItemContainsBlock == 0 {
-			// no block level elements, don't output a paragraph
-			return
+			// see comments in paragraphEnter
+			listInList := false
+			ast.WalkFunc(p, func(node ast.Node, entering bool) ast.WalkStatus {
+				if _, ok := node.(*ast.List); ok {
+					listInList = true
+					return ast.Terminate
+				}
+				return ast.GoToNext
+			})
+			if !listInList {
+				return
+			}
 		}
 	}
 	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
