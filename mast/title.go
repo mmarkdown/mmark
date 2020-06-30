@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/mast/reference"
 )
 
 // Title represents the TOML encoded title block.
@@ -35,7 +36,7 @@ type TitleData struct {
 	Title  string
 	Abbrev string
 
-	SeriesInfo     SeriesInfo
+	SeriesInfo     reference.SeriesInfo
 	Consensus      bool
 	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int
@@ -49,14 +50,6 @@ type TitleData struct {
 	Author    []Author
 
 	Language string
-}
-
-// SeriesInfo holds details on the Internet-Draft or RFC, see https://tools.ietf.org/html/rfc7991#section-2.47
-type SeriesInfo struct {
-	Name   string // name of the document, values are "RFC", "Internet-Draft", and "DOI"
-	Value  string // either draft name, or number
-	Status string // The status of this document, values: "standard", "informational", "experimental", "bcp", "fyi", and "full-standard"
-	Stream string // "IETF" (default), "IAB", "IRTF" or "independent"
 }
 
 // Author denotes an RFC author.

@@ -11,6 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/html"
 
 	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/mast/reference"
 )
 
 // TODO(miek): double check if this is how it works.
@@ -183,7 +184,7 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 }
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
-func (r *Renderer) titleSeriesInfo(w io.Writer, s mast.SeriesInfo) {
+func (r *Renderer) titleSeriesInfo(w io.Writer, s reference.SeriesInfo) {
 	attr := Attributes(
 		[]string{"value", "stream", "status", "name"},
 		[]string{s.Value, s.Stream, s.Status, s.Name},

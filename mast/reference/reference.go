@@ -61,11 +61,22 @@ type Format struct {
 	Target string `xml:"target,attr"`
 }
 
+// SeriesInfo holds details on the Internet-Draft or RFC, see https://tools.ietf.org/html/rfc7991#section-2.47
+type SeriesInfo struct {
+	Name       string `xml:"name,attr,omitempty"`       // name of the document, values are "RFC", "Internet-Draft", and "DOI"
+	AsciiName  string `xml:"asciiName,attr,omitempty"`  // ascii name of the document, values are "RFC", "Internet-Draft", and "DOI"
+	Value      string `xml:"value,attr,omitempty"`      // either draft name, or number
+	AsciiValue string `xml:"asciiValue,attr,omitempty"` // value in ascii: either draft name, or number
+	Status     string `xml:"status,attr,omitempty"`     // The status of this document, values: "standard", "informational", "experimental", "bcp", "fyi", and "full-standard"
+	Stream     string `xml:"stream,attr,omitempty"`     // "IETF" (default), "IAB", "IRTF" or "independent"
+}
+
 // Reference is the entire <reference> structure.
 type Reference struct {
-	XMLName xml.Name `xml:"reference"`
-	Anchor  string   `xml:"anchor,attr"`
-	Front   Front    `xml:"front"`
-	Format  *Format  `xml:"format,omitempty"`
-	Target  string   `xml:"target,attr"`
+	XMLName xml.Name    `xml:"reference"`
+	Anchor  string      `xml:"anchor,attr"`
+	Front   Front       `xml:"front"`
+	Format  *Format     `xml:"format,omitempty"`
+	Target  string      `xml:"target,attr"`
+	Series  *SeriesInfo `xml:"seriesInfo,omitempty"`
 }
