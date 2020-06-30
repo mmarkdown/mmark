@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"log"
+	"sort"
 
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mast/reference"
@@ -40,7 +41,17 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 		return ast.GoToNext
 	})
 
-	for _, r := range seen {
+	// sort on anchor, to we are stable when outputting the bibliography.
+	keys := make([]string, len(seen))
+	i := 0
+	for k := range seen {
+		keys[i] = k
+		i++
+	}
+	keys = sort.StringSlice(keys)
+
+	for _, k := range keys {
+		r := seen[k]
 		// If we have a reference anchor and the raw XML add that here.
 		if raw, ok := raw[string(bytes.ToLower(r.Anchor))]; ok {
 			var x reference.Reference
