@@ -13,3 +13,20 @@ func IsComment(data []byte) ([]byte, bool) {
 
 	return data[5 : len(data)-4], true
 }
+
+func IsBr(data []byte) bool {
+	// <br> <br/> <br /> are recognized
+	if bytes.Equal(data, []byte("<br>")) {
+		return true
+	}
+	if bytes.Equal(data, []byte("<br >")) {
+		return true
+	}
+	if bytes.Equal(data, []byte("<br/>")) {
+		return true
+	}
+	if bytes.Equal(data, []byte("<br />")) {
+		return true
+	}
+	return false
+}

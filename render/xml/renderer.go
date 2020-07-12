@@ -430,6 +430,11 @@ func (r *Renderer) htmlSpan(w io.Writer, span *ast.HTMLSpan) {
 	if _, ok := IsComment(span.Literal); ok {
 		return
 	}
+	if IsBr(span.Literal) {
+		r.hardBreak(w, &ast.Hardbreak{})
+		return
+	}
+
 	if r.opts.Flags&SkipHTML == 0 {
 		html.EscapeHTML(w, span.Literal)
 	}

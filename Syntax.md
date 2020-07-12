@@ -182,6 +182,9 @@ Comments:
 :   HTML comments are detected and discarded. These can be useful to make the parser parse certain
     contstructs as a block element without meddling with the output.
 
+HTML:
+:   The `<br>` tag is detected and converted into a hard break.
+
 ### XML RFC 7749 Output
 
 When the RFC editor drops support for this format it will be removed from Mmark as well. This is
