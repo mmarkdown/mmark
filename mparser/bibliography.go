@@ -48,7 +48,7 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 		keys[i] = k
 		i++
 	}
-	keys = sort.StringSlice(keys)
+	sort.Strings(keys)
 
 	for _, k := range keys {
 		r := seen[k]
