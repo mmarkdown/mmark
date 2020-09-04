@@ -1,4 +1,3 @@
 <t>Just take a look at</t>
-<figure><artwork src="context.svg" type="alt" name="context"/></figure>
+<figure><artwork src="context.svg" type="svg" alt="alt"/></figure>
 <t>this image</t>
-

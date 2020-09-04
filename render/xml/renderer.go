@@ -3,6 +3,7 @@ package xml
 import (
 	"fmt"
 	"io"
+	"path"
 	"strconv"
 	"strings"
 
@@ -504,15 +505,19 @@ func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
 func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 	dest := image.Destination
 	r.outs(w, `<artwork src="`)
-	// type= will be the alt text
 	html.EscapeHTML(w, dest)
-	r.outs(w, `" type="`)
+	ext := path.Ext(string(dest))
+	if ext == "" {
+		ext = "svg"
+	}
+	r.outs(w, `" type="`+ext[1:]+`"`) // ext includes the dot, skip that
+	r.outs(w, ` alt="`)
 }
 
 func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
+	// where to put image title? Put in the artwork?
 	if image.Title != nil {
-		r.outs(w, `" name="`)
-		html.EscapeHTML(w, image.Title)
+		// html.EscapeHTML(w, image.Title)
 	}
 	r.outs(w, `"/>`)
 }
