@@ -138,6 +138,8 @@ Note:
 :   Any special header that is not "abstract" or "preface" will be a
     [note](https://tools.ietf.org/html/rfc7749#section-2.24): a numberless section.
     These notes are only allowed in the `<front>` section of the document.
+    Note [sic] that notes can only contain `<t>` and not other block level elements,
+    Mmark will filter these out for: `blockquote` currently (2020 September).
 
 BCP 14/RFC 2119 Keywords:
 :   If an RFC 2119 word is found enclosed in `**` it will be rendered
@@ -159,7 +161,7 @@ Source code:
     Will be typesets as source code with the language set to `go`.
 
 Block Level Attributes:
-:   We use the attributes as specified in RFC 7991, e.g. to speficify an empty list style use:
+:   We use the attributes as specified in RFC 7991, e.g. to specify an empty list style use:
     `{empty="true"}` before the list. The renderer for this output format filters unknown attributes
     away. The current list is to allow IDs (translated into 'anchor'), remove any `class=` and `style=`
     attributes, so `{style="empty" empty="true"}`, will make a document both RFC 7991 and RFC 7749
@@ -169,26 +171,24 @@ Footnotes:
 :   Are discarded from the final output, don't use them.
 
 Images:
-:   Images are supported (but for text output only(?) SVG graphcs are allowed. We convert this to
+:   Images are supported, but only SVG graphics are allowed. We convert this to
     an `<artwork>` with `src` set to the image URL of path. I.e. `![svg](img.svg "title")` becomes
     `<artwork src="img.svg" type="svg" name="title"/>`. Note the first `svg` (the alt text) is used
     as the `type=` attribute. Also note that an image like this will be wrapped in `<t>` which is
-    not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure.
+    not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure:
+    `!---`. If an image referenced is *not* an empty SVG is substituted!
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
 
 Comments:
-:   HTML comments are detected and discarded. These can be useful to make the parser parse certain
-    contstructs as a block element without meddling with the output.
+:   HTML Comments are detected and discarded. These can be useful to make the parser parse certain
+    constructs as a block element without meddling with the output.
+
+
 
 HTML:
 :   The `<br>` tag is detected and converted into a hard break.
-
-### XML RFC 7749 Output
-
-When the RFC editor drops support for this format it will be removed from Mmark as well. This is
-expected to happen in 2019. **This has been implemented in October 2019**.
 
 ### HTML5 Output
 

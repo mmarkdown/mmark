@@ -612,6 +612,12 @@ func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
 }
 
 func (r *Renderer) blockQuote(w io.Writer, block *ast.BlockQuote, entering bool) {
+	if r.section != nil && r.section.IsSpecial {
+		// XML2RFC doesn't like blocklevel elements in special section, this should be done in other
+		// places, but I'm using this in learning go and I want that to translate cleanly to txt with xml2rfc.
+		return
+	}
+
 	if !entering {
 		r.outs(w, "</blockquote>")
 		return
