@@ -15,7 +15,7 @@ func IsComment(data []byte) ([]byte, bool) {
 }
 
 func IsBr(data []byte) bool {
-	// <br> <br/> <br /> are recognized
+	// <br> <br/> <br /> and <br></br> are recognized
 	if bytes.Equal(data, []byte("<br>")) {
 		return true
 	}
@@ -26,6 +26,9 @@ func IsBr(data []byte) bool {
 		return true
 	}
 	if bytes.Equal(data, []byte("<br />")) {
+		return true
+	}
+	if bytes.Equal(data, []byte("<br></br>")) {
 		return true
 	}
 	return false
