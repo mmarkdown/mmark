@@ -521,7 +521,8 @@ func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 	// where to put image title? Put in the artwork?
 	if image.Title != nil {
-		// html.EscapeHTML(w, image.Title)
+		r.outs(w, `" name="`)
+		html.EscapeHTML(w, image.Title)
 	}
 	r.outs(w, `"/>`)
 }
