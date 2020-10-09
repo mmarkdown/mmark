@@ -506,18 +506,23 @@ func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 	dest := image.Destination
 	r.outs(w, `<artwork src="`)
 	html.EscapeHTML(w, dest)
+	r.outs(w, `"`)
 	ext := path.Ext(string(dest))
-	if ext == "" {
-		ext = "svg"
+	if len(ext) > 2 {
+		r.outs(w, ` type="`)
+		r.outs(w, ext[1:])
+		r.outs(w, `"`)
 	}
-	r.outs(w, `" type="`+ext[1:]+`"`) // ext includes the dot, skip that
+
+	// alt= will be the alt text (which is normal text so rendered by the normal render flow)
 	r.outs(w, ` alt="`)
 }
 
 func (r *Renderer) imageExit(w io.Writer, image *ast.Image) {
 	// where to put image title? Put in the artwork?
 	if image.Title != nil {
-		// html.EscapeHTML(w, image.Title)
+		r.outs(w, `" name="`)
+		html.EscapeHTML(w, image.Title)
 	}
 	r.outs(w, `"/>`)
 }
