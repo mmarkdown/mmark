@@ -176,7 +176,7 @@ Images:
     `<artwork src="img.svg" type="svg" name="title"/>`. Note the first `svg` (the alt text) is used
     as the `type=` attribute. Also note that an image like this will be wrapped in `<t>` which is
     not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure:
-    `!---`. If an image referenced is *not* an empty SVG is substituted!
+    `!---`.
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
