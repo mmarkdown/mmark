@@ -8,7 +8,7 @@ import (
 
 func (r *Renderer) centerText(data []byte) []byte {
 	replaced := re.ReplaceAll(data, []byte(" "))
-	wrapped := mtext.WrapBytes(replaced, r.opts.TextWidth)
+	wrapped := mtext.WrapBytes(replaced, []byte{}, r.opts.TextWidth)
 
 	// now split the wrapped text on the newlines and center each chucnk
 

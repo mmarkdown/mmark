@@ -42,9 +42,9 @@ var re = regexp.MustCompile("  +")
 func lastNode(node ast.Node) bool { return ast.GetNextNode(node) == nil }
 
 // wrapText wraps the text in data, taking len(prefix) into account.
-func (r *Renderer) wrapText(data, prefix []byte) []byte {
+func (r *Renderer) wrapText(data, prefix, tab []byte) []byte {
 	replaced := re.ReplaceAll(data, []byte(" "))
-	wrapped := mtext.WrapBytes(replaced, r.opts.TextWidth-len(prefix))
+	wrapped := mtext.WrapBytes(replaced, tab, r.opts.TextWidth-len(prefix))
 	return r.indentText(wrapped, prefix)
 }
 

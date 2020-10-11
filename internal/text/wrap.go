@@ -12,16 +12,18 @@ var (
 
 const defaultPenalty = 1e5
 
-// Wrap wraps s into a paragraph of lines of length lim, with minimal
-// raggedness.
-func Wrap(s string, lim int) string {
-	return string(WrapBytes([]byte(s), lim))
+// Wrap wraps s into a paragraph of lines of length lim, with minimal raggedness.
+func Wrap(s, tab string, lim int) string {
+	return string(WrapBytes([]byte(s), []byte(tab), lim))
 }
 
 // WrapBytes wraps b into a paragraph of lines of length lim, with minimal raggedness.
-func WrapBytes(b []byte, lim int) []byte {
+func WrapBytes(b, tab []byte, lim int) []byte {
 	words := bytes.Split(bytes.Replace(bytes.TrimSpace(b), nl, sp, -1), sp)
 	var lines [][]byte
+	if len(words) > 0 {
+		words[0] = append(tab, words[0]...)
+	}
 	for _, line := range WrapWords(words, 1, lim, defaultPenalty) {
 		lines = append(lines, bytes.Join(line, sp))
 	}

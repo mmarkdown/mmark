@@ -152,12 +152,16 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 	p := bytes.Split(b, []byte("\\\n"))
 	for i := range p {
 		if len(indented) > 0 {
-			p1 := r.wrapText(p[i], r.prefix.flatten())
+			p1 := r.wrapText(p[i], r.prefix.flatten(), []byte(""))
 			indented = append(indented, []byte("\\\n")...)
 			indented = append(indented, p1...)
 			continue
 		}
-		indented = r.wrapText(p[i], r.prefix.flatten())
+		var tab = []byte("")
+		if i == 0 {
+			tab = []byte("	")
+		}
+		indented = r.wrapText(p[i], r.prefix.flatten(), tab)
 	}
 	if len(indented) == 0 {
 		indented = make([]byte, r.prefix.peek()+3)
