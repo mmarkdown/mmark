@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -547,6 +548,11 @@ func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock) {
 func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, entering bool) {
 	// If the captionFigure has a table as child element *don't* output the figure tags, because 7991 is weird.
 	// If we have a quoted blockquote it is also wrapped in a figure, which we don't want.
+	//
+	// To detect an artset, we check the number of images, *and* if the filename referenced in Destination is equal apart from the
+	// extensions. We don't care about the extension here, but if we detect this we wrap the lot in a artset.
+	base := ""
+	artset := false
 	for _, child := range captionFigure.GetChildren() {
 		if _, ok := child.(*ast.Table); ok {
 			return
@@ -554,9 +560,28 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 		if _, ok := child.(*ast.BlockQuote); ok {
 			return
 		}
+		// for figures/images, these are wrapped below a paragraph.
+		// TODO: can there be more than 1 paragraph??
+		if p, ok := child.(*ast.Paragraph); ok {
+			for _, img := range p.GetChildren() {
+				x, ok := img.(*ast.Image)
+				if !ok {
+					continue
+				}
+				b := strings.TrimSuffix(string(x.Destination), filepath.Ext(string(x.Destination)))
+				artset = false
+				if b == base {
+					artset = true
+				}
+				base = b
+			}
+		}
 	}
 
 	if !entering {
+		if artset {
+			r.outs(w, "</artset>\n")
+		}
 		r.outs(w, "</figure>\n")
 		return
 	}
@@ -588,6 +613,10 @@ func (r *Renderer) captionFigure(w io.Writer, captionFigure *ast.CaptionFigure, 
 			mast.DeleteAttribute(artwork, "id")
 		}
 	}
+	if artset {
+		r.outs(w, "<artset>\n")
+	}
+
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
