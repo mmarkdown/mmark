@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
@@ -295,14 +296,62 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 	}
 }
 
-func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {}
+func (r *Renderer) image(w io.Writer, node *ast.Image, entering bool) {
+	// only works with `ascii-art` images
+	if !bytes.HasSuffix(node.Destination, []byte(".ascii-art")) {
+		// remove from tree, we can use RemoveFromTree, because that re-shuffles things and can
+		// make us output things twice.
+		node.SetChildren(nil)
+		node = nil
+		return
+	}
+	if !entering {
+		r.outs(w, "\n.fi\n.RE\n")
+		return
+	}
+	node.SetChildren(nil) // remove Title, if any, we can type set it.
+	r.outs(w, "\n.PP\n.RS\n\n.nf\n")
+	img, err := ioutil.ReadFile(string(node.Destination)) // markdown, doens't err, this can be an empty image, log maybe??
+	if err != nil {
+		img = []byte(err.Error())
+	}
+	escapeSpecialChars(r, w, img)
+}
 
 func (r *Renderer) mathBlock(w io.Writer, mathBlock *ast.MathBlock, entering bool) {
 	// may indent it?
 }
 
 func (r *Renderer) captionFigure(w io.Writer, figure *ast.CaptionFigure, entering bool) {
-	// not used.
+	// check what we have here and throw away any non ascii-art figures
+	// CaptionFigure
+	//   Paragraph
+	//     Text
+	//     Image 'url=array-vs-slice.svg'
+	//       Text 'Array versus Slice svg'
+	//     Text '\n'
+	//     Image 'url=array-vs-slice.ascii-art'
+	//       Text 'Array versus Slice ascii-art'
+	//
+	// The image with svg will be removed as child and then we continue to walk the AST.
+	for _, child := range figure.GetChildren() {
+		// for figures/images, these are wrapped below a paragraph.
+		// TODO: can there be more than 1 paragraph??
+		if p, ok := child.(*ast.Paragraph); ok {
+			for _, img := range p.GetChildren() {
+				x, ok := img.(*ast.Image)
+				if !ok {
+					continue
+				}
+				// if not ascii-art, remove entirely
+				if !bytes.HasSuffix(x.Destination, []byte(".ascii-art")) {
+					ast.RemoveFromTree(img) // this is save because we're not accessing any of the children just yet.
+					continue
+				}
+				img.SetChildren(nil) // remove alt text
+			}
+		}
+	}
 }
 
 func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
@@ -312,7 +361,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 		switch what.(type) {
 		case *ast.Table:
 			r.outs(w, "\n.RE\n")
-		case *ast.CodeBlock:
+		case *ast.CodeBlock, *ast.Paragraph: // Paragraph is here because that wrap an image.
 			r.outs(w, "\n.RE\n")
 		case *ast.BlockQuote:
 			r.outs(w, "\n.RE\n")
@@ -324,7 +373,7 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	case *ast.Table:
 		r.outs(w, "\n.RS\n")
 		r.outs(w, "Table: ")
-	case *ast.CodeBlock:
+	case *ast.CodeBlock, *ast.Paragraph:
 		r.outs(w, "\n.RS\n")
 		r.outs(w, "Figure: ")
 	case *ast.BlockQuote:

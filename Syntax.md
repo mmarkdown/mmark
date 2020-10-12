@@ -90,7 +90,8 @@ Mmark adds:
 * [Captions](#captions) for code, tables, quotes and subfigures.
 * [Asides](#asides).
 * [Figures and Subfigures](#figures-and-subfigures) - allows grouping images into subfigures as
-  well as giving a single image metadata (a link, attributes, etc.).
+  well as giving a single image metadata (a link, attributes, etc.). See [Images in
+  Mmark](/syntax/images) for more details.
 * [Block Level Attributes](#block-level-attributes) that allow to specify attributes, classes and
   IDs for elements.
 * [Indices](#indices) to mark an item (and/or a subitem) to be referenced in the document index.
@@ -172,11 +173,12 @@ Footnotes:
 
 Images:
 :   Images are supported, but only SVG graphics are allowed. We convert this to
-    an `<artwork>` with `src` set to the image URL of path. I.e. `![svg](img.svg "title")` becomes
+    an `<artwork>` with `src` set to the image URL of path. I.e. `![alt text](img.svg "title")` becomes
     `<artwork src="img.svg" type="svg" name="title"/>`. Note the first `svg` (the alt text) is used
     as the `type=` attribute. Also note that an image like this will be wrapped in `<t>` which is
     not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure:
     `!---`.
+    See [Images in Mmark](/syntax/images) for more details.
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.
@@ -184,8 +186,6 @@ Horizontal Line:
 Comments:
 :   HTML Comments are detected and discarded. These can be useful to make the parser parse certain
     constructs as a block element without meddling with the output.
-
-
 
 HTML:
 :   The `<br>` tag is detected and converted into a hard break.
@@ -211,7 +211,8 @@ Title Block:
     * `date`, date of the man page, optional, defaults to "today".
 
 Images:
-:   Not supported.
+:   See [Images in Mmark](/syntax/images) for details, `ascii-art` images from a sub-figure are
+    included.
 
 References and citations:
 :   Supported, a "Bibliography" section is added.
@@ -417,7 +418,7 @@ quote, but can be styled differently.
 To *group* artworks and code blocks into figures, we need an extra syntax element. [Scholarly
 markdown] has a neat syntax for this. It uses a special section syntax and all images in that
 section become subfigures of a larger figure. Disadvantage of this syntax is that it can not be used
-in lists. Hence we use a fenced code block like syntax: `!---` as the opening and closing "tag".
+in lists. We use a fenced code block like syntax: `!---` as the opening and closing "tag".
 Note: only inline elements are parsed inside a figure block.
 
 Basic usage:
