@@ -172,13 +172,12 @@ Footnotes:
 :   Are discarded from the final output, don't use them.
 
 Images:
-:   Images are supported, but only SVG graphics are allowed. We convert this to
-    an `<artwork>` with `src` set to the image URL of path. I.e. `![alt text](img.svg "title")` becomes
-    `<artwork src="img.svg" type="svg" name="title"/>`. Note the first `svg` (the alt text) is used
-    as the `type=` attribute. Also note that an image like this will be wrapped in `<t>` which is
-    not allowed in RFC 7991 syntax. So to make this fully work you need to the image in a subfigure:
-    `!---`.
-    See [Images in Mmark](/syntax/images) for more details.
+:   Images are supported. We convert this to an `<artwork>` with `src` set to the image URL of path.
+    I.e. `![alt text](img.svg "title")` becomes `<artwork src="img.svg" type="svg" name="title"/>`.
+    Note the first `svg` (the alt text) is used as the `type=` attribute. Also note that an image
+    like this will be wrapped in `<t>` which is not allowed in RFC 7991 syntax. So to make this
+    fully work you need to the image in a subfigure: `!---`. See [Images in Mmark](/syntax/images)
+    for more details.
 
 Horizontal Line:
 :   Outputs a paragraph with 60 dashes `-`.

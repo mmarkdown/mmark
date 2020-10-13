@@ -24,9 +24,9 @@ A code block *with* a language will be turned into a `sourcecode`:
     println("hello!")
     ```
 
-If no language is given it will be an `artwork`.
+If no language (the `go` above) is given it will be an `artwork`.
 
-## Subfigures
+## Figures in an Artset
 
 To support `artset` we do the following. If multiple images are present as subfigures, we check
 if the name *without* the extension of the image destination (the file to be shown) is equal for all
@@ -38,14 +38,14 @@ the type and XML2RFC checks for that string.
 
 ~~~
 !---
-![Array vs Slice](array-vs-slice.svg "Title of the image")
-![Array vs Slice](array-vs-slice.ascii-art "Title of the image")
+![Array vs Slice](array-vs-slice.svg "Title of the svg image")
+![Array vs Slice](array-vs-slice.ascii-art "Title of the ascii-art image")
 !---
 ~~~
 
-Note this syntax is also supported for the manual page output and it does the same thing by only
-using the `ascii-art` version. This is true for all included imagary; only `ascii-art` ones are
+Note this syntax is also supported for the *manual page output* and it does the same thing by only
+using the `ascii-art` version. This is true for all included imagery; only `ascii-art` ones are
 included in the output.
 
-By some happy co-indicence a browser will not show the `ascii-art` version of the image. It remains
-to be seen if we need some code to actually filter these out.
+By some happy co-incidence a browser will not show the `ascii-art` version of the image when
+generating HTML. It remains to be seen if we need some code to actually filter these out.
