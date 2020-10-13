@@ -716,6 +716,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *mast.Title:
 		r.titleBlock(w, node)
 		r.title = true
+	case *mast.Authors:
+		// ignore
 	case *mast.Bibliography:
 		r.bibliography(w, node, entering)
 	case *mast.BibliographyItem:

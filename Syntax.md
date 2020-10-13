@@ -208,13 +208,15 @@ Title Block:
     * `area`, what is it, e.g. "User Commands".
     * `workgroup`, who wrote this e.g.  "Mmark Markdown".
     * `date`, date of the man page, optional, defaults to "today".
+    * `author`, to add an Authors section at the end.
 
 Images:
 :   See [Images in Mmark](/syntax/images) for details, `ascii-art` images from a sub-figure are
     included.
 
 References and citations:
-:   Supported, a "Bibliography" section is added.
+:   Supported, a "Bibliography" section is added. Note that unlike XML2RFC, references for IDs and
+    RFCs *are not* automatically added.
 
 Code Block:
 :   Tabs are converted into four spaces.

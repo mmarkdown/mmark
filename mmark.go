@@ -106,19 +106,6 @@ func main() {
 		}
 
 		doc := markdown.Parse(d, p)
-		if *flagBib {
-			mparser.AddBibliography(doc)
-		}
-		if *flagIndex {
-			mparser.AddIndex(doc)
-		}
-
-		if *flagAst {
-			ast.Print(os.Stdout, doc)
-			fmt.Print("\n")
-			return
-		}
-
 		if *flagMan {
 			title := false
 			// If there isn't a title block the resulting manual page does not start
@@ -136,8 +123,24 @@ func main() {
 				c := doc.GetChildren()
 				newc := append([]ast.Node{t}, c...)
 				doc.SetChildren(newc) // t must be the first element.
+			} else {
+				ast.AppendChild(doc, &mast.Authors{})
 			}
+
 		}
+		if *flagBib {
+			mparser.AddBibliography(doc)
+		}
+		if *flagIndex {
+			mparser.AddIndex(doc)
+		}
+
+		if *flagAst {
+			ast.Print(os.Stdout, doc)
+			fmt.Print("\n")
+			return
+		}
+
 		var renderer markdown.Renderer
 
 		switch {

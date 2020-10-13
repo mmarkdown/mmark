@@ -648,6 +648,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.outs(w, node.Trigger)
 		r.outs(w, "\n")
 		r.newline(w)
+	case *mast.Authors:
+		// ignore
 	case *mast.Bibliography:
 	case *mast.BibliographyItem:
 	case *mast.DocumentIndex, *mast.IndexLetter, *mast.IndexItem, *mast.IndexSubItem, *mast.IndexLink:
