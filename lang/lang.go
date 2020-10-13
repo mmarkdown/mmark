@@ -12,33 +12,36 @@ func New(language string) Lang {
 	// The keys must be in all lower case for normalized lookup.
 	l.m = map[string]Term{
 		"en": {
-			Footnotes:    "Footnotes",
+			And:          "and",
+			Authors:      "Authors",
 			Bibliography: "Bibliography",
+			Footnotes:    "Footnotes",
 			Index:        "Index",
+			WrittenBy:    "Written by",
 		},
 		"nl": {
-			Footnotes:    "Voetnoten",
 			Bibliography: "Bibliografie",
+			Footnotes:    "Voetnoten",
 			Index:        "Index",
 		},
 		"de": {
-			Footnotes:    "Fußnoten",
 			Bibliography: "Literaturverzeichnis",
+			Footnotes:    "Fußnoten",
 			Index:        "Index",
 		},
 		"ja": {
-			Footnotes:    "脚注",
 			Bibliography: "参考文献",
+			Footnotes:    "脚注",
 			Index:        "索引",
 		},
 		"zh-cn": {
-			Footnotes:    "注释",
 			Bibliography: "参考文献",
+			Footnotes:    "注释",
 			Index:        "索引",
 		},
 		"zh-tw": {
-			Footnotes:    "註釋",
 			Bibliography: "參考文獻",
+			Footnotes:    "註釋",
 			Index:        "索引",
 		},
 	}
@@ -55,9 +58,12 @@ type Lang struct {
 
 // Term contains the specific terms for translation.
 type Term struct {
-	Footnotes    string
+	And          string
+	Authors      string
 	Bibliography string
+	Footnotes    string
 	Index        string
+	WrittenBy    string
 }
 
 func (l Lang) Footnotes() string {
@@ -82,4 +88,28 @@ func (l Lang) Index() string {
 		return l.m["en"].Index
 	}
 	return t.Index
+}
+
+func (l Lang) Authors() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].Authors
+	}
+	return t.Authors
+}
+
+func (l Lang) And() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].And
+	}
+	return t.And
+}
+
+func (l Lang) WrittenBy() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].WrittenBy
+	}
+	return t.WrittenBy
 }

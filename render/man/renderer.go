@@ -47,6 +47,7 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
+	Title        *mast.Title
 	listLevel    int
 	allListLevel int
 }
@@ -415,6 +416,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		// do nothing
 	case *mast.Title:
 		r.title(w, node, entering)
+		r.Title = node // save for later.
+	case *mast.Authors:
+		r.authors(w, node, entering)
 	case *mast.Bibliography:
 		if entering {
 			r.outs(w, "\n.SH \"")
