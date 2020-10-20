@@ -197,15 +197,6 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	r.headingEnter(w, node)
 }
 
-var rule = strings.Repeat("-", 60)
-
-func (r *Renderer) horizontalRule(w io.Writer, node *ast.HorizontalRule) {
-	r.outs(w, "<t>")
-	r.outs(w, rule)
-	r.outs(w, "</t>")
-	r.cr(w)
-}
-
 func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 	if !entering {
 		return
@@ -751,7 +742,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Heading:
 		r.heading(w, node, entering)
 	case *ast.HorizontalRule:
-		r.horizontalRule(w, node)
+		/* not supported */
 	case *ast.Paragraph:
 		r.paragraph(w, node, entering)
 	case *ast.HTMLSpan:
