@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/mmarkdown/mmark/mast"
 
@@ -101,8 +102,29 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 			return
 		}
 	}
+	// each string of unicode chars is outputted between <u> tags.
+	uni := 0
+	for i, c := range string(text.Literal) {
+		if c > unicode.MaxASCII {
+			uni += len(string(c))
+			continue
+		}
+		if uni > 0 {
+			r.outs(w, `<u format="char-num">`)
+			r.outs(w, string(text.Literal)[i-uni:i]) // must we also html escape this??
+			r.outs(w, `</u>`)
+			uni = 0
+		}
+		html.EscapeHTML(w, []byte(string(c)))
+	}
+	// last chars where uni
+	if uni > 0 {
+		i := len(string(text.Literal))
+		r.outs(w, `<u format="char-num">`)
+		r.outs(w, string(text.Literal)[i-uni:i])
+		r.outs(w, `</u>`)
+	}
 
-	html.EscapeHTML(w, text.Literal)
 }
 
 func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
