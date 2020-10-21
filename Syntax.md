@@ -179,15 +179,15 @@ Images:
     fully work you need to the image in a subfigure: `!---`. See [Images in Mmark](/syntax/images)
     for more details.
 
-Horizontal Line:
-:   Outputs a paragraph with 60 dashes `-`.
-
 Comments:
 :   HTML Comments are detected and discarded. These can be useful to make the parser parse certain
     constructs as a block element without meddling with the output.
 
 HTML:
 :   The `<br>` tag is detected and converted into a hard break.
+
+Unicode:
+:   Just the Unicode characters, the renderer takes care of putting these in between `<u>` tags.
 
 ### HTML5 Output
 
