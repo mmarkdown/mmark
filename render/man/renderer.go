@@ -85,14 +85,14 @@ func (r *Renderer) title(w io.Writer, node *mast.Title, entering bool) {
 	case i > 0:
 		d, err := strconv.Atoi(node.Title[i:])
 		if err != nil {
-			log.Printf("No section number found at end of title, defaulting to 1")
+			log.Print("No section number found at end of title, defaulting to 1")
 		} else {
 			section = d
 			title = node.Title[:i-1]
 		}
 	}
 	if i == 0 {
-		log.Printf("No section number found at end of title, defaulting to 1")
+		log.Print("No section number found at end of title, defaulting to 1")
 	}
 
 	r.outs(w, fmt.Sprintf(".TH %q", strings.ToUpper(title)))

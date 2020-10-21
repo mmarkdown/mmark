@@ -3,6 +3,7 @@ package xml
 import (
 	"fmt"
 	"io"
+	"log"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -523,6 +524,12 @@ func (r *Renderer) imageEnter(w io.Writer, image *ast.Image) {
 	r.outs(w, `"`)
 	ext := path.Ext(string(dest))
 	if len(ext) > 2 {
+		// warn if not svn or ascii-art.
+		switch ext {
+		case ".svg", ".ascii-art":
+		default:
+			log.Printf("Image extension of %q will likely create errors in XML2RFC", ext)
+		}
 		r.outs(w, ` type="`)
 		r.outs(w, ext[1:])
 		r.outs(w, `"`)
