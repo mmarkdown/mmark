@@ -187,7 +187,7 @@ HTML:
 :   The `<br>` tag is detected and converted into a hard break.
 
 Unicode:
-:   Just the Unicode characters, the renderer takes care of putting these in between `<u>` tags.
+:   Just type the Unicode characters, the renderer takes care of putting these in between `<u>` tags.
 
 ### HTML5 Output
 
