@@ -566,6 +566,9 @@ Note that for citing I-Ds and RFCs you *don't* need to include any XML, as Mmark
 automatically from their online location: or technically more correct: the xml2rfc post processor
 will do this.
 
+The newer `referencegroup` is also supported. No attempt to parse it is made, it's detected and
+included in the bibliography.
+
 ### Cross References
 
 Cross references can use the syntax `[](#id)`, but usually the need for the title within the

@@ -39,6 +39,13 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 		return
 	}
 
+	if node.ReferenceGroup != nil {
+		// output this raw
+		r.out(w, node.ReferenceGroup)
+		r.cr(w)
+		return
+	}
+
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
