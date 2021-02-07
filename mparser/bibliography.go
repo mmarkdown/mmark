@@ -12,7 +12,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 )
 
-// CitationToBibliography walks the AST and gets all the citations on HTML blocks and groups them into
+// CitationToBibliography walks the AST and gets all the citations from HTML blocks and groups them into
 // normative and informative references.
 func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.Node) {
 	seen := map[string]*mast.BibliographyItem{}
@@ -41,7 +41,7 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 		return ast.GoToNext
 	})
 
-	// sort on anchor, to we are stable when outputting the bibliography.
+	// sort on anchor, so it is stable when outputting the bibliography.
 	keys := make([]string, len(seen))
 	i := 0
 	for k := range seen {
@@ -53,13 +53,14 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 	for _, k := range keys {
 		r := seen[k]
 		// If we have a reference anchor and the raw XML add that here.
-		if raw, ok := raw[string(bytes.ToLower(r.Anchor))]; ok {
+		if rw, ok := raw[string(bytes.ToLower(r.Anchor))]; ok {
 			var x reference.Reference
-			if e := xml.Unmarshal(raw, &x); e != nil {
-				log.Printf("Failed to unmarshal reference: %q: %s", r.Anchor, e)
-				continue
+			if e := xml.Unmarshal(rw, &x); e != nil {
+				log.Printf("Failed to unmarshal reference: %q: %s, assuming <referencegroup>", r.Anchor, e)
+				r.ReferenceGroup = rw
+			} else {
+				r.Reference = &x
 			}
-			r.Reference = &x
 		}
 
 		switch r.Type {
@@ -99,7 +100,7 @@ func NodeBackMatter(doc ast.Node) ast.Node {
 
 // Parse '<reference anchor='CBR03' target=''>' and return the string after anchor= is the ID for the reference.
 func anchorFromReference(data []byte) []byte {
-	if !bytes.HasPrefix(data, []byte("<reference ")) {
+	if !bytes.HasPrefix(data, []byte("<reference ")) && !bytes.HasPrefix(data, []byte("<referencegroup ")) {
 		return nil
 	}
 
@@ -141,25 +142,24 @@ func ReferenceHook(data []byte) (ast.Node, []byte, int) {
 
 // IsReference returns wether data contains a reference.
 func IsReference(data []byte) ([]byte, bool) {
-	if !bytes.HasPrefix(data, []byte("<reference ")) {
+	typ := ""
+	if bytes.HasPrefix(data, []byte("<reference ")) {
+		typ = "</reference>"
+	}
+	if bytes.HasPrefix(data, []byte("<referencegroup ")) {
+		typ = "</referencegroup>"
+	}
+	if typ == "" {
 		return nil, false
 	}
 
-	i := 12
 	// scan for an end-of-reference marker, across lines if necessary
-	for i < len(data) &&
-		!(data[i-12] == '<' && data[i-11] == '/' && data[i-10] == 'r' && data[i-9] == 'e' && data[i-8] == 'f' &&
-			data[i-7] == 'e' && data[i-6] == 'r' && data[i-5] == 'e' &&
-			data[i-4] == 'n' && data[i-3] == 'c' && data[i-2] == 'e' &&
-			data[i-1] == '>') {
-		i++
-	}
-
-	// no end-of-reference marker
-	if i > len(data) {
+	end := bytes.Index(data[len(typ):], []byte(typ))
+	if end > len(data) || end == 0 {
 		return nil, false
 	}
-	return data[:i], true
+
+	return data[:end+2*len(typ)], true
 }
 
 func fmtReference(data []byte) []byte {
