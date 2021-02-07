@@ -1,6 +1,7 @@
 package xml
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -230,6 +231,16 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 		}
 
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
+		// Attempt to parse the suffix, supported:
+		// 'section N', where N is a number. We're not checking the number, garbage in, garbage out
+		if len(node.Suffix) != 0 {
+			if bytes.HasPrefix(node.Suffix[0], []byte("section ")) {
+				num := node.Suffix[0][len("section "):]
+				attr = append(attr, `sectionFormat="bare" relative="#"`)
+				attr = append(attr, `section="`+string(num)+`"`)
+			}
+		}
+
 		r.outTag(w, "<xref", attr)
 		r.outs(w, "</xref>")
 	}

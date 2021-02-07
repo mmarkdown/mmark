@@ -539,6 +539,14 @@ citation index.
 A bibliography section is created by default if a `{backmatter}` is given, but you can suppress it
 by using the command line flag `-bibliography=false`.
 
+#### Reference Text Suffices
+
+You can specify extra text after the citation using a comma: `[@RFC2535, section 5]`, see
+<https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#name-how-do-i-link-to-multiple-se>.
+Currently only one such syntax is parsed and understood, you can reference a section within another
+document with `section <number>`, this is converted into a `section="<number>" sectionFormat="bare"`
+of the reference.
+
 ### XML References
 
 Any valid XML reference fragment found anywhere in the document, can be used as a citation reference.
@@ -631,7 +639,7 @@ These are the changes from Mmark version 1:
 * Citations:
    * Suppressing a citation is done with `[@-ref]` (it was the reverse `-@` in v1), this is more consistent.
    * Multiple citations are allowed in one go, separated with a semicolons: `[@ref1; @ref2]`.
-   * A reference text suffix is allowed `[@ref, p. 23]`, the separation character is a comma; this
+   * A reference text suffix is allowed `[@ref, section 23]`, the separation character is a comma; this
      mirrors the pandoc syntax.
 * Indices: now just done with `(!item)`, marking one primary will be: `(!!item)`.
 * Code block callouts are now a renderer setting, not a [Block Level
