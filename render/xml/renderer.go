@@ -443,6 +443,10 @@ func (r *Renderer) tableCell(w io.Writer, tableCell *ast.TableCell, entering boo
 	if align != "" {
 		mast.SetAttribute(tableCell, "align", []byte(align))
 	}
+	if colspan := tableCell.ColSpan; colspan > 0 {
+		mast.SetAttribute(tableCell, "colspan", []byte(fmt.Sprintf("%d", colspan)))
+
+	}
 	if ast.GetPrevNode(tableCell) == nil {
 		r.cr(w)
 	}
