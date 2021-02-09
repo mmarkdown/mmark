@@ -408,6 +408,15 @@ Alice   | 23
 Table: This is the table caption. {#ages}
 ~~~
 
+Colspan is also supported, just repeat the pipe symbol after the cell:
+
+~~~
+Name    | Age
+--------|-----
+Bob     ||
+Alice   | 23
+~~~
+
 ### Asides
 
 Any text prefixed with `A>` will become an
