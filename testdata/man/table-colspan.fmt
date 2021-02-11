@@ -3,11 +3,11 @@
 allbox;
 c c
 c c
-c c
+c s
 .
 \fBName\fP\fB	Age\fP
 Bob	27
-Alice	23
+Alice
 .TE
 .RE
 
