@@ -241,11 +241,32 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering boo
 }
 
 func (r *Renderer) table(w io.Writer, tab *ast.Table, entering bool) {
+	// The tbl renderer want to see the entire table's columns, rows first
 	if entering {
 		r.outs(w, "\n.RS\n.TS\nallbox;\n")
-		columns := countColumns(tab)
-		r.outs(w, strings.Repeat("l ", columns)+"\n")
-		r.outs(w, strings.Repeat("l ", columns)+".\n")
+		cells := rows(tab)
+		for r1 := 0; r1 < len(cells); r1++ {
+			align := ""
+			for c := 0; c < len(cells[r1]); c++ {
+				x := cells[r1][c]
+				switch x.Align {
+				case ast.TableAlignmentLeft:
+					align += "l "
+				case ast.TableAlignmentRight:
+					align += "r "
+				case ast.TableAlignmentCenter:
+					fallthrough
+				default:
+					align += "c "
+				}
+				if x.ColSpan > 0 {
+					align += strings.Repeat("s ", x.ColSpan-1)
+				}
+
+			}
+			r.outs(w, strings.TrimSpace(align)+"\n")
+		}
+		r.outs(w, ".\n")
 		return
 	}
 	r.outs(w, ".TE\n.RE\n\n")
@@ -373,10 +394,8 @@ func (r *Renderer) caption(w io.Writer, caption *ast.Caption, entering bool) {
 	switch what.(type) {
 	case *ast.Table:
 		r.outs(w, "\n.RS\n")
-		r.outs(w, "Table: ")
 	case *ast.CodeBlock, *ast.Paragraph:
 		r.outs(w, "\n.RS\n")
-		r.outs(w, "Figure: ")
 	case *ast.BlockQuote:
 		r.outs(w, "\n.RS\n")
 		r.outs(w, "\\(en ")

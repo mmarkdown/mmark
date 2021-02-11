@@ -52,20 +52,30 @@ func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
 	}
 }
 
-func countColumns(node ast.Node) int {
-	columns := 0
+// return the table cells.
+func rows(node *ast.Table) [][]*ast.TableCell {
+	table := [][]*ast.TableCell{}
+	row := []*ast.TableCell{}
 	ast.WalkFunc(node, func(node ast.Node, entering bool) ast.WalkStatus {
-		switch node.(type) {
-		case *ast.TableRow:
+		switch x := node.(type) {
+		case *ast.Table:
 			if !entering {
 				return ast.Terminate
 			}
-		case *ast.TableCell:
+		case *ast.TableRow:
 			if entering {
-				columns++
+				row = []*ast.TableCell{}
+			} else {
+				table = append(table, row)
+				return ast.GoToNext
 			}
+		case *ast.TableCell:
+			if !entering {
+				row = append(row, x)
+			}
+			return ast.GoToNext
 		}
 		return ast.GoToNext
 	})
-	return columns
+	return table
 }
