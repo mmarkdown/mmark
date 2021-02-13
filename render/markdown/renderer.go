@@ -228,13 +228,12 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = ' '
 			if r.listLevel%2 == 0 {
-				indented[plen+1] = '*'
+				indented[plen+0] = '*'
 			} else {
-				indented[plen+1] = '-'
+				indented[plen+0] = '-'
 			}
-
+			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
 	}
@@ -697,8 +696,11 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.newline(w)
 	case *ast.List:
 		r.list(w, node, entering)
-	case *ast.ListItem:
 		if !entering {
+			r.newline(w)
+		}
+	case *ast.ListItem:
+		if !entering && node.ListFlags&ast.ListTypeDefinition != 0 {
 			r.newline(w)
 		}
 	case *ast.CodeBlock:
