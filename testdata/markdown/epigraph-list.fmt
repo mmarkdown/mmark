@@ -1,7 +1,6 @@
 {.epigraph}
->  *  Parallelism is about performance.
->
->  *  Concurrency is about program design.
+> *   Parallelism is about performance.
+> *   Concurrency is about program design.
 >
 > ********
 >

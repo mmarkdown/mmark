@@ -15,4 +15,5 @@ notification rule:
 
 :   controls access for a specific notification event type, identified by its YANG module and name.
 
+
 More.
