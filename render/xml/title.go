@@ -81,7 +81,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	r.titleSeriesInfo(w, d.SeriesInfo)
 
 	for _, author := range d.Author {
-		r.TitleAuthor(w, author)
+		r.TitleAuthor(w, author, "author")
 	}
 
 	r.TitleDate(w, d.Date)
@@ -100,14 +100,14 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 }
 
 // TitleAuthor outputs the author.
-func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
+func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author, tag string) {
 
 	attrs := Attributes(
 		[]string{"role", "initials", "surname", "fullname"},
 		[]string{a.Role, a.Initials, a.Surname, a.Fullname},
 	)
 
-	r.outTag(w, "<author", attrs)
+	r.outTag(w, "<"+tag, attrs)
 
 	r.outTag(w, "<organization", Attributes([]string{"abbrev"}, []string{a.OrganizationAbbrev}))
 	html.EscapeHTML(w, []byte(a.Organization))
@@ -148,8 +148,7 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author) {
 	r.outTagMaybe(w, "<uri", a.Address.URI)
 
 	r.outs(w, "</address>")
-	r.outs(w, "</author>")
-	r.cr(w)
+	r.outs(w, "</"+tag+">")
 }
 
 // TitleDate outputs the date from the TOML title block.
@@ -204,4 +203,30 @@ func IntSliceToString(is []int) string {
 		s = append(s, strconv.Itoa(is[i]))
 	}
 	return strings.Join(s, ", ")
+}
+
+func AuthorFromTitle(fullname []byte, t *mast.Title) *mast.Author {
+	if t == nil {
+		return nil
+	}
+	full := string(fullname)
+	for _, a := range t.TitleData.Author {
+		if strings.EqualFold(a.Fullname, full) {
+			return &a
+		}
+	}
+	return nil
+}
+
+func ContactFromTitle(fullname []byte, t *mast.Title) *mast.Contact {
+	if t == nil {
+		return nil
+	}
+	full := string(fullname)
+	for _, a := range t.TitleData.Contact {
+		if strings.EqualFold(a.Fullname, full) {
+			return &a
+		}
+	}
+	return nil
 }

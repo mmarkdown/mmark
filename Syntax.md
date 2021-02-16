@@ -271,6 +271,7 @@ An I-D needs to have a Title Block with the following items filled out:
 * `workgroup` - the workgroup the document is created for.
 * `keyword` - array with keywords (optional).
 * `author(s)` - define all the authors.
+* `contact(s)` - define all the contacts.
 * `date` - the date for this I-D/RFC.
 * `language` - the language for this document, this uses localized names for `Index`, `Footnotes`
   and `References`, etc. Valid values are from [BCP47](https://tools.ietf.org/html/bcp47). This
@@ -311,6 +312,21 @@ organization = "Mmark"
 ~~~
 
 An `#` acts as a comment in this block. TOML itself is specified [here](https://github.com/toml-lang/toml).
+
+If you want to define a `contact` do the following:
+
+~~~ toml
+[[contact]]
+initials="R.."
+surname="Gieben"
+fullname="R. (Miek) Gieben"
+  [contact.address]
+  email = "miek@miek.nl
+~~~
+
+You can then *reference* this contact using a *citation* via the `fullname`: `[@R. (Miek) Gieben]`.
+This also works when referencing an author of the I-D. Note just like authors, defining contacts
+needs to happen in the titleblock.
 
 ### Special Sections
 
@@ -547,6 +563,9 @@ citation index.
 
 A bibliography section is created by default if a `{backmatter}` is given, but you can suppress it
 by using the command line flag `-bibliography=false`.
+
+A non-suppressed reference to the *full name* of an author or contact will insert the referenced
+person as a `contact`. See <https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-5.4>.
 
 #### Reference Text Suffices
 

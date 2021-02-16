@@ -56,8 +56,8 @@ type Renderer struct {
 
 	documentMatter ast.DocumentMatters // keep track of front/main/back matter
 	section        *ast.Heading        // current open section
-	title          bool                // did we output a title block
-	filter         mast.FilterFunc     // filter for attributes.
+	title          *mast.Title         // did we output a title block, nil if not
+	filter         mast.FilterFunc     // filter for attributes
 
 	// Track heading IDs to prevent ID collision in a single generation.
 	headingIDs map[string]int
@@ -227,6 +227,19 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 	}
 	for i, c := range node.Destination {
 		if node.Type[i] == ast.CitationTypeSuppressed {
+			continue
+		}
+
+		// Hack, if the citation matches the (lowercased) fullname of an author or contact
+		// we render the auhtor/contact here, instead of the reference.
+		author := AuthorFromTitle(c, r.title)
+		if author != nil {
+			r.TitleAuthor(w, *author, "contact")
+			continue
+		}
+		contact := ContactFromTitle(c, r.title)
+		if contact != nil {
+			r.TitleAuthor(w, mast.Author(*contact), "contact")
 			continue
 		}
 
@@ -750,7 +763,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		// do nothing
 	case *mast.Title:
 		r.titleBlock(w, node)
-		r.title = true
+		r.title = node
 	case *mast.Authors:
 		// ignore
 	case *mast.Bibliography:
@@ -888,7 +901,7 @@ func (r *Renderer) RenderFooter(w io.Writer, _ ast.Node) {
 		r.outs(w, "\n</back>\n")
 	}
 
-	if r.title {
+	if r.title != nil {
 		io.WriteString(w, "\n</rfc>")
 	}
 }
