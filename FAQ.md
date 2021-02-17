@@ -56,7 +56,9 @@ Set the group attribute with a block level attribute.
 {type="REQ%d" group="reqs"}
 1. do a
 2. do b
+
 Here is text in between
+
 {type="REQ%d" group="reqs"}
 1. do c
 2. do d
