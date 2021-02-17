@@ -42,13 +42,13 @@ ignored for this stream.
 
 Use `role = "editor"` in the author's section in the titleblock.
 
-## XML2RFCv3 FAQ
+# XML2RFCv3 FAQ
 
-### How do I get a list like (1), (2), (3) or (a), (b), (c)?
+## How do I get a list like (1), (2), (3) or (a), (b), (c)?
 
 Use a block level attribute: `{type="(%d)"}`, `{type="(%c)"}` or `{type="REQ%d"}`.
 
-### How do I get continuous numbering in a list that is split by text (or across sections)?
+## How do I get continuous numbering in a list that is split by text (or across sections)?
 
 Set the group attribute with a block level attribute.
 
@@ -62,27 +62,27 @@ Here is text in between
 2. do d
 ~~~
 
-### How do I get indentation? or How do I use definition lists?
+## How do I get indentation? or How do I use definition lists?
 
-### How do I insert non-ASCII characters?
+## How do I insert non-ASCII characters?
 
 This is handled for you, mmark will wrap non-ASCII characters in `<u>`. The `asciiFullname` and
 friends used in authors and contacts is currently not implemented.
 
-### How do I insert a table?
+## How do I insert a table?
 
-### How do I get bold, italics, or a fixed-width font?
+## How do I get bold, italics, or a fixed-width font?
 
 * bold: `**bold**`
 * italics `*italics*`
 * fixed-width, wrap in back-ticks
 
-### How do I get subscript and superscript?
+## How do I get subscript and superscript?
 
 * subscript: `_2_`
 * superscript: `^10^`
 
-### Do I have to use the bcp14 element each time a keyword (e.g., "MUST") appears in my document?
+## Do I have to use the bcp14 element each time a keyword (e.g., "MUST") appears in my document?
 
 Just use `**MUST**`, i.e. make the bcp14 element bold and capital, mmark wraps these in `<bcp14>`
 tags.
