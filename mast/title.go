@@ -48,6 +48,7 @@ type TitleData struct {
 	Workgroup string
 	Keyword   []string
 	Author    []Author
+	Contact   []Contact
 
 	Language string
 }
@@ -63,6 +64,9 @@ type Author struct {
 	ASCII              string
 	Address            Address
 }
+
+// Contact denotes an RFC contact.
+type Contact Author
 
 // Address denotes the address of an RFC author.
 type Address struct {
