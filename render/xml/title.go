@@ -145,6 +145,9 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author, tag string) {
 
 	r.outTagMaybe(w, "<phone", a.Address.Phone)
 	r.outTagMaybe(w, "<email", a.Address.Email)
+	for _, email := range a.Address.Emails {
+		r.outTagContent(w, "<email", email)
+	}
 	r.outTagMaybe(w, "<uri", a.Address.URI)
 
 	r.outs(w, "</address>")
