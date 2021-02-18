@@ -74,6 +74,8 @@ type Address struct {
 	Email  string
 	URI    string
 	Postal AddressPostal
+
+	Emails []string // Plurals when these need to be specified multiple times.
 }
 
 // AddressPostal denotes the postal address of an RFC author.

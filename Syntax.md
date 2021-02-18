@@ -308,6 +308,7 @@ fullname="R. (Miek) Gieben"
 organization = "Mmark"
   [author.address]
   email = "miek@miek.nl"
+  emails = ["another@example.org"] # for when you need to speficy more than 1 email address
 %%%
 ~~~
 
