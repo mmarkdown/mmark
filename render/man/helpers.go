@@ -1,9 +1,12 @@
 package man
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }
@@ -27,7 +30,9 @@ func needsBackslash(c byte) bool {
 }
 
 func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
-	for i := 0; i < len(text); i++ {
+	lt := len(text)
+Parse:
+	for i := 0; i < lt; i++ {
 		// escape apostrophe or period after newline (making this first char on the line)
 		if i == 0 && (text[i] == '\'' || text[i] == '.') {
 			r.outs(w, "\\&")
@@ -48,6 +53,25 @@ func escapeSpecialChars(r *Renderer, w io.Writer, text []byte) {
 		if needsBackslash(text[i]) {
 			r.out(w, []byte{'\\'})
 		}
+
+		// callout comments
+
+		for _, comment := range r.opts.Comments {
+			if !bytes.HasPrefix(text[i:], comment) {
+				break
+			}
+
+			lc := len(comment)
+			if i+lc < lt {
+				if id, consumed := parser.IsCallout(text[i+lc:]); consumed > 0 {
+					// We have seen a callout
+					io.WriteString(w, fmt.Sprintf("<%s>", id))
+					i += consumed + lc - 1
+					continue Parse
+				}
+			}
+		}
+
 		r.out(w, []byte{text[i]})
 	}
 }
