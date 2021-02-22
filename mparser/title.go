@@ -13,7 +13,7 @@ import (
 // be signalled with %%% or --- (the later to more inline with Hugo and other markdown dialects.
 func TitleHook(data []byte) (ast.Node, []byte, int) {
 	i := 0
-	if len(data) < 3 {
+	if len(data) < 4 {
 		return nil, nil, 0
 	}
 
@@ -22,7 +22,7 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 		return nil, nil, 0
 	}
 
-	if data[i] != c || data[i+1] != c || data[i+2] != c {
+	if data[i] != c || data[i+1] != c || data[i+2] != c || data[i+3] != '\n' {
 		return nil, nil, 0
 	}
 
@@ -30,8 +30,8 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 	beg := i
 	found := false
 	// search for end.
-	for i < len(data) {
-		if data[i] == c && data[i+1] == c && data[i+2] == c {
+	for i < len(data)-3 {
+		if data[i] == c && data[i+1] == c && data[i+2] == c && data[i+3] == '\n' {
 			found = true
 			break
 		}
