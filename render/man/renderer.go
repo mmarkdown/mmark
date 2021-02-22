@@ -41,6 +41,10 @@ type RendererOptions struct {
 
 	// if set, called at the start of RenderNode(). Allows replacing rendering of some nodes
 	RenderNodeHook html.RenderNodeFunc
+
+	// Comments is a list of comments the renderer should detect when
+	// parsing code blocks and detecting callouts.
+	Comments [][]byte
 }
 
 // Renderer implements Renderer interface for Markdown output.
@@ -544,9 +548,9 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 
 func (r *Renderer) callout(w io.Writer, node *ast.Callout, entering bool) {
 	if entering {
-		r.outs(w, "\\fB\\&<")
+		r.outs(w, "\\fB")
 		r.out(w, node.ID)
-		r.outs(w, "\\&>\\fP")
+		r.outs(w, "\\fP")
 		return
 	}
 }

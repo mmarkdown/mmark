@@ -175,7 +175,10 @@ func main() {
 			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
 			renderer = mmarkout.NewRenderer(opts)
 		case *flagMan:
-			opts := man.RendererOptions{Language: lang.New(documentLanguage)}
+			opts := man.RendererOptions{
+				Comments: [][]byte{[]byte("//"), []byte("#")},
+				Language: lang.New(documentLanguage),
+			}
 			if *flagFragment {
 				opts.Flags |= man.ManFragment
 			}
