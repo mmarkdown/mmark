@@ -1,0 +1,3 @@
+<sourcecode type="go">for _, days := range monthdays &lt;1&gt;
+</sourcecode>
+<t>At <em>1</em> we use the underscore.</t>

@@ -29,7 +29,8 @@ func TestMmarkXML(t *testing.T) {
 		}
 		base := f.Name()[:len(f.Name())-3]
 		opts := xml.RendererOptions{
-			Flags: xml.CommonFlags | xml.XMLFragment,
+			Flags:    xml.CommonFlags | xml.XMLFragment,
+			Comments: [][]byte{[]byte("//"), []byte("#")},
 		}
 		renderer := xml.NewRenderer(opts)
 
