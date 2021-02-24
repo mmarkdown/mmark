@@ -533,6 +533,8 @@ Total   | 50
 The pipe symbol (`|`) to mark columns does not need to be aligned. Each row must be on a single
 line.
 
+Headerless tables are also supported, just leave of the first line.
+
 ## Inline Elements
 
 ### Indices
