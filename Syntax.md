@@ -330,6 +330,17 @@ You can then *reference* this contact using a *citation* via the `fullname`: `[@
 This also works when referencing an author of the I-D. Note just like authors, defining contacts
 needs to happen in the titleblock.
 
+To renders contacts just like the authors are rendered, they need to be a put directly after opening
+a new section in the *first* paragraph:
+
+~~~
+# Acknowledgements
+
+[@R. (Miek) Gieben] [@More Folk]
+
+Miek wrote ..., While More wrote ..
+~~~
+
 ### Special Sections
 
 Any section that needs special handling, like an abstract or preface can be started with `.#
