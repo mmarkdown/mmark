@@ -58,7 +58,8 @@ type Renderer struct {
 	section        *ast.Heading        // current open section
 	title          *mast.Title         // did we output a title block, nil if not
 	filter         mast.FilterFunc     // filter for attributes
-	contacts       bool                // we are outputing a special "para" with only <contacts>
+	contacts       bool                // we are outputing a special "para" with only <contact>s
+	indices        bool                // we are outputting a speicla "para" with only <iref>s
 
 	// Track heading IDs to prevent ID collision in a single generation.
 	headingIDs map[string]int
@@ -92,7 +93,7 @@ func NewRenderer(opts RendererOptions) *Renderer {
 }
 
 func (r *Renderer) text(w io.Writer, text *ast.Text) {
-	if r.contacts {
+	if r.contacts || r.indices {
 		return
 	}
 	if _, parentIsLink := text.Parent.(*ast.Link); parentIsLink {
@@ -264,7 +265,7 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 }
 
 func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
-	if r.contacts {
+	if r.contacts || r.indices {
 		return
 	}
 	if p, ok := para.Parent.(*ast.ListItem); ok {
@@ -291,11 +292,16 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 	if _, ok := para.Parent.(*ast.CaptionFigure); ok {
 		return
 	}
-	if ok := r.paragraphWithOnlyContacts(para); ok {
+	if r.paragraphWithOnlyContacts(para) {
 		r.contacts = true
 		// this para only containts, whitespace text and contact citations. We skip text when r.contacts is set
 		// the citations can be rendered as-is.
 		// we also skip opening the para
+		return
+	}
+	if r.paragraphWithOnlyIndices(para) {
+		// see previous if statement
+		r.indices = true
 		return
 	}
 
@@ -306,6 +312,10 @@ func (r *Renderer) paragraphEnter(w io.Writer, para *ast.Paragraph) {
 func (r *Renderer) paragraphExit(w io.Writer, para *ast.Paragraph) {
 	if r.contacts {
 		r.contacts = false
+		return
+	}
+	if r.indices {
+		r.indices = false
 		return
 	}
 	if p, ok := para.Parent.(*ast.ListItem); ok {
@@ -950,7 +960,7 @@ func (r *Renderer) paragraphWithOnlyContacts(node *ast.Paragraph) bool {
 		return false
 	}
 
-	// if the entire para must be empty, except for (whitespacE) text and citations.
+	// if the entire para must be empty, except for (whitespace) text and citations.
 	citations := 0
 	contact := 0
 	for _, n := range node.GetChildren() {
@@ -962,7 +972,6 @@ func (r *Renderer) paragraphWithOnlyContacts(node *ast.Paragraph) bool {
 		if ok1 {
 			// TODO check if the text is empty
 		}
-
 		if ok2 {
 			for _, c := range citation.Destination {
 				citations++
@@ -976,7 +985,31 @@ func (r *Renderer) paragraphWithOnlyContacts(node *ast.Paragraph) bool {
 		return false
 	}
 	return citations == contact
+}
 
+func (r *Renderer) paragraphWithOnlyIndices(node *ast.Paragraph) bool {
+	// The paragraph must be the first the child after a heading.
+	prev := ast.GetPrevNode(node)
+	if _, isHeading := prev.(*ast.Heading); !isHeading {
+		return false
+	}
+
+	// if the entire para must be empty, except for (whitespace) text and index item.
+	index := 0
+	for _, n := range node.GetChildren() {
+		_, ok1 := n.(*ast.Text)
+		_, ok2 := n.(*ast.Index)
+		if !ok1 && !ok2 {
+			return false
+		}
+		if ok1 {
+			// TODO check if the text is empty
+		}
+		if ok2 {
+			index++
+		}
+	}
+	return index != 0
 }
 
 const Generator = `<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->`
