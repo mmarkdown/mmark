@@ -556,6 +556,9 @@ be added as well, with `(!item, subitem)`. To make `item` primary, use another `
 subitem)`. If any index is defined the end of the document contains the list of indices. The
 `-index=false` flag suppresses this generation.
 
+An index may apply to an *entire* section. This can be entered (just like contacts) by having an
+index (or multiple),  and just the index, to be the first paragraph after a new section.
+
 ### Citations
 
 Mmark uses the citation syntax from Pandoc: `[@RFC2535]`, the citation can either be informative
