@@ -14,17 +14,14 @@ import (
 	"github.com/mmarkdown/mmark/mast/reference"
 )
 
-// TODO(miek): double check if this is how it works.
-
 // StatusToCategory translate the status to a category.
 var StatusToCategory = map[string]string{
+	"full-standard": "std",
 	"standard":      "std",
 	"informational": "info",
 	"experimental":  "exp",
 	"bcp":           "bcp",
-	"fyi":           "fyi",
-	"full-standard": "std",
-	// historic??
+	"historic":      "historic",
 }
 
 func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {

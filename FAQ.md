@@ -38,6 +38,20 @@ do for normal Internet-Draft documents.
 Set `submissiontype` and `stream` in `seriesInfo` to *IAB*. Items like `workgroup` are (I believe)
 ignored for this stream.
 
+# How Do I Create an FYI Document?
+
+Use this as the `seriesInfo`:
+
+~~~ toml
+[seriesInfo]
+name = "FYI"
+value = "2100"
+stream = "IETF"
+status = "informational"
+~~~
+
+Note this makes xml2rfc still complain, but at least creates valid XML.
+
 # How Do I Make an Author an Editor
 
 Use `role = "editor"` in the author's section in the titleblock.
