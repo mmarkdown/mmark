@@ -261,11 +261,11 @@ An I-D needs to have a Title Block with the following items filled out:
 * `title` - the main title of the document.
 * `abbrev` - abbreviation of the title.
 * `updates/obsoletes` - array of integers.
-* `seriesInfo`, containing (this might change with the new *new* XMLv3 output)
-   * `name` - `RFC` or `Internet-Draft` or `DOI`
+* `seriesInfo`, containing (the implementation in xml2rfc does not RFC 7991 anymore)
+   * `name` - `RFC`, `Internet-Draft`, `DOI`, or `FYI`.
    * `value` - draft name or RFC number
    * `stream` - `IETF` (default), `IAB`, `IRTF` or `independent`.
-   * `status` - `standard`, `informational`, `experimental`, `bcp`, `fyi`, or `full-standard`.
+   * `status` - `standard`, `informational`, `experimental`, `bcp`, `historic`, or `full-standard`.
 * `ipr` - usually just set `trust200902`.
 * `area` - usually just `Internet`.
 * `workgroup` - the workgroup the document is created for.
