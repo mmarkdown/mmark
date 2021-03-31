@@ -67,7 +67,7 @@ The HTML5 renderer outputs HTML.
 ## Markdown
 
 Mmark can also be "translated" into markdown again. This is a useful feature for auto-formatting
-markdown files.
+markdown files. Multi-column tables are not supported yet here.
 
 ## Manual Pages
 
