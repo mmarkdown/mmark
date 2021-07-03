@@ -73,10 +73,11 @@ type SeriesInfo struct {
 
 // Reference is the entire <reference> structure.
 type Reference struct {
-	XMLName xml.Name    `xml:"reference"`
-	Anchor  string      `xml:"anchor,attr"`
-	Front   Front       `xml:"front"`
-	Format  *Format     `xml:"format,omitempty"`
-	Target  string      `xml:"target,attr"`
-	Series  *SeriesInfo `xml:"seriesInfo,omitempty"`
+	XMLName    xml.Name    `xml:"reference"`
+	Anchor     string      `xml:"anchor,attr"`
+	Front      Front       `xml:"front"`
+	Format     *Format     `xml:"format,omitempty"`
+	Target     string      `xml:"target,attr"`
+	Series     *SeriesInfo `xml:"seriesInfo,omitempty"`
+	RefContent string      `xml:"refcontent"`
 }
