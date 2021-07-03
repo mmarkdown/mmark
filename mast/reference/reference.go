@@ -52,7 +52,7 @@ type Date struct {
 type Front struct {
 	Title   string   `xml:"title"`
 	Authors []Author `xml:"author,omitempty"`
-	Date    Date     `xml:"date"`
+	Date    *Date    `xml:"date,omitempty"`
 }
 
 // Format is the reference <format>. This is deprecated in RFC 7991, see Section 3.3.
