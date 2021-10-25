@@ -75,6 +75,11 @@ func main() {
 				continue
 			}
 		}
+
+		if crlf(d) {
+			log.Printf("Warning: %q contains Windows style line-endings, this will lead to parse errors", fileName)
+		}
+
 		if *flagUnsafe {
 			init.Flags |= mparser.UnsafeInclude
 		}
