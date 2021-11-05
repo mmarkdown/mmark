@@ -22,19 +22,20 @@ import (
 )
 
 var (
-	flagCSS      = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
-	flagHead     = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
-	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
-	flagBib      = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
-	flagFragment = flag.Bool("fragment", false, "don't create a full document")
-	flagHTML     = flag.Bool("html", false, "create HTML output")
-	flagIndex    = flag.Bool("index", true, "generate an index at the end of the document")
-	flagMarkdown = flag.Bool("markdown", false, "generate markdown (experimental)")
-	flagMan      = flag.Bool("man", false, "generate manual pages (nroff)")
-	flagWrite    = flag.Bool("w", false, "write to source file when generating markdown")
-	flagWidth    = flag.Int("width", 100, "text width when generating markdown")
-	flagUnsafe   = flag.Bool("unsafe", false, "allow unsafe includes")
-	flagVersion  = flag.Bool("version", false, "show mmark version")
+	flagCSS       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
+	flagHead      = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
+	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
+	flagBib       = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
+	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
+	flagHTML      = flag.Bool("html", false, "create HTML output")
+	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
+	flagMarkdown  = flag.Bool("markdown", false, "generate markdown (experimental)")
+	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
+	flagWrite     = flag.Bool("w", false, "write to source file when generating markdown")
+	flagWidth     = flag.Int("width", 100, "text width when generating markdown")
+	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
+	flagIntraEmph = flag.Bool("intra-emphasis", true, "interpret camel_case_value as emphasizing \"case\"")
+	flagVersion   = flag.Bool("version", false, "show mmark version")
 )
 
 func main() {
@@ -86,6 +87,10 @@ func main() {
 
 		if *flagMarkdown {
 			mparser.Extensions &^= parser.Includes
+		}
+
+		if !*flagIntraEmph {
+			mparser.Extensions |= parser.NoIntraEmphasis
 		}
 
 		p := parser.NewWithExtensions(mparser.Extensions)
