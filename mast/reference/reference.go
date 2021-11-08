@@ -27,7 +27,7 @@ type Address struct {
 	Phone  string        `xml:"phone,omitempty"`
 	Email  string        `xml:"email,omitempty"`
 	URI    string        `xml:"uri,omitempty"`
-	Postal AddressPostal `xml:"postal,omitempty"`
+	Postal *AddressPostal `xml:"postal,omitempty"`
 }
 
 // AddressPostal denotes the postal address of an RFC author.
