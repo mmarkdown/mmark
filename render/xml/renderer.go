@@ -249,14 +249,33 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 		}
 
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
-		// Attempt to parse the suffix, supported:
-		// 'section N', where N is a number. We're not checking the number, garbage in, garbage out
-		if len(node.Suffix) != 0 {
-			if bytes.HasPrefix(node.Suffix[0], []byte("section ")) {
-				num := node.Suffix[0][len("section "):]
-				attr = append(attr, `sectionFormat="bare" relative="#"`)
-				attr = append(attr, `section="`+string(num)+`"`)
+
+		// Attempt to parse the suffix.
+		if len(node.Suffix) > i {
+			suf := node.Suffix[i]
+			if len(suf) > 0 {
+				switch {
+				case bytes.HasPrefix(suf, []byte("section ")):
+					num := suf[len("section "):]
+					attr = append(attr, `sectionFormat="of" relative="#"`)
+					attr = append(attr, `section="`+string(num)+`"`)
+
+				case bytes.HasPrefix(suf, []byte("see, section ")):
+					num := suf[len("see, section "):]
+					attr = append(attr, `sectionFormat="comma" relative="#"`)
+					attr = append(attr, `section="`+string(num)+`"`)
+
+				case bytes.HasPrefix(suf, []byte("(see) section ")):
+					num := suf[len("(see) section "):]
+					attr = append(attr, `sectionFormat="parens" relative="#"`)
+					attr = append(attr, `section="`+string(num)+`"`)
+
+				default:
+					attr = append(attr, `sectionFormat="bare" relative="#"`)
+					attr = append(attr, `section="`+string(suf)+`"`)
+				}
 			}
+
 		}
 
 		r.outTag(w, "<xref", attr)
