@@ -87,7 +87,7 @@ Files edited under Windows and using Windows style line endings will not be pars
 
 ## Example RFC
 
-The rfc/ directory contains a couple of example RFCs that can be build via the v2 or v3 tool chain.
+The rfc/ directory contains a couple of example RFCs that can be build via v3 tool chain.
 The build the text files, just run:
 
 ~~~ sh
@@ -97,60 +97,9 @@ make txt
 
 Official RFCs are in rfc/orig (so you can compare the text output from mmark).
 
-## Using Mmark as a library
-
-By default Mmark gives you a binary you can run, if you want to include the parser and renderers in
-your own code you'll have to lift some of it out of `mmark.go`.
-
-Create a parser with the correct options and flags. The that `init` is used to track file includes.
-In this snippet we set if to `fileName` which is the file we're currently reading. If reading from
-standard input, this can be set to `""`.
-
-~~~ go
-p := parser.NewWithExtensions(mparser.Extensions)
-init := mparser.NewInitial(fileName)
-documentTitle := "" // hack to get document title from TOML title block and then set it here.
-p.Opts = parser.Options{
-    ParserHook: func(data []byte) (ast.Node, []byte, int) {
-        node, data, consumed := mparser.Hook(data)
-        if t, ok := node.(*mast.Title); ok {
-            if !t.IsTriggerDash() {
-                documentTitle = t.TitleData.Title
-            }
-        }
-        return node, data, consumed
-    },
-    ReadIncludeFn: init.ReadInclude,
-    Flags:         parserFlags,
-}
-~~~
-
-Then parser the document (`d` is a `[]byte` containing the document text):
-
-~~~ go
-doc := markdown.Parse(d, p)
-mparser.AddBibliography(doc)
-mparser.AddIndex(doc)
-~~~
-
-After this `doc` is ready to be rendered. Create a renderer, with a bunch of options.
-
-~~~ go
-opts := html.RendererOptions{
-    Comments:       [][]byte{[]byte("//"), []byte("#")}, // used for callouts.
-	RenderNodeHook: mhtml.RenderHook,
-	Flags:          html.CommonFlags | html.FootnoteNoHRTag | html.FootnoteReturnLinks| html.CompletePage,
-	Generator:      `  <meta name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl`,
-}
-opts.Title = documentTitle // hack to add-in discovered title
-
-renderer := html.NewRenderer(opts)
-~~~
-
-Next we we only need to generate the HTML: `x := markdown.Render(doc, renderer)`. Now `x` contains
-a `[]byte` with the HTML.
-
 ## Also See
 
 [Kramdown-rfc2629](https://github.com/cabo/kramdown-rfc2629) is another tool to process markdown and
 output XML2RFC XML.
+
+See Syntax.md for a primer on how to use the Markdown syntax to create IETF documents.
