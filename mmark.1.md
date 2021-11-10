@@ -20,7 +20,7 @@ is, however, *also* suited for writing complete books and other technical docume
 
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), HTML5, manual pages and markdown output.
+RFC 7991), HTML5 and manual pages.
 
 The syntax is detailed at [https://mmark.miek.nl/syntax](https://mmark.miek.nl/syntax).
 
@@ -64,11 +64,6 @@ This is the XML format used by the RFC editor for accepting Internet-Drafts.
 
 The HTML5 renderer outputs HTML.
 
-## Markdown
-
-Mmark can also be "translated" into markdown again. This is a useful feature for auto-formatting
-markdown files. Multi-column tables are not supported yet here.
-
 ## Manual Pages
 
 The man renderer outputs nroff that can be viewed via man(1).
@@ -95,10 +90,6 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 :  create HTML output.
 
-**-markdown**
-
-:  output (normalized) markdown.
-
 **-man**
 
 :  output nroff (manual pages).
@@ -107,14 +98,6 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 :  allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
    current document.
-
-**-textwidth integer**
-
-:  set the text width when generating markdown, defaults to 100 characters.
-
-**-w**
-
-:  write to source file when generating markdown.
 
 **-index**
 

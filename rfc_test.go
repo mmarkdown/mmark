@@ -11,7 +11,6 @@ import (
 	"github.com/mmarkdown/mmark/lang"
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
-	mmarkdown "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
 
@@ -60,22 +59,6 @@ func TestHTML(t *testing.T) {
 		}
 		renderer := html.NewRenderer(opts)
 		t.Run("html/"+base, func(t *testing.T) {
-			err := doRenderTest(base, renderer)
-			if err != nil {
-				t.Error(err)
-			}
-		})
-	}
-}
-
-// TestMarkdown parses the RFC in the rfc/ directory to markdown.
-func TestMarkdown(t *testing.T) {
-	for _, f := range testFiles {
-		base := f[:len(f)-3]
-
-		opts := mmarkdown.RendererOptions{}
-		renderer := mmarkdown.NewRenderer(opts)
-		t.Run("markdown/"+base, func(t *testing.T) {
 			err := doRenderTest(base, renderer)
 			if err != nil {
 				t.Error(err)

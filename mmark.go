@@ -11,7 +11,6 @@ import (
 	"github.com/mmarkdown/mmark/mast"
 	"github.com/mmarkdown/mmark/mparser"
 	"github.com/mmarkdown/mmark/render/man"
-	mmarkout "github.com/mmarkdown/mmark/render/markdown"
 	"github.com/mmarkdown/mmark/render/mhtml"
 	"github.com/mmarkdown/mmark/render/xml"
 
@@ -29,10 +28,7 @@ var (
 	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
 	flagHTML      = flag.Bool("html", false, "create HTML output")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
-	flagMarkdown  = flag.Bool("markdown", false, "generate markdown (experimental)")
 	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
-	flagWrite     = flag.Bool("w", false, "write to source file when generating markdown")
-	flagWidth     = flag.Int("width", 100, "text width when generating markdown")
 	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagIntraEmph = flag.Bool("intra-emphasis", true, "interpret camel_case_value as emphasizing \"case\"")
 	flagVersion   = flag.Bool("version", false, "show mmark version")
@@ -83,10 +79,6 @@ func main() {
 
 		if *flagUnsafe {
 			init.Flags |= mparser.UnsafeInclude
-		}
-
-		if *flagMarkdown {
-			mparser.Extensions &^= parser.Includes
 		}
 
 		if !*flagIntraEmph {
@@ -181,9 +173,6 @@ func main() {
 			}
 
 			renderer = html.NewRenderer(opts)
-		case *flagMarkdown:
-			opts := mmarkout.RendererOptions{TextWidth: *flagWidth}
-			renderer = mmarkout.NewRenderer(opts)
 		case *flagMan:
 			opts := man.RendererOptions{
 				Comments: [][]byte{[]byte("//"), []byte("#")},
@@ -206,14 +195,6 @@ func main() {
 		}
 
 		x := markdown.Render(doc, renderer)
-		if *flagMarkdown && *flagWrite && fileName != "os.Stdin" {
-			ioutil.WriteFile(fileName, x, 0600)
-			continue
-		}
-		if *flagMarkdown {
-			fmt.Print(string(x))
-			continue
-		}
 
 		fmt.Println(string(x))
 	}
