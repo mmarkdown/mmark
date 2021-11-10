@@ -597,7 +597,8 @@ This is used in the following manner:
 * `[@RFC2525, 5]` -> sectionFormat="bare"
 
 `page`, `paragraph`, etc., might be supported in the future if these pop up in XML2RFC. Translation
-of 'see' and words like section is also not done yet.
+of 'see' and words like section is also not done yet. Also note these strings need to be literary
+types as shown here (we may become more lenient in the future).
 
 ### XML References
 
