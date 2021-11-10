@@ -26,11 +26,11 @@ Biggest changes:
 
 # Why this new version?
 
-It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST). It
-will be easier to add new renderers with this setup. It is also closer to Common Mark. So we took
-this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5, RFC 7749 XML (xml2rfc version 2
-- now deprecated) and Markdown output (use mmark is a markdown formatter). Also with code upstreamed
-(to [gomarkdown](https://github.com/gomarkdown)), we have less code to maintain.
+It fixes a bunch of long standing bugs and the parser generates an abstract syntax tree (AST).
+It will be easier to add new renderers with this setup. It is also closer to Common Mark. So we
+took this opportunity to support RFC 7991 XML (xml2rfc version 3), HTML5 and manual page output.
+Also with code upstreamed (to [gomarkdown](https://github.com/gomarkdown)), we have less code to
+maintain.
 
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
@@ -194,10 +194,6 @@ Unicode:
 Title Block:
 :   From the title block only the title is used, in the `<title>` tag.
 
-### Markdown Output
-
-This outputs markdown again, but pretty printed.
-
 ### Manual Page Output
 
 Title Block:
@@ -251,8 +247,7 @@ title = "Foo Bar"
 The difference between the two is:
 
 * `%%%`: block is assumed to be encoded in TOML and *parsed*.
-* `---`: block is not parsed just outputted as-is again (for markdown output), all other formats
-  ignore the contents.
+* `---`: block is not parsed just outputted as-is again.
 
 #### Elements of the Title Block
 
