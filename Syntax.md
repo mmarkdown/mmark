@@ -589,9 +589,16 @@ person as a `contact`. See <https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.h
 
 You can specify extra text after the citation using a comma: `[@RFC2535, section 5]`, see
 <https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#name-how-do-i-link-to-multiple-se>.
-Currently only one such syntax is parsed and understood, you can reference a section within another
-document with `section <number>`, this is converted into a `section="<number>" sectionFormat="bare"`
-of the reference.
+This is used in the following manner:
+
+* `[@RFC2535, section 5]` -> sectionFormat="of"
+* `[@RFC2525, see, section 5]` -> sectionFormat="comma"
+* `[@RFC2525, (see) section 5]` -> sectionFormat="parens"
+* `[@RFC2525, 5]` -> sectionFormat="bare"
+
+`page`, `paragraph`, etc., might be supported in the future if these pop up in XML2RFC. Translation
+of 'see' and words like section is also not done yet. Also note these strings need to be literary
+typed as shown here (we may become more lenient in the future).
 
 ### XML References
 
