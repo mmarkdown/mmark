@@ -39,7 +39,6 @@ type TitleData struct {
 	SeriesInfo     reference.SeriesInfo
 	IndexInclude   bool
 	Consensus      bool
-	Version        int
 	TocDepth       int
 	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int

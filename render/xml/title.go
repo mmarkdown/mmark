@@ -62,12 +62,6 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 			[]string{fmt.Sprintf("%d", t.TocDepth)},
 		)...)
 	}
-	if t.Version > 0 {
-		attrs = append(attrs, Attributes(
-			[]string{"version"},
-			[]string{fmt.Sprintf("%d", t.Version)},
-		)...)
-	}
 
 	// number is deprecated, but xml2rfc want's it here to generate an actual RFC.
 	// But only if number is a integer...

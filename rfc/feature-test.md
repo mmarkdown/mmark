@@ -8,6 +8,7 @@ area = "Internet"
 workgroup = "Network Working Group"
 submissiontype = "IETF"
 keyword = [""]
+tocdepth = 5
 #date = 1997-04-01T00:00:00Z
 
 [seriesInfo]
