@@ -39,9 +39,12 @@ type TitleData struct {
 	SeriesInfo     reference.SeriesInfo
 	IndexInclude   bool
 	Consensus      bool
+	Version        int
+	TocDepth       int
 	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int
 	Updates        []int
+	Links          []Link
 	SubmissionType string // IETF, IAB, IRTF or independent, defaults to IETF.
 
 	Date      time.Time
@@ -52,6 +55,11 @@ type TitleData struct {
 	Contact   []Contact
 
 	Language string
+}
+
+type Link struct {
+	Href string
+	Rel  string
 }
 
 // Author denotes an RFC author.
@@ -83,15 +91,21 @@ type Address struct {
 type AddressPostal struct {
 	Street     string
 	City       string
+	CityArea   string
 	Code       string
 	Country    string
+	ExtAddr    string
 	Region     string
+	PoBox      string
 	PostalLine []string
 
 	// Plurals when these need to be specified multiple times.
 	Streets   []string
 	Cities    []string
+	CityAreas []string
 	Codes     []string
 	Countries []string
 	Regions   []string
+	PoBoxes   []string
+	ExtAddrs  []string
 }
