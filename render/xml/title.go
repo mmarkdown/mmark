@@ -56,6 +56,12 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 			[]string{fmt.Sprintf("%t", d.Consensus)},
 		)...)
 	}
+	if t.TocDepth > 0 {
+		attrs = append(attrs, Attributes(
+			[]string{"tocDepth"},
+			[]string{fmt.Sprintf("%d", t.TocDepth)},
+		)...)
+	}
 
 	// number is deprecated, but xml2rfc want's it here to generate an actual RFC.
 	// But only if number is a integer...
@@ -123,6 +129,11 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author, tag string) {
 		r.outTagContent(w, "<city", city)
 	}
 
+	r.outTagMaybe(w, "<cityarea", a.Address.Postal.CityArea)
+	for _, city := range a.Address.Postal.CityAreas {
+		r.outTagContent(w, "<cityarea", city)
+	}
+
 	r.outTagMaybe(w, "<code", a.Address.Postal.Code)
 	for _, code := range a.Address.Postal.Codes {
 		r.outTagContent(w, "<code", code)
@@ -131,6 +142,16 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author, tag string) {
 	r.outTagMaybe(w, "<country", a.Address.Postal.Country)
 	for _, country := range a.Address.Postal.Countries {
 		r.outTagContent(w, "<country", country)
+	}
+
+	r.outTagMaybe(w, "<extaddr", a.Address.Postal.ExtAddr)
+	for _, extaddr := range a.Address.Postal.ExtAddrs {
+		r.outTagContent(w, "<extaddr", extaddr)
+	}
+
+	r.outTagMaybe(w, "<pobox", a.Address.Postal.PoBox)
+	for _, pobox := range a.Address.Postal.PoBoxes {
+		r.outTagContent(w, "<pobox", pobox)
 	}
 
 	r.outTagMaybe(w, "<region", a.Address.Postal.Region)

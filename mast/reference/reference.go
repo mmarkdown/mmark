@@ -24,9 +24,9 @@ type Organization struct {
 
 // Address denotes the address of an RFC author.
 type Address struct {
-	Phone  string        `xml:"phone,omitempty"`
-	Email  string        `xml:"email,omitempty"`
-	URI    string        `xml:"uri,omitempty"`
+	Phone  string         `xml:"phone,omitempty"`
+	Email  string         `xml:"email,omitempty"`
+	URI    string         `xml:"uri,omitempty"`
 	Postal *AddressPostal `xml:"postal,omitempty"`
 }
 
