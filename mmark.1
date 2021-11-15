@@ -18,7 +18,7 @@ is, however, \fIalso\fP suited for writing complete books and other technical do
 Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 RFC 7991
 \[la]https://tools.ietf.org/html/rfc7991\[ra] format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), HTML5, manual pages and markdown output.
+RFC 7991), HTML5 and manual pages.
 
 .PP
 The syntax is detailed at https://mmark.miek.nl/syntax
@@ -67,11 +67,6 @@ This is the XML format used by the RFC editor for accepting Internet-Drafts.
 .PP
 The HTML5 renderer outputs HTML.
 
-.SH "MARKDOWN"
-.PP
-Mmark can also be "translated" into markdown again. This is a useful feature for auto-formatting
-markdown files. Multi-column tables are not supported yet here.
-
 .SH "MANUAL PAGES"
 .PP
 The man renderer outputs nroff that can be viewed via man(1).
@@ -93,21 +88,12 @@ link to HTML to be included in head (only used with -html).
 \fB-html\fP
 create HTML output.
 .TP
-\fB-markdown\fP
-output (normalized) markdown.
-.TP
 \fB-man\fP
 output nroff (manual pages).
 .TP
 \fB-unsafe\fP
 allow includes from anywhere in the filesystem, otherwise they are only allowed \fIunder\fP the
 current document.
-.TP
-\fB-textwidth integer\fP
-set the text width when generating markdown, defaults to 100 characters.
-.TP
-\fB-w\fP
-write to source file when generating markdown.
 .TP
 \fB-index\fP
 generate an index at the end of the document (default true).
