@@ -96,7 +96,7 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 **-unsafe**
 
-:  allow includes from anywhere in the filesystem, otherwise they are only allowed *under* the
+:  allow includes from anywhere in the filesystem, otherwise they are only allowed *below* the
    current document.
 
 **-index**
