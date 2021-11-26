@@ -57,6 +57,33 @@ Except to TS Eliot.
 
 And, for that matter, to [@David Addison], who hates iambic pentameter.
 
+# Features
+
+## Definition List
+
+First Term
+: This is the definition of the first term.
+
+Second Term
+: This is one definition of the second term.
+
+## Lists in Lists
+
+Foo validator:
+: It performs the following actions:
+  {spacing="compact"}
+  * runs
+  * jumps
+  * walks
+
+Another example:
+
+{type="Step %d:"}
+1. Send it to
+   * Alice
+   * Bob
+   * Carol
+
 # Credits
 
 [@David Addison]

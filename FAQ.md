@@ -56,7 +56,29 @@ Note this makes xml2rfc still complain, but at least creates valid XML.
 
 Use `role = "editor"` in the author's section in the titleblock.
 
+## How Do Specify a Contact
+
+Use a `[[contact]]` in the toml header:
+
+~~~ toml
+[[contact]]
+initials="D."
+surname="Addison"
+fullname="David Addison"
+  [contact.address.postal]
+  city = "St. Petersburg"
+  code = "FL 33709-4819"
+~~~
+
+Using the contact is done by referencing it: `[@David Addison]` (using the `fullname` property). If
+the reference is the *first* thing after a new paragraph it will be expanded like XML2RFC expands
+authors in an Internet-Draft.
+
 # XML2RFCv3 FAQ
+
+## How do I get different kinds of lists?
+
+Use the standard markdown syntax for unordered, ordered and definition lists.
 
 ## How do I get a list like (1), (2), (3) or (a), (b), (c)?
 
@@ -80,12 +102,40 @@ Here is text in between
 
 ## How do I get indentation? or How do I use definition lists?
 
+~~~ markdown
+First Term
+: This is the definition of the first term.
+
+Second Term
+: This is one definition of the second term.
+~~~
+
+## How do I create nested lists?
+
+~~~ markdown
+Foo validator:
+: It performs the following actions:
+  * runs
+  * jumps
+  * walks
+~~~
+
+~~~ markdown
+{type="Step %d:"}
+1. Send it to
+   * Alice
+   * Bob
+   * Carol
+~~~
+
 ## How do I insert non-ASCII characters?
 
 This is handled for you, mmark will wrap non-ASCII characters in `<u>`. The `asciiFullname` and
 friends used in authors and contacts is currently not implemented.
 
 ## How do I insert a table?
+
+Use the markdown table syntax.
 
 ## How do I get bold, italics, or a fixed-width font?
 
