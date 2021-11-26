@@ -388,6 +388,9 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
 		openTag = "<dl"
 	}
+	if nodeData.Tight {
+		mast.SetAttribute(nodeData, "spacing", []byte("compact"))
+	}
 	r.outTag(w, openTag, html.BlockAttrs(nodeData))
 	r.cr(w)
 }
