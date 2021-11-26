@@ -1,8 +1,8 @@
-<ol>
+<ol spacing="compact">
 <li>a</li>
 <li><t>b</t>
 
-<ol>
+<ol spacing="compact">
 <li>c</li>
 <li>d</li>
 </ol></li>
