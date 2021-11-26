@@ -71,7 +71,6 @@ Second Term
 
 Foo validator:
 : It performs the following actions:
-  {spacing="compact"}
   * runs
   * jumps
   * walks
