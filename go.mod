@@ -7,5 +7,3 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20211127175527-619d1500ca66
 	github.com/google/go-cmp v0.2.0
 )
-
-replace github.com/gomarkdown/markdown => /home/miek/gohack/github.com/gomarkdown/markdown
