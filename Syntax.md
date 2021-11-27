@@ -546,7 +546,7 @@ Headerless tables are also supported, just leave of the first line.
 
 Lists are the normal markdown lists, but we track how they are typeset, for ordered list the
 delimiter can be either `.` or `)`. When a parenthesis is used the `type` is set to `%d)`. Note that
-any block level attributes take precedence. I.e.:
+any block level attributes take precedence.
 
 ## Inline Elements
 
