@@ -6,8 +6,8 @@ import (
 	"log"
 	"sort"
 
-	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/mast/reference"
+	"github.com/mmarkdown/mmark/v2/mast"
+	"github.com/mmarkdown/mmark/v2/mast/reference"
 
 	"github.com/gomarkdown/markdown/ast"
 )

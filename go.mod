@@ -1,4 +1,4 @@
-module github.com/mmarkdown/mmark
+module github.com/mmarkdown/mmark/v2
 
 go 1.13
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/v2/mast"
 
 	"github.com/gomarkdown/markdown/ast"
 )

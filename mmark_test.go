@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mmarkdown/mmark/mparser"
-	"github.com/mmarkdown/mmark/render/xml"
+	"github.com/mmarkdown/mmark/v2/mparser"
+	"github.com/mmarkdown/mmark/v2/render/xml"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
