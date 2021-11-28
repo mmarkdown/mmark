@@ -67,6 +67,11 @@ First Term
 Second Term
 : This is one definition of the second term.
 
+## Ordered List
+
+1) First item.
+2) Second item.
+
 ## Lists in Lists
 
 Foo validator:
