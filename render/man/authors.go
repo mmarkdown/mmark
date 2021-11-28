@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 // authors creates a 'Authors' section that can be included. Only the 'fullname' is used.

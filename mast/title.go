@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/mmarkdown/mmark/mast/reference"
+	"github.com/mmarkdown/mmark/v2/mast/reference"
 )
 
 // Title represents the TOML encoded title block.

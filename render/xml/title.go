@@ -10,8 +10,8 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 
-	"github.com/mmarkdown/mmark/mast"
-	"github.com/mmarkdown/mmark/mast/reference"
+	"github.com/mmarkdown/mmark/v2/mast"
+	"github.com/mmarkdown/mmark/v2/mast/reference"
 )
 
 // StatusToCategory translate the status to a category.

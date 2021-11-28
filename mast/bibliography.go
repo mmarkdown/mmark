@@ -1,7 +1,7 @@
 package mast
 
 import (
-	"github.com/mmarkdown/mmark/mast/reference"
+	"github.com/mmarkdown/mmark/v2/mast/reference"
 
 	"github.com/gomarkdown/markdown/ast"
 )

@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mmarkdown/mmark/lang"
-	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/v2/lang"
+	"github.com/mmarkdown/mmark/v2/mast"
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
