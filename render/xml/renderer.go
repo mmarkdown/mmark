@@ -383,6 +383,13 @@ func (r *Renderer) listEnter(w io.Writer, nodeData *ast.List) {
 		if nodeData.Start > 0 {
 			mast.SetAttribute(nodeData, "start", []byte(strconv.Itoa(nodeData.Start)))
 		}
+		if nodeData.Delimiter == byte(')') {
+			set := mast.Attribute(nodeData, "type")
+			if len(set) == 0 {
+				mast.SetAttribute(nodeData, "type", []byte("%d)"))
+			}
+		}
+
 		openTag = "<ol"
 	}
 	if nodeData.ListFlags&ast.ListTypeDefinition != 0 {
