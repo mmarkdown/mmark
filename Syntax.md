@@ -268,11 +268,33 @@ An I-D needs to have a Title Block with the following items filled out:
 * `author(s)` - define all the authors.
 * `contact(s)` - define all the contacts.
 * `date` - the date for this I-D/RFC.
+
+There is a `[mmark]` section that details document parsing options (historically this was a mix
+of flags ands options in the title block. There is a subsection for `html`:
+All options and defaults are:
+
+~~~ toml
+[mmark]
+language = "en"
+index = false
+bibliography = true
+intraemphasis = true
+unsafe = false
+[mmark.html]
+css = "path/to/file"
+head = "path/to/another/file"
+~~~
+
 * `language` - the language for this document, this uses localized names for `Index`, `Footnotes`
   and `References`, etc. Valid values are from [BCP47](https://tools.ietf.org/html/bcp47). This
-  defaults to `en` (English). See the [current
-  list](https://github.com/mmarkdown/mmark/blob/master/lang/lang.go).
-* `indexInclude` - set to true when you want to include an index (defaults to false).
+  defaults to `en` (English). See the [current list](https://github.com/mmarkdown/mmark/blob/master/lang/lang.go).
+* `index` - set to true when you want to include an index (defaults to false).
+* `bibliography` - generate bibliograph section after the back matter (default true), this needs a `{{backmatter}}` in the document.
+* `intraemphasis` -
+* `unsafe` - allow includes from anywhere in the filesystem, otherwise they are only allowed *below* the
+   current document.
+* `css` - link to a CSS stylesheet.
+* `head` - link to HTML to be included in head.
 
 For a manual page the `title`, `area` and `workgroup` are mandatory, if `date` is not specified,
 "today" is assumed.
@@ -298,9 +320,9 @@ stream = "IETF"
 date = 2014-12-10T00:00:00Z
 
 [[author]]
-initials="R."
-surname="Gieben"
-fullname="R. (Miek) Gieben"
+initials = "R."
+surname = "Gieben"
+fullname = "R. (Miek) Gieben"
 organization = "Mmark"
   [author.address]
   email = "miek@miek.nl"

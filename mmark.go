@@ -21,17 +21,11 @@ import (
 )
 
 var (
-	flagCSS       = flag.String("css", "", "link to a CSS stylesheet (only used with -html)")
-	flagHead      = flag.String("head", "", "link to HTML to be included in head (only used with -html)")
-	flagAst       = flag.Bool("ast", false, "print abstract syntax tree and exit")
-	flagBib       = flag.Bool("bibliography", true, "generate a bibliography section after the back matter")
-	flagFragment  = flag.Bool("fragment", false, "don't create a full document")
-	flagHTML      = flag.Bool("html", false, "create HTML output")
-	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
-	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
-	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
-	flagIntraEmph = flag.Bool("intra-emphasis", true, "interpret camel_case_value as emphasizing \"case\"")
-	flagVersion   = flag.Bool("version", false, "show mmark version")
+	flagAst      = flag.Bool("ast", false, "print abstract syntax tree and exit")
+	flagFragment = flag.Bool("fragment", false, "don't create a full document")
+	flagHTML     = flag.Bool("html", false, "create HTML output")
+	flagMan      = flag.Bool("man", false, "generate manual pages (nroff)")
+	flagVersion  = flag.Bool("version", false, "show mmark version")
 )
 
 func main() {
@@ -77,18 +71,12 @@ func main() {
 			log.Printf("Warning: %q contains Windows style line-endings, this will lead to parse errors", fileName)
 		}
 
-		if *flagUnsafe {
-			init.Flags |= mparser.UnsafeInclude
-		}
-
-		if !*flagIntraEmph {
-			mparser.Extensions |= parser.NoIntraEmphasis
-		}
-
 		p := parser.NewWithExtensions(mparser.Extensions)
 		parserFlags := parser.FlagsNone
 		documentTitle := ""    // hack to get document title from toml title block and then set it here.
 		documentLanguage := "" // get document language from title block if it is set.
+		options := &mast.Options{}
+
 		if !*flagHTML && !*flagMan {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
@@ -99,6 +87,14 @@ func main() {
 					if !t.IsTriggerDash() {
 						documentTitle = t.TitleData.Title
 						documentLanguage = t.TitleData.Language
+						// Options
+						options = t.TitleData.Options
+						if options.Unsafe {
+							init.Flags |= mparser.UnsafeInclude
+						}
+						if !options.IntraEmphasis {
+							mparser.Extensions |= parser.NoIntraEmphasis
+						}
 					}
 				}
 				return node, data, consumed
@@ -130,10 +126,10 @@ func main() {
 			}
 
 		}
-		if *flagBib {
+		if options.Bibliography {
 			mparser.AddBibliography(doc)
 		}
-		if *flagIndex {
+		if options.Index {
 			mparser.AddIndex(doc)
 		}
 
@@ -159,11 +155,11 @@ func main() {
 			if !*flagFragment {
 				opts.Flags |= html.CompletePage
 			}
-			opts.CSS = *flagCSS
-			if *flagHead != "" {
-				head, err := ioutil.ReadFile(*flagHead)
+			opts.CSS = options.Html.Css
+			if options.Html.Head != "" {
+				head, err := ioutil.ReadFile(options.Html.Head)
 				if err != nil {
-					log.Printf("Couldn't open %q, error: %q", *flagHead, err)
+					log.Printf("Couldn't open %q, error: %q", options.Html.Head, err)
 					continue
 				}
 				opts.Head = head

@@ -47,7 +47,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	)
 	attrs = append(attrs, Attributes(
 		[]string{"updates", "obsoletes", "indexInclude"},
-		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes), fmt.Sprintf("%t", d.IndexInclude)},
+		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes), fmt.Sprintf("%t", d.Options.Index)},
 	)...)
 	// Only for IETF stream add the consensus attribute.
 	if d.SubmissionType == "IETF" {
