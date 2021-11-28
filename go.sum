@@ -1,6 +1,6 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/gomarkdown/markdown v0.0.0-20211127175527-619d1500ca66 h1:fh6qorP24ww0BmL0ZFWLgZMAZUYpvbXoKn46xXhqe7Q=
-github.com/gomarkdown/markdown v0.0.0-20211127175527-619d1500ca66/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
+github.com/gomarkdown/markdown v0.0.0-20211128002848-ab7d7bf476b3 h1:TyhCPRkxLfBBOuOy8oambova4pG4Iivc0lTdTrkhN98=
+github.com/gomarkdown/markdown v0.0.0-20211128002848-ab7d7bf476b3/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
 github.com/google/go-cmp v0.2.0 h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
