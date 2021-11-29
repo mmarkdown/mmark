@@ -10,15 +10,15 @@ import (
 )
 
 // TitleHook will parse a title and returns it. The start and ending can
-// be signalled with %%% or --- (the later to more inline with Hugo and other markdown dialects.
+// be signalled with %%%.
 func TitleHook(data []byte) (ast.Node, []byte, int) {
 	i := 0
 	if len(data) < 4 {
 		return nil, nil, 0
 	}
 
-	c := data[i] // first char can either be % or -
-	if c != '%' && c != '-' {
+	c := data[i] // first char must be %
+	if c != '%' {
 		return nil, nil, 0
 	}
 
@@ -41,7 +41,7 @@ func TitleHook(data []byte) (ast.Node, []byte, int) {
 		return nil, nil, 0
 	}
 
-	node := mast.NewTitle(c)
+	node := mast.NewTitle()
 	buf := data[beg:i]
 
 	if c == '-' {
