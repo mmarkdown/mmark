@@ -80,7 +80,8 @@ switch (optionally you can use `-width` to set the text width).
 There may be warning omitted by `mmark`, to see and check for those you can discard standard output
 to just leave standard error: `./mmark rfc/3515.md > /dev/null`.
 
-Files edited under Windows and using Windows style line endings will not be parsed correctly.
+Files edited under Windows/Mac and using Windows style will be converted into Unix style line ending
+before parsing. Any output from `mmark` will used Unix line endings.
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
