@@ -11,11 +11,10 @@ import (
 type Title struct {
 	ast.Leaf
 	*TitleData
-	Trigger string // either triggered by %%% or ---
 }
 
 // NewTitle returns a pointer to TitleData with some defaults set.
-func NewTitle(trigger byte) *Title {
+func NewTitle() *Title {
 	t := &Title{
 		TitleData: &TitleData{
 			Area:      "Internet",
@@ -23,13 +22,8 @@ func NewTitle(trigger byte) *Title {
 			Consensus: true,
 		},
 	}
-	t.Trigger = string([]byte{trigger, trigger, trigger})
 	return t
 }
-
-const triggerDash = "---"
-
-func (t *Title) IsTriggerDash() bool { return t.Trigger == triggerDash }
 
 // TitleData holds all the elements of the title.
 type TitleData struct {

@@ -164,9 +164,7 @@ Source code:
 Block Level Attributes:
 :   We use the attributes as specified in RFC 7991, e.g. to specify an empty list style use:
     `{empty="true"}` before the list. The renderer for this output format filters unknown attributes
-    away. The current list is to allow IDs (translated into 'anchor'), remove any `class=` and `style=`
-    attributes, so `{style="empty" empty="true"}`, will make a document both RFC 7991 and RFC 7749
-    compliant.
+    away.
 
 Footnotes:
 :   Are discarded from the final output, don't use them.
@@ -228,26 +226,14 @@ standard](https://tools.ietf.org/html/rfc7991). More on these below. The complet
 specified in [TOML](https://github.com/toml-lang/toml). Examples title blocks can be [found in the
 repository of Mmark](https://github.com/mmarkdown/mmark/tree/master/rfc).
 
-The title block itself needs three or more `%`'s (or `-`'s) at the start and end of the block. A
-minimal title block would look like this:
+The title block itself needs three or more `%`'s at the start and end of the block. A minimal title
+block would look like this:
 
 ~~~
 %%%
 title = "Foo Bar"
 %%%
 ~~~
-or
-
-~~~
----
-title = "Foo Bar"
----
-~~~
-
-The difference between the two is:
-
-* `%%%`: block is assumed to be encoded in TOML and *parsed*.
-* `---`: block is not parsed just outputted as-is again.
 
 #### Elements of the Title Block
 
