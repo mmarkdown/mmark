@@ -30,7 +30,7 @@ var (
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
 	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
-	flagIntraEmph = flag.Bool("intra-emphasis", true, "interpret camel_case_value as emphasizing \"case\"")
+	flagIntraEmph = flag.Bool("intra-emphasis", false, "interpret camel_case_value as emphasizing \"case\" (legacy behavior)")
 	flagVersion   = flag.Bool("version", false, "show mmark version")
 )
 
