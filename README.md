@@ -74,10 +74,9 @@ Making a draft in text form (v3 output)
     % ./mmark rfc/3514.md > x.xml
     % xml2rfc --v3 --text x.xml
 
-Outputting HTML5 is done with the `-html` switch. Outputting markdown is done with the `-markdown`
-switch (optionally you can use `-width` to set the text width).
+Outputting HTML5 is done with the `-html` switch.
 
-There may be warning omitted by `mmark`, to see and check for those you can discard standard output
+There may be warnings omitted by `mmark`, to see and check for those you can discard standard output
 to just leave standard error: `./mmark rfc/3515.md > /dev/null`.
 
 Files edited under Windows/Mac and using Windows style will be converted into Unix style line ending

@@ -1,6 +1,8 @@
 VERSION:=$(shell grep 'var Version =' version.go | awk '{ print $$4} ' | tr -d '"' )
 GITHUB:=mmarkdown
 NAME:=mmark
+LINUX_ARCH:=amd64 arm64 arm
+DARWIN_ARCH:=amd64 arm64
 
 .PHONY: mmark
 mmark:
@@ -36,19 +38,15 @@ git-commit:
 build:
 	@echo $(VERSION)
 	rm -rf build && mkdir build
-	GOOS=linux GOARCH=amd64 go build -o build/linux/amd64/mmark
-	GOOS=linux GOARCH=arm64 go build -o build/linux/arm64/mmark
-	GOOS=linux GOARCH=arm go build -o build/linux/arm/mmark
-	GOOS=darwin GOARCH=amd64 go build -o build/darwin/amd64/mmark
+	for arch in $(LINUX_ARCH); do GOOS=linux GOARCH=$$arch go build -o build/linux/$$arch/mmark; done
+	for arch in $(DARWIN_ARCH); do GOOS=darwin GOARCH=$$arch go build -o build/darwin/$$arch/mmark; done
 	GOOS=windows GOARCH=amd64 go build -o build/windows/amd64/mmark.exe
 
 .PHONY: tar
 tar:
 	rm -rf release && mkdir release
-	tar -zcf release/mmark_$(VERSION)_linux_amd64.tgz -C build/linux/amd64 mmark
-	tar -zcf release/mmark_$(VERSION)_linux_arm64.tgz -C build/linux/arm64 mmark
-	tar -zcf release/mmark_$(VERSION)_linux_arm.tgz -C build/linux/arm mmark
-	tar -zcf release/mmark_$(VERSION)_darwin_amd64.tgz -C build/darwin/amd64 mmark
+	for arch in $(LINUX_ARCH); do tar -zcf release/mmark_$(VERSION)_linux_$$arch.tgz -C build/linux/$$arch mmark; done
+	for arch in $(DARWIN_ARCH); do tar -zcf release/mmark_$(VERSION)_darwin_$$arch.tgz -C build/darwin/$$arch mmark; done
 	tar -zcf release/mmark_$(VERSION)_windows_amd64.tgz -C build/windows/amd64 mmark.exe
 
 .PHONY: release
