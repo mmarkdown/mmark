@@ -105,7 +105,7 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 **-bibliography**
 
-:  generate a bibliography section after the back matter (default true), this needs a
+:  generate a bibliography section after the back matter (default true), this *needs* a
    `{{backmatter}}` in the document.
 
 **-version**

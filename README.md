@@ -16,7 +16,7 @@ write RFC using Markdown.
 
 It provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
 [RFC 7991](https://tools.ietf.org/html/rfc7991) format. Mmark can produce xml2rfc (aforementioned
-RFC 7991), RFC 7749 (xml2rfc version 2 - now deprecated), HTML5 output, markdown and manual pages.
+RFC 7991), HTML5 output, and manual pages.
 
 Example RFCs in Mmark format can be [found in the Github
 repository](https://github.com/mmarkdown/mmark/tree/master/rfc).
