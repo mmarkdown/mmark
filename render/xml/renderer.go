@@ -11,6 +11,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/mmarkdown/mmark/v2/lang"
 	"github.com/mmarkdown/mmark/v2/mast"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -48,6 +49,8 @@ type RendererOptions struct {
 
 	// Generator is a comment that is inserted in the generated XML to show what rendered it.
 	Generator string
+
+	Language lang.Lang // Input/Output language for the document.
 }
 
 // Renderer implements Renderer interface for IETF XMLv3 output. See RFC 7991.
@@ -254,19 +257,22 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 		if len(node.Suffix) > i {
 			suf := node.Suffix[i]
 			if len(suf) > 0 {
+				section := r.opts.Language.Section() + " "                                          // section
+				seesection := r.opts.Language.See() + ", " + r.opts.Language.Section() + " "        // see, section
+				seepsection := "(" + r.opts.Language.See() + ") " + r.opts.Language.Section() + " " // (see) section
 				switch {
-				case bytes.HasPrefix(suf, []byte("section ")):
-					num := suf[len("section "):]
+				case bytes.HasPrefix(suf, []byte(section)):
+					num := suf[len(section):]
 					attr = append(attr, `sectionFormat="of" relative="#"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
-				case bytes.HasPrefix(suf, []byte("see, section ")):
-					num := suf[len("see, section "):]
+				case bytes.HasPrefix(suf, []byte(seesection)):
+					num := suf[len(seesection):]
 					attr = append(attr, `sectionFormat="comma" relative="#"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
-				case bytes.HasPrefix(suf, []byte("(see) section ")):
-					num := suf[len("(see) section "):]
+				case bytes.HasPrefix(suf, []byte(seepsection)):
+					num := suf[len(seepsection):]
 					attr = append(attr, `sectionFormat="parens" relative="#"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
@@ -275,7 +281,6 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 					attr = append(attr, `section="`+string(suf)+`"`)
 				}
 			}
-
 		}
 
 		r.outTag(w, "<xref", attr)

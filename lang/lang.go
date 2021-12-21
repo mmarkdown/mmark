@@ -18,16 +18,22 @@ func New(language string) Lang {
 			Footnotes:    "Footnotes",
 			Index:        "Index",
 			WrittenBy:    "Written by",
+			See:          "see",
+			Section:      "section",
 		},
 		"nl": {
 			Bibliography: "Bibliografie",
 			Footnotes:    "Voetnoten",
 			Index:        "Index",
+			See:          "zie",
+			Section:      "sectie",
 		},
 		"de": {
 			Bibliography: "Literaturverzeichnis",
 			Footnotes:    "Fußnoten",
 			Index:        "Index",
+			See:          "siehe",
+			Section:      "abschnit",
 		},
 		"ja": {
 			Bibliography: "参考文献",
@@ -64,6 +70,10 @@ type Term struct {
 	Footnotes    string
 	Index        string
 	WrittenBy    string
+
+	// The references
+	See     string
+	Section string
 }
 
 func (l Lang) Footnotes() string {
@@ -112,4 +122,20 @@ func (l Lang) WrittenBy() string {
 		return l.m["en"].WrittenBy
 	}
 	return t.WrittenBy
+}
+
+func (l Lang) See() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].See
+	}
+	return t.See
+}
+
+func (l Lang) Section() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].Section
+	}
+	return t.Section
 }
