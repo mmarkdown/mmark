@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/mmarkdown/mmark/v2/lang"
 	"github.com/mmarkdown/mmark/v2/mparser"
 	"github.com/mmarkdown/mmark/v2/render/xml"
 
@@ -27,11 +29,21 @@ func TestMmarkXML(t *testing.T) {
 		if filepath.Ext(f.Name()) != ".md" {
 			continue
 		}
+
 		base := f.Name()[:len(f.Name())-3]
 		opts := xml.RendererOptions{
 			Flags:    xml.CommonFlags | xml.XMLFragment,
 			Comments: [][]byte{[]byte("//"), []byte("#")},
 		}
+		// if the file name has a prefix ending in a underscore that prefix is taken is the language
+		// for this particular file and used.
+		us := strings.Index(f.Name(), "_")
+		l := "en"
+		if us >= 0 {
+			l = f.Name()[:us]
+		}
+		opts.Language = lang.New(l)
+
 		renderer := xml.NewRenderer(opts)
 
 		doTest(t, dir, base, renderer)

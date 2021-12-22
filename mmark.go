@@ -85,8 +85,8 @@ func main() {
 
 		p := parser.NewWithExtensions(mparser.Extensions)
 		parserFlags := parser.FlagsNone
-		documentTitle := ""    // hack to get document title from toml title block and then set it here.
-		documentLanguage := "" // get document language from title block if it is set.
+		documentTitle := ""      // hack to get document title from toml title block and then set it here.
+		documentLanguage := "en" // get document language from title block if it is set.
 		if !*flagHTML && !*flagMan {
 			parserFlags |= parser.SkipFootnoteList // both xml formats don't deal with footnotes well.
 		}
@@ -182,6 +182,7 @@ func main() {
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,
 				Comments: [][]byte{[]byte("//"), []byte("#")},
+				Language: lang.New(documentLanguage),
 			}
 			if *flagFragment {
 				opts.Flags |= xml.XMLFragment
