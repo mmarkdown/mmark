@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"log"
 	"sort"
+	"strings"
 
 	"github.com/mmarkdown/mmark/v2/mast"
 	"github.com/mmarkdown/mmark/v2/mast/reference"
@@ -17,14 +18,32 @@ import (
 func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.Node) {
 	seen := map[string]*mast.BibliographyItem{}
 	raw := map[string][]byte{}
+	names := []string{} // names of the authors and contacts
 
-	// Gather all citations.
+	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
+		if t, ok := node.(*mast.Title); ok {
+			names = authContFromTitle(t)
+			return ast.Terminate
+		}
+		return ast.GoToNext
+	})
+
+	// Gather all citations, but check for contacts/author citation, as we want to exclude
+	// those here - otherwise they end up in the bibliography.
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
 		switch c := node.(type) {
 		case *ast.Citation:
+		Destination:
 			for i, d := range c.Destination {
+				for n := range names {
+					if strings.EqualFold(names[n], string(d)) {
+						// author/contact ref -> exclude
+						continue Destination
+					}
+
+				}
 				if _, ok := seen[string(bytes.ToLower(d))]; ok {
-					continue
+					continue Destination
 				}
 				ref := &mast.BibliographyItem{}
 				ref.Anchor = d
@@ -192,4 +211,19 @@ func AddBibliography(doc ast.Node) bool {
 		ast.AppendChild(where, inform)
 	}
 	return (norm != nil) || (inform != nil)
+}
+
+// Authors FromTitle returns all the authors or contacts from the title block.
+func authContFromTitle(t *mast.Title) []string {
+	if t == nil {
+		return nil
+	}
+	names := []string{}
+	for _, a := range t.TitleData.Author {
+		names = append(names, a.Fullname)
+	}
+	for _, c := range t.TitleData.Contact {
+		names = append(names, c.Fullname)
+	}
+	return names
 }
