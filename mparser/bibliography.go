@@ -198,12 +198,15 @@ func fmtReference(data []byte) []byte {
 // added just after the backmatter node. If that node can't be found this
 // function returns false and does nothing.
 func AddBibliography(doc ast.Node) bool {
+	norm, inform := CitationToBibliography(doc)
 	where := NodeBackMatter(doc)
 	if where == nil {
+		if norm != nil || inform != nil {
+			log.Print("No {backmatter} found, can't insert references")
+		}
 		return false
 	}
 
-	norm, inform := CitationToBibliography(doc)
 	if norm != nil {
 		ast.AppendChild(where, norm)
 	}
