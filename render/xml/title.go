@@ -3,6 +3,7 @@ package xml
 import (
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -199,6 +200,9 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
 func (r *Renderer) titleSeriesInfo(w io.Writer, s reference.SeriesInfo) {
+	if s.Value == "" || s.Stream == "" || s.Status == "" || s.Name == "" {
+		log.Printf("Incomplete or empty [seriesInfo] in title block, resulting XML will fail to parse.")
+	}
 	attr := Attributes(
 		[]string{"value", "stream", "status", "name"},
 		[]string{s.Value, s.Stream, s.Status, s.Name},
