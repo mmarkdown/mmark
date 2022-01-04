@@ -76,14 +76,16 @@ Making a draft in text form (v3 output)
 
 Outputting HTML5 is done with the `-html` switch.
 
-There may be warnings omitted by `mmark`, to see and check for those you can discard standard output
-to just leave standard error: `./mmark rfc/3515.md > /dev/null`.
-
 Files edited under Windows/Mac and using Windows style will be converted into Unix style line ending
 before parsing. Any output from `mmark` will used Unix line endings.
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
+
+Note there are no _wrong_ markdown documents, so `mmark` will only warn about things that are not
+right. This may result in invalid XML. Any warning from `mmark` are send to standard error, to see
+and check for those you can discard standard output to just leave standard error: `./mmark
+rfc/3515.md > /dev/null`.
 
 ## Example RFC
 
