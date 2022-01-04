@@ -378,7 +378,7 @@ automatically starts the front matter for you *if* the document has a title bloc
 divisions can be done with `{frontmatter}`, `{mainmatter}` and `{backmatter}`. This must be the only
 thing on the line.
 
-Note if there isn't `{backmatter}` the bibliography will not be inserted.
+Note if there isn't a `{backmatter}` the bibliography will not be inserted.
 
 ### Captions
 
