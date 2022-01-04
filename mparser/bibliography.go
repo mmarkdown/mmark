@@ -202,7 +202,7 @@ func AddBibliography(doc ast.Node) bool {
 	where := NodeBackMatter(doc)
 	if where == nil {
 		if norm != nil || inform != nil {
-			log.Print("No {backmatter} found, can't insert references")
+			log.Print("No {backmatter} found, can't insert bibliography")
 		}
 		return false
 	}
