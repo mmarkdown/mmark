@@ -17,9 +17,10 @@ type Title struct {
 func NewTitle() *Title {
 	t := &Title{
 		TitleData: &TitleData{
-			Area:      "Internet",
-			Ipr:       "trust200902",
-			Consensus: true,
+			Area:         "Internet",
+			Ipr:          "trust200902",
+			Consensus:    true,
+			IndexInclude: true,
 		},
 	}
 	return t
