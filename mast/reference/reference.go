@@ -79,5 +79,6 @@ type Reference struct {
 	Format     *Format      `xml:"format,omitempty"`
 	Target     string       `xml:"target,attr"`
 	Series     []SeriesInfo `xml:"seriesInfo,omitempty"`
-	RefContent string       `xml:"refcontent,omitempty"`
+	RefContent []string     `xml:"refcontent,omitempty"`
+	Annotation []string     `xml:"annotation,omitempty"`
 }
