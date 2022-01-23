@@ -83,14 +83,14 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 		}
 
 		switch r.Type {
+		case ast.CitationTypeSuppressed:
+			fallthrough
 		case ast.CitationTypeInformative:
 			if informative == nil {
 				informative = &mast.Bibliography{Type: ast.CitationTypeInformative}
 			}
 
 			ast.AppendChild(informative, r)
-		case ast.CitationTypeSuppressed:
-			fallthrough
 		case ast.CitationTypeNormative:
 			if normative == nil {
 				normative = &mast.Bibliography{Type: ast.CitationTypeNormative}
