@@ -258,7 +258,7 @@ An I-D needs to have a Title Block with the following items filled out:
   and `References`, etc. Valid values are from [BCP47](https://tools.ietf.org/html/bcp47). This
   defaults to `en` (English). See the [current
   list](https://github.com/mmarkdown/mmark/blob/master/lang/lang.go).
-* `indexInclude` - set to true when you want to include an index (defaults to false).
+* `indexInclude` - set to true when you want to include an index (defaults to true).
 
 For a manual page the `title`, `area` and `workgroup` are mandatory, if `date` is not specified,
 "today" is assumed.
