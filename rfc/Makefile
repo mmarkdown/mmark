@@ -5,9 +5,10 @@ HTML := $(patsubst %.md,%.html,$(wildcard *.md))
 PDF := $(patsubst %.md,%.pdf,$(wildcard *.md))
 
 txt: $(TXT)
+# --table-borders {full,light,minimal,min}
 
 %.txt: %.md
-	$(MMARK) $< > $(basename $<).xml && xml2rfc --text --v3 $(basename $<).xml && rm $(basename $<).xml
+	$(MMARK) $< > $(basename $<).xml && xml2rfc --table-borders light --text --v3 $(basename $<).xml && rm $(basename $<).xml
 
 html: $(HTML)
 
