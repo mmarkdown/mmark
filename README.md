@@ -72,7 +72,7 @@ Making a draft in text form (v3 output)
 Outputting HTML5 is done with the `-html` switch.
 
 Files edited under Windows/Mac and using Windows style will be converted into Unix style line ending
-before parsing. Any output from `mmark` will used Unix line endings.
+before parsing. Any output from `mmark` will use Unix line endings.
 
 [1]: https://daringfireball.net/projects/markdown/ "Markdown"
 [2]: https://golang.org/ "Go Language"
