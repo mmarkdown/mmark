@@ -5,15 +5,16 @@ HTML := $(patsubst %.md,%.html,$(wildcard *.md))
 PDF := $(patsubst %.md,%.pdf,$(wildcard *.md))
 
 txt: $(TXT)
-# --table-borders {full,light,minimal,min}
 
-%.txt: %.md
-	$(MMARK) $< > $(basename $<).xml && xml2rfc --table-borders light --text --v3 $(basename $<).xml && rm $(basename $<).xml
+%.txt: %.xml
+	xml2rfc --table-borders light --text --v3 $<
+	rm -f $(basename $<).xml
 
 html: $(HTML)
 
-%.html: %.md
-	$(MMARK) $< > $(basename $<).xml && xml2rfc --html --v3 $(basename $<).xml && rm $(basename $<).xml
+%.html: %.xml
+	xml2rfc --html --v3 $<
+	rm -f $(basename $<).xml
 
 xml: $(XML)
 
@@ -22,8 +23,9 @@ xml: $(XML)
 
 pdf: $(PDF)
 
-%.pdf: %.md
-	$(MMARK) $< > $(basename $<).xml && xml2rfc --pdf --v3 $(basename $<).xml && rm $(basename $<).xml
+%.pdf: %.xml
+	xml2rfc --pdf --v3 $<
+	rm $(basename $<).xml
 
 .PHONY: clean
 clean:
