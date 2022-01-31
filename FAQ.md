@@ -118,10 +118,24 @@ Second Term
 : This is one definition of the second term.
 ~~~
 
+A non compact definition list can be done like so: (not the block attribute allows for a newline
+after the term):
+
+~~~ markdown
+{newline="true"}
+First Term
+
+: This is the definition of the first term.
+
+Second Term
+
+: This is one definition of the second term.
+~~~
+
 ## How do I create nested lists?
 
 ~~~ markdown
-Foo validator:
+Foo validator
 : It performs the following actions:
   * runs
   * jumps

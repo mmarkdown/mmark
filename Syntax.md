@@ -536,6 +536,23 @@ Lists are the normal markdown lists, but we track how they are typeset, for orde
 delimiter can be either `.` or `)`. When a parenthesis is used the `type` is set to `%d)`. Note that
 any block level attributes take precedence.
 
+Newlines between list items will create a non-compact list, i.e. compare:
+
+~~~
+1. Item
+2. Item
+~~~
+
+with:
+
+~~~
+1. Item
+
+2. Item
+~~~
+
+This is true for all types of lists.
+
 ## Inline Elements
 
 ### Indices
