@@ -7,7 +7,7 @@ PDF := $(patsubst %.md,%.pdf,$(wildcard *.md))
 txt: $(TXT)
 
 %.txt: %.xml
-	xml2rfc --table-borders light --text --v3 $<
+	xml2rfc --text --v3 $<
 	rm -f $(basename $<).xml
 
 html: $(HTML)
