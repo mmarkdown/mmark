@@ -653,6 +653,24 @@ Lorem ipsum dolor sit amet, at ultricies ...
 See Section (#header).
 ~~~
 
+Using Block Level Attributes this also works for tables and figures (including artwork):
+
+~~~
+{id="myid"}
+---|---
+ a | b
+ d | d
+~~~
+
+or
+
+    {id="myid"}
+    ~~~~
+    artwork
+    ~~~~
+
+And then reference the same `(#myid)`, the formatter (`xml2rfc`) will do the right thing.
+
 ### Super- and Subscript
 
 For superscript use `^` and for subscripts use `~`. For example:
