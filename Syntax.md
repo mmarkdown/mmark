@@ -643,6 +643,8 @@ included in the bibliography.
 
 Cross references can use the syntax `[](#id)`, but usually the need for the title within the
 brackets is not needed, so Mmark has the shorter syntax `(#id)` to cross reference in the document.
+Note: if you do use `[](#id)` it is assumed you want to external reference (`eref` in XML2RFC
+output).
 
 Example:
 
@@ -670,6 +672,23 @@ or
     ~~~~
 
 And then reference the same `(#myid)`, the formatter (`xml2rfc`) will do the right thing.
+
+#### Cross Reference Text Suffices
+
+Just like (#reference-text-suffices) you can tweak how the formatter formats the reference. For
+XML2RFC output this sets the `format` attribute. This format attribute has (pratically) two values:
+
+1. `counter` -> just output a number
+2. `title` -> will figure out the title of a parent element
+
+To allow for these and maintain consistency with the citations, Mmark allows:
+
+* `(#myid, see counter)` -> format="counter"
+* `(#myid, see title)` -> format="title"
+
+Where the string "see" is optional. Translation of these strings _is_ supported for a few languages,
+`zie nummer` (Dutch) is supported for instance. So `(#myd, counter)` and `(#myid, nummer)` is
+supported.
 
 ### Super- and Subscript
 
