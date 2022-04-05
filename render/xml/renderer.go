@@ -490,7 +490,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	appendLanguageAttr(codeBlock, codeBlock.Info)
 
 	name := "artwork"
-	if codeBlock.Info != nil {
+	if len(codeBlock.Info) != 0 {
 		name = "sourcecode"
 	}
 
