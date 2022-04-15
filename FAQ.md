@@ -74,6 +74,12 @@ Using the contact is done by referencing it: `[@David Addison]` (using the `full
 the reference is the *first* thing after a new paragraph it will be expanded like XML2RFC expands
 authors in an Internet-Draft.
 
+# Errors
+
+## Error: IDREF attribute target references an unknown ID "...", at None
+
+You likely forgot to open the back matter with `{backmatter}`.
+
 # XML2RFCv3 FAQ
 
 ## What version of xml2rfc is supported?
