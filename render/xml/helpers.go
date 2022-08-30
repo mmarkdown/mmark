@@ -6,10 +6,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/mmarkdown/mmark/v2/mast"
-
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 func (r *Renderer) out(w io.Writer, d []byte)  { w.Write(d) }

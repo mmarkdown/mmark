@@ -3,10 +3,9 @@ package mparser
 import (
 	"log"
 
-	"github.com/mmarkdown/mmark/v2/mast"
-
 	"github.com/BurntSushi/toml"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 // TitleHook will parse a title and returns it. The start and ending can

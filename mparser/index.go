@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/mmarkdown/mmark/v2/mast"
-
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 // IndexToDocumentIndex crawls the entire doc searching for indices, it will then return
@@ -17,8 +16,8 @@ import (
 // - IndexItem
 //   - IndexLink
 //   - IndexSubItem
-//     - IndexLink
-//     - IndexLink
+//   - IndexLink
+//   - IndexLink
 //
 // Which can then be rendered by the renderer.
 func IndexToDocumentIndex(doc ast.Node) *mast.DocumentIndex {

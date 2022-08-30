@@ -14,11 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mmarkdown/mmark/v2/lang"
-	"github.com/mmarkdown/mmark/v2/mast"
-
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/mmarkdown/mmark/v2/lang"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 // Flags control optional behavior of Markdown renderer.

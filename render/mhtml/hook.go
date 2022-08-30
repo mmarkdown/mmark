@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/v2/lang"
 	"github.com/mmarkdown/mmark/v2/mast"
-
-	"github.com/gomarkdown/markdown/ast"
 )
 
 var (

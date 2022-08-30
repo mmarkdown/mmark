@@ -10,7 +10,6 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
-
 	"github.com/mmarkdown/mmark/v2/mast"
 	"github.com/mmarkdown/mmark/v2/mast/reference"
 )

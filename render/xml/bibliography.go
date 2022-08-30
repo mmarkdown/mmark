@@ -2,13 +2,12 @@ package xml
 
 import (
 	"bytes"
-	goxml "encoding/xml"
+	"encoding/xml"
 	"fmt"
 	"io"
 
-	"github.com/mmarkdown/mmark/v2/mast"
-
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
@@ -33,7 +32,7 @@ func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering b
 
 func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	if node.Reference != nil {
-		data, _ := goxml.MarshalIndent(node.Reference, "", "  ")
+		data, _ := xml.MarshalIndent(node.Reference, "", "  ")
 		r.out(w, data)
 		r.cr(w)
 		return

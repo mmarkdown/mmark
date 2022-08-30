@@ -7,10 +7,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/mmarkdown/mmark/v2/mast"
 	"github.com/mmarkdown/mmark/v2/mast/reference"
-
-	"github.com/gomarkdown/markdown/ast"
 )
 
 // CitationToBibliography walks the AST and gets all the citations from HTML blocks and groups them into
@@ -117,7 +116,7 @@ func NodeBackMatter(doc ast.Node) ast.Node {
 	return matter
 }
 
-// Parse '<reference anchor='CBR03' target=''>' and return the string after anchor= is the ID for the reference.
+// Parse '<reference anchor='CBR03' target=">' and return the string after anchor= is the ID for the reference.
 func anchorFromReference(data []byte) []byte {
 	if !bytes.HasPrefix(data, []byte("<reference ")) && !bytes.HasPrefix(data, []byte("<referencegroup ")) {
 		return nil

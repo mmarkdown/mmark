@@ -7,12 +7,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/mmarkdown/mmark/v2/lang"
 	"github.com/mmarkdown/mmark/v2/mparser"
 	"github.com/mmarkdown/mmark/v2/render/xml"
-
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/parser"
 )
 
 func TestMmarkXML(t *testing.T) {
