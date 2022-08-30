@@ -671,6 +671,25 @@ or
 
 And then reference the same `(#myid)`, the formatter (`xml2rfc`) will do the right thing.
 
+#### Cross Reference Text Suffixes
+
+Just like [](#reference-text-suffices), you can add a suffix text to a reference, to influence how
+xml2rfc will render it, see <https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-3.11>
+it will allow you to set the format attribute. The following is supported:
+
+* counter
+* title
+* default
+
+* `(#myid, use counter)` -> format="counter"
+* `(#myid, use title)` -> format="title"
+
+Translation of these strings _is_ supported for a few languages, `(#myid, gebruik titel)` (Dutch) is
+supported for instance.
+
+Also note these strings need to be literary typed as shown here (we may become more lenient in the
+future).
+
 ### Super- and Subscript
 
 For superscript use `^` and for subscripts use `~`. For example:

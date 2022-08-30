@@ -20,15 +20,21 @@ func New(language string) Lang {
 			WrittenBy:    "Written by",
 			See:          "see",
 			Section:      "section",
+			UseCounter:   "use counter",
+			UseTitle:     "use title",
 		},
 		"nl": {
+			And:          "en",
 			Bibliography: "Bibliografie",
 			Footnotes:    "Voetnoten",
 			Index:        "Index",
 			See:          "zie",
 			Section:      "sectie",
+			UseCounter:   "gebruik nummer",
+			UseTitle:     "gebruik titel",
 		},
 		"de": {
+			And:          "und",
 			Bibliography: "Literaturverzeichnis",
 			Footnotes:    "Fußnoten",
 			Index:        "Index",
@@ -71,9 +77,11 @@ type Term struct {
 	Index        string
 	WrittenBy    string
 
-	// The references
-	See     string
-	Section string
+	// for cross references
+	See        string
+	Section    string
+	UseCounter string
+	UseTitle   string
 }
 
 func (l Lang) Footnotes() string {
@@ -138,4 +146,20 @@ func (l Lang) Section() string {
 		return l.m["en"].Section
 	}
 	return t.Section
+}
+
+func (l Lang) UseCounter() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].UseCounter
+	}
+	return t.UseCounter
+}
+
+func (l Lang) UseTitle() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].UseTitle
+	}
+	return t.UseTitle
 }

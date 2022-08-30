@@ -567,7 +567,17 @@ func (r *Renderer) callout(w io.Writer, callout *ast.Callout) {
 
 func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering bool) {
 	if entering {
-		r.outTag(w, "<xref", []string{"target=\"" + string(cr.Destination) + "\""})
+		attr := []string{fmt.Sprintf(`target="%s"`, cr.Destination)}
+		if len(cr.Suffix) > 0 {
+			switch {
+			case string(cr.Suffix) == r.opts.Language.UseCounter():
+				attr = append(attr, `format="counter"`)
+
+			case string(cr.Suffix) == r.opts.Language.UseTitle():
+				attr = append(attr, `format="title"`)
+			}
+		}
+		r.outTag(w, "<xref", attr)
 		return
 	}
 	r.outs(w, "</xref>")
