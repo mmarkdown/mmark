@@ -570,10 +570,10 @@ func (r *Renderer) crossReference(w io.Writer, cr *ast.CrossReference, entering 
 		attr := []string{fmt.Sprintf(`target="%s"`, cr.Destination)}
 		if len(cr.Suffix) > 0 {
 			switch {
-			case bytes.Equal(cr.Suffix, r.opts.Language.UseCounter()):
+			case string(cr.Suffix) == r.opts.Language.UseCounter():
 				attr = append(attr, `format="counter"`)
 
-			case bytes.Equal(cr.Suffix, r.opts.Language.UseTitle()):
+			case string(cr.Suffix) == r.opts.Language.UseTitle():
 				attr = append(attr, `format="title"`)
 			}
 		}
