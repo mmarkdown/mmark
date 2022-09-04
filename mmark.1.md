@@ -7,7 +7,7 @@ date: October 2019
 
 # NAME
 
-mmark \\- generate XML, HTML or markdown from mmark markdown documents.
+mmark \\- generate XML, HTML or manual pages from mmark markdown documents.
 
 # SYNOPSIS
 
@@ -26,7 +26,7 @@ The syntax is detailed at [https://mmark.miek.nl/syntax](https://mmark.miek.nl/s
 
 Compared to other markdown variants mmark adds:
 
-*  (Extended) Title block to specify authors and IETF specific bits.
+*  (Extended) title block to specify authors and IETF specific bits.
 
 *  (Special) sections for abstracts, prefaces or notes.
 
@@ -39,7 +39,7 @@ Compared to other markdown variants mmark adds:
 
 *  Asides for small notes.
 
-*  Figures and Subfigures that allow for grouping images into subfigures as well as giving a single
+*  Figures and subfigures that allow for grouping images into subfigures as well as giving a single
    image metadata (a link, attributes, etc.).
 
 *  Block Level Attributes that allow to specify attributes, classes and IDs for elements.
@@ -50,7 +50,7 @@ Compared to other markdown variants mmark adds:
 
 *  Cross references: short form of referencing a section in the document.
 
-*  Super- and Subscript.
+*  Super- and subscript.
 
 *  Callouts in code and text.
 
