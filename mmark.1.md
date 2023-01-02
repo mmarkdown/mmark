@@ -72,45 +72,45 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 **-ast**
 
-:  print abstract syntax tree and exit.
+:  print abstract syntax tree and exit
 
 **-css string**
 
-:  link to a CSS stylesheet (only used with -html).
+:  link to a CSS stylesheet (only used with -html)
 
 **-fragment**
 
-:  don't create a full document.
+:  don't create a full document
 
 **-head string**
 
-:  link to HTML to be included in head (only used with -html).
+:  link to HTML to be included in head (only used with -html)
 
 **-html**
 
-:  create HTML output.
+:  create HTML output
 
 **-man**
 
-:  output nroff (manual pages).
+:  output nroff (manual pages)
 
 **-unsafe**
 
 :  allow includes from anywhere in the filesystem, otherwise they are only allowed *below* the
-   current document.
+   current document
 
 **-index**
 
-:  generate an index at the end of the document (default true).
+:  generate an index at the end of the document (default true)
 
 **-bibliography**
 
 :  generate a bibliography section after the back matter (default true), this *needs* a
-   `{{backmatter}}` in the document.
+   `{{backmatter}}` in the document
 
 **-version**
 
-:  show mmark's version.
+:  show mmark's version
 
 # ALSO SEE
 
