@@ -20,12 +20,13 @@ import (
 // Flags control optional behavior of XML3 renderer.
 type Flags int
 
-// HTML renderer configuration options.
+// XML3 renderer configuration options.
 const (
-	FlagsNone   Flags = 0
-	XMLFragment Flags = 1 << iota // Don't generate a complete XML document
-	SkipHTML                      // Skip preformatted HTML blocks - skips comments
-	SkipImages                    // Skip embedded images
+	FlagsNone    Flags = 0
+	XMLFragment  Flags = 1 << iota // Don't generate a complete XML document
+	SkipHTML                       // Skip preformatted HTML blocks - skips comments
+	SkipImages                     // Skip embedded images
+	AllowUnicode                   // Allow bare unicode, otherwise wrap in <u>
 
 	CommonFlags Flags = FlagsNone
 )
@@ -111,6 +112,11 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 			return
 		}
 	}
+	if r.opts.Flags&AllowUnicode != 0 {
+		html.EscapeHTML(w, text.Literal)
+		return
+	}
+
 	// each string of unicode chars is outputted between <u> tags.
 	uni := 0
 	for i, c := range string(text.Literal) {

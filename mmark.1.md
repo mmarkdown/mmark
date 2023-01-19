@@ -99,6 +99,12 @@ The man renderer outputs nroff that can be viewed via man(1).
 :  allow includes from anywhere in the filesystem, otherwise they are only allowed *below* the
    current document
 
+**-unicode**
+
+:  allow unicode characters in \<t\>, from xml2rfc 3.16.0 this is allowed. It's true by default, set
+   to false if you have an older xml2rfc version. Note the \<u\> text/html output produced by
+   xml2rfc is (extremely) verbose.
+
 **-index**
 
 :  generate an index at the end of the document (default true)
