@@ -31,6 +31,7 @@ var (
 	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagIntraEmph = flag.Bool("intra-emphasis", false, "interpret camel_case_value as emphasizing \"case\" (legacy behavior)")
 	flagVersion   = flag.Bool("version", false, "show mmark version")
+	flagUnicode   = flag.Bool("unicode", true, "from xml2rfc 3.16 onwards unicode is allowed in <t>")
 )
 
 func main() {
@@ -185,6 +186,9 @@ func main() {
 			}
 			if *flagFragment {
 				opts.Flags |= xml.XMLFragment
+			}
+			if *flagUnicode {
+				opts.Flags |= xml.AllowUnicode
 			}
 
 			renderer = xml.NewRenderer(opts)
