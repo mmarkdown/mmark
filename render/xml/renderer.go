@@ -1022,7 +1022,9 @@ func (r *Renderer) paragraphWithOnlyContacts(node *ast.Paragraph) bool {
 			return false
 		}
 		if ok1 {
-			// TODO check if the text is empty
+			if trimmed := bytes.TrimSpace(n.(*ast.Text).Literal); len(trimmed) != 0 {
+				return false
+			}
 		}
 		if ok2 {
 			for _, c := range citation.Destination {
@@ -1055,7 +1057,9 @@ func (r *Renderer) paragraphWithOnlyIndices(node *ast.Paragraph) bool {
 			return false
 		}
 		if ok1 {
-			// TODO check if the text is empty
+			if trimmed := bytes.TrimSpace(n.(*ast.Text).Literal); len(trimmed) != 0 {
+				return false
+			}
 		}
 		if ok2 {
 			index++
