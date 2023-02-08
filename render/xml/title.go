@@ -199,8 +199,17 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
 func (r *Renderer) titleSeriesInfo(w io.Writer, s reference.SeriesInfo) {
-	if s.Value == "" || s.Stream == "" || s.Status == "" || s.Name == "" {
-		log.Printf("Incomplete or empty [seriesInfo] in title block, resulting XML will fail to parse.")
+	if s.Value == "" {
+		log.Printf("Empty 'value' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Stream == "" {
+		log.Printf("Empty 'stream' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Status == "" {
+		log.Printf("Empty 'status' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Name == "" {
+		log.Printf("Empty 'name' in [seriesInfo], resulting XML may fail to parse.")
 	}
 	attr := Attributes(
 		[]string{"value", "stream", "status", "name"},
