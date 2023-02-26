@@ -501,10 +501,16 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 
 	r.cr(w)
 	r.outTag(w, "<"+name, html.BlockAttrs(codeBlock))
+	callout := false
 	if r.opts.Comments != nil {
+		callout = callouts(codeBlock.Literal, r.opts.Comments)
+	}
+	if callout {
 		EscapeHTMLCallouts(w, codeBlock.Literal, r.opts.Comments)
 	} else {
-		html.EscapeHTML(w, codeBlock.Literal)
+		r.outs(w, "<![CDATA[")
+		r.out(w, codeBlock.Literal)
+		r.outs(w, "]]>\n")
 	}
 	r.outs(w, "</"+name+">")
 	r.cr(w)
