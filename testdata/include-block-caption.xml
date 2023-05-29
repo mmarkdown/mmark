@@ -1,8 +1,9 @@
 <figure><name>A sample function.
 </name>
-<sourcecode type="c">main() int {
+<sourcecode type="c"><![CDATA[main() int {
         return 0
 }
+]]>
 </sourcecode>
 </figure>
 <t>And some other text.</t>

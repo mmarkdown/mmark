@@ -14,5 +14,6 @@
 </tr>
 </tbody>
 </table>
-<sourcecode type="sh">% cat /dev/zero
+<sourcecode type="sh"><![CDATA[% cat /dev/zero
+]]>
 </sourcecode>
