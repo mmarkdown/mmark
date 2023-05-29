@@ -1,2 +1,3 @@
-<sourcecode type="go">println(&quot;hello&quot;)
+<sourcecode type="go"><![CDATA[println("hello")
+]]>
 </sourcecode>
