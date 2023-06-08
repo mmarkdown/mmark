@@ -73,41 +73,41 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 .SH "OPTIONS"
 .TP
-\fB-ast\fP
+\fB\fC-ast\fR
 print abstract syntax tree and exit
 .TP
-\fB-css string\fP
-link to a CSS stylesheet (only used with -html)
-.TP
-\fB-fragment\fP
+\fB\fC-fragment\fR
 don't create a full document
 .TP
-\fB-head string\fP
-link to HTML to be included in head (only used with -html)
+\fB\fC-css\fR \fIURL\fP
+\fIURL\fP to a CSS stylesheet (only used with -html)
 .TP
-\fB-html\fP
+\fB\fC-head\fR \fIURL\fP
+\fIURL\fP to HTML to be included in head (only used with -html)
+.TP
+\fB\fC-html\fR
 create HTML output
 .TP
-\fB-man\fP
+\fB\fC-man\fR
 output nroff (manual pages)
 .TP
-\fB-unsafe\fP
+\fB\fC-unsafe\fR
 allow includes from anywhere in the filesystem, otherwise they are only allowed \fIbelow\fP the
 current document
 .TP
-\fB-unicode\fP
+\fB\fC-unicode\fR
 allow unicode characters in <t>, from xml2rfc 3.16.0 this is allowed. It's true by default, set
 to false if you have an older xml2rfc version. Note the <u> text/html output produced by
 xml2rfc is (extremely) verbose.
 .TP
-\fB-index\fP
+\fB\fC-index\fR
 generate an index at the end of the document (default true)
 .TP
-\fB-bibliography\fP
+\fB\fC-bibliography\fR
 generate a bibliography section after the back matter (default true), this \fIneeds\fP a
 \fB\fC{{backmatter}}\fR in the document
 .TP
-\fB-version\fP
+\fB\fC-version\fR
 show mmark's version
 
 

@@ -70,51 +70,52 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 # OPTIONS
 
-**-ast**
+`-ast`
 
 :  print abstract syntax tree and exit
 
-**-css string**
-
-:  link to a CSS stylesheet (only used with -html)
-
-**-fragment**
+`-fragment`
 
 :  don't create a full document
 
-**-head string**
 
-:  link to HTML to be included in head (only used with -html)
+`-css` *URL*
 
-**-html**
+:  *URL* to a CSS stylesheet (only used with -html)
+
+`-head` *URL*
+
+:  *URL* to HTML to be included in head (only used with -html)
+
+`-html`
 
 :  create HTML output
 
-**-man**
+`-man`
 
 :  output nroff (manual pages)
 
-**-unsafe**
+`-unsafe`
 
 :  allow includes from anywhere in the filesystem, otherwise they are only allowed *below* the
    current document
 
-**-unicode**
+`-unicode`
 
 :  allow unicode characters in \<t\>, from xml2rfc 3.16.0 this is allowed. It's true by default, set
    to false if you have an older xml2rfc version. Note the \<u\> text/html output produced by
    xml2rfc is (extremely) verbose.
 
-**-index**
+`-index`
 
 :  generate an index at the end of the document (default true)
 
-**-bibliography**
+`-bibliography`
 
 :  generate a bibliography section after the back matter (default true), this *needs* a
    `{{backmatter}}` in the document
 
-**-version**
+`-version`
 
 :  show mmark's version
 
