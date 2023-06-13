@@ -51,6 +51,7 @@ man: mmark.1 mmark-syntax.7 mmark-syntax-images.7
 .PHONY: release
 release:
 	git ci -am"Version $(VERSION)"
+	git tag v$(VERSION)
 	git push --tags
 	git push
 
