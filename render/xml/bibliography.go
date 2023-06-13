@@ -48,10 +48,10 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
-		tag = makeXiInclude(ToolsRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+		tag = makeXiInclude(BibRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
-		tag = makeXiInclude(ToolsW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
+		tag = makeXiInclude(BibW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
@@ -60,7 +60,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 			node.Anchor[hash] = '-'
 			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
-		tag = makeXiInclude(ToolsID, fmt.Sprintf("reference.I-D.%s.xml", node.Anchor[4:]))
+		tag = makeXiInclude(BibID, fmt.Sprintf("reference.I-D.%s.xml", node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)
@@ -72,7 +72,7 @@ func makeXiInclude(url, reference string) string {
 }
 
 var (
-	ToolsRFC = "https://xml2rfc.ietf.org/public/rfc/bibxml"
-	ToolsID  = "https://xml2rfc.ietf.org/public/rfc/bibxml-ids"
-	ToolsW3C = "https://xml2rfc.ietf.org/public/rfc/bibxml-w3c"
+	BibRFC = "https://bib.ietf.org/public/rfc/bibxml"
+	BibID  = "https://bib.ietf.org/public/rfc/bibxml-ids"
+	BibW3C = "https://bib.ietf.org/public/rfc/bibxml-w3c"
 )
