@@ -7,7 +7,7 @@ DARWIN_ARCH:=amd64 arm64
 .PHONY: mmark
 mmark:
 	@echo $(VERSION)
-	go build
+	CGO_ENABLED=0 go build
 
 define DOCHEADER
 %%%
