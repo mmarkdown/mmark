@@ -206,6 +206,14 @@ func AddBibliography(doc ast.Node) bool {
 		return false
 	}
 
+	// RFC 7322 Section 4.8.6: When both normative and informative references
+	// exist, the references section should be split into two subsections.
+	if (norm != nil) && (inform != nil) {
+		wrapper := &mast.BibliographyWrapper{}
+		ast.AppendChild(where, wrapper)
+		where = wrapper
+	}
+
 	if norm != nil {
 		ast.AppendChild(where, norm)
 	}
