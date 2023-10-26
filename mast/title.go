@@ -19,7 +19,7 @@ func NewTitle() *Title {
 		TitleData: &TitleData{
 			Area:         "Internet",
 			Ipr:          "trust200902",
-			Consensus:    true,
+			Consensus:    false,
 			IndexInclude: true,
 			SortRefs:     false,
 		},
