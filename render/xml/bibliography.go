@@ -73,6 +73,6 @@ func makeXiInclude(url, reference string) string {
 
 var (
 	BibRFC = "https://bib.ietf.org/public/rfc/bibxml"
-	BibID  = "https://bib.ietf.org/public/rfc/bibxml-ids"
-	BibW3C = "https://bib.ietf.org/public/rfc/bibxml-w3c"
+	BibID  = "https://bib.ietf.org/public/rfc/bibxml3"
+	BibW3C = "https://bib.ietf.org/public/rfc/bibxml4"
 )
