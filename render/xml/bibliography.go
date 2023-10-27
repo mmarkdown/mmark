@@ -10,6 +10,21 @@ import (
 	"github.com/mmarkdown/mmark/v2/mast"
 )
 
+func (r *Renderer) bibliographyWrapper(w io.Writer, node *mast.BibliographyWrapper, entering bool) {
+	if len(node.GetChildren()) == 0 {
+		return
+	}
+	if !entering {
+		r.outs(w, "</references>\n")
+		return
+	}
+
+	r.sectionClose(w, nil)
+
+	r.outs(w, `<references><name>References</name>`)
+	r.cr(w)
+}
+
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
 	if len(node.GetChildren()) == 0 {
 		return

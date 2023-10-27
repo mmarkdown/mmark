@@ -43,8 +43,9 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		[]string{"updates", "obsoletes", "indexInclude"},
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes), fmt.Sprintf("%t", d.IndexInclude)},
 	)...)
-	// Only for IETF stream add the consensus attribute.
-	if d.SubmissionType == "IETF" {
+	// RFC 7841 Appendix A.2.2: IETF and IRTF streams pay attention to the consensus attribute.
+	// RFC 7991 Section 2.45.2: Default is false.
+	if ((d.SubmissionType == "IETF") || (d.SubmissionType == "IRTF")) && d.Consensus {
 		attrs = append(attrs, Attributes(
 			[]string{"consensus"},
 			[]string{fmt.Sprintf("%t", d.Consensus)},
