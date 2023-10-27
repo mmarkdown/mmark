@@ -50,6 +50,13 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 			[]string{fmt.Sprintf("%t", d.Consensus)},
 		)...)
 	}
+	// RFC 7991 Section 2.45.11: Default is false.
+	if d.SortRefs {
+		attrs = append(attrs, Attributes(
+			[]string{"sortRefs"},
+			[]string{fmt.Sprintf("%t", d.SortRefs)},
+		)...)
+	}
 	if t.TocDepth > 0 {
 		attrs = append(attrs, Attributes(
 			[]string{"tocDepth"},

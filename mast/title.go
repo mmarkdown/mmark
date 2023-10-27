@@ -21,6 +21,7 @@ func NewTitle() *Title {
 			Ipr:          "trust200902",
 			Consensus:    true,
 			IndexInclude: true,
+			SortRefs:     false,
 		},
 	}
 	return t
@@ -34,6 +35,7 @@ type TitleData struct {
 	SeriesInfo     reference.SeriesInfo
 	IndexInclude   bool
 	Consensus      bool
+	SortRefs       bool
 	TocDepth       int
 	Ipr            string // See https://tools.ietf.org/html/rfc7991#appendix-A.1
 	Obsoletes      []int
