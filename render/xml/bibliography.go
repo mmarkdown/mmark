@@ -83,7 +83,7 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 
 			draft = "draft-"
 			node.Anchor[hash] = '-'
-			//defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
+			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
 		tag = makeXiInclude(BibID, fmt.Sprintf("reference.I-D.%s%s.xml", draft, node.Anchor[4:]))
 	}
