@@ -14,7 +14,7 @@ builds:
         goarch: arm
 
 archives:
-  - format: tar.gz
+  - format: tgz
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_
