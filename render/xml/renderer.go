@@ -256,9 +256,7 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 			continue
 		}
 
-		// draft-referencing, if there is a #00 (#version) we remove it from the target, but save
-		// the number as the first word in the Suffix to pick it up later when we generate the URL
-		// for the xi:include
+		// draft-referencing, if there is a #00 (#version) we remove it from the target as this isn't allowed.
 		if bytes.HasPrefix(c, []byte("I-D.")) {
 			hash := bytes.Index(c, []byte("#"))
 			if hash > 0 {
