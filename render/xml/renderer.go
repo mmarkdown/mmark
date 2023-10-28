@@ -276,21 +276,21 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 				switch {
 				case bytes.HasPrefix(suf, []byte(section)):
 					num := suf[len(section):]
-					attr = append(attr, `sectionFormat="of" relative="#"`)
+					attr = append(attr, `sectionFormat="of"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				case bytes.HasPrefix(suf, []byte(seesection)):
 					num := suf[len(seesection):]
-					attr = append(attr, `sectionFormat="comma" relative="#"`)
+					attr = append(attr, `sectionFormat="comma"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				case bytes.HasPrefix(suf, []byte(seepsection)):
 					num := suf[len(seepsection):]
-					attr = append(attr, `sectionFormat="parens" relative="#"`)
+					attr = append(attr, `sectionFormat="parens"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				default:
-					attr = append(attr, `sectionFormat="bare" relative="#"`)
+					attr = append(attr, `sectionFormat="bare"`)
 					attr = append(attr, `section="`+string(suf)+`"`)
 				}
 			}
