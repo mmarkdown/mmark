@@ -70,12 +70,22 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
+		draft := ""
 		if hash > 0 {
-			// rewrite # to - and we have our link
+			// no version: https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.brzozowski-dhc-dhcvp6-leasequery.xml
+			//
+			// with version: https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.draft-brzozowski-dhc-dhcvp6-leasequery-00.xml
+			//
+			// rewrite # to - and we have our link, and also include "draft-" before for it xi:include
+			// the anchor text from the reference is: anchor="I-D.brzozowski-dhc-dhcvp6-leasequery"
+			// problem here is that the original xref includes #00, which isn't the case in the reference
+			// any more.
+
+			draft = "draft-"
 			node.Anchor[hash] = '-'
-			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
+			//defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
-		tag = makeXiInclude(BibID, fmt.Sprintf("reference.I-D.%s.xml", node.Anchor[4:]))
+		tag = makeXiInclude(BibID, fmt.Sprintf("reference.I-D.%s%s.xml", draft, node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)
