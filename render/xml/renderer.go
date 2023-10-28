@@ -256,6 +256,14 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 			continue
 		}
 
+		// draft-referencing, if there is a #00 (#version) we remove it from the target as this isn't allowed.
+		if bytes.HasPrefix(c, []byte("I-D.")) {
+			hash := bytes.Index(c, []byte("#"))
+			if hash > 0 {
+				c = c[:hash]
+			}
+		}
+
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
 
 		// Attempt to parse the suffix.

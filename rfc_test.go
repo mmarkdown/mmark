@@ -26,6 +26,8 @@ var (
 		"5841.md",
 		"7511.md",
 		"8341.md",
+		//
+		"draft-citation-test.md",
 	}
 )
 
