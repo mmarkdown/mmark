@@ -19,4 +19,4 @@ archives:
       {{ .ProjectName }}_
       {{- .Version }}_
       {{- .Os }}_
-      {{ .Arch }}
+      {{- .Arch }}
