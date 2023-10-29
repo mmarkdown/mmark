@@ -11,15 +11,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - run: git fetch --force --tags
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.3
+      - uses: goreleaser/goreleaser-action@v5
+        with:
+          version: v1.21.2
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Release version ${{ github.ref }}
-          draft: false
-          prerelease: false
