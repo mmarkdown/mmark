@@ -568,6 +568,9 @@ func (r *Renderer) text(w io.Writer, node *ast.Text, entering bool) {
 		}
 	}
 
+	// A hyphen must be escaped otherwise it will be an em/en-dash.
+	text = bytes.Replace(text, []byte("-"), []byte("\\-"), -1)
+
 	r.out(w, text)
 }
 
