@@ -24,7 +24,7 @@ Callouts
 
 .RS
 .IP \(en 4
-\fIalways\fP rendered and require double greater/less-than signs, \fB\fC<<1>>\fR.
+\fIalways\fP rendered and require double greater/less\-than signs, \fB\fC<<1>>\fR.
 .IP \(en 4
 \fIalways\fP require a comment in the code, i.e. \fB\fC//<<1>>\fR will be rendered as a callout, a plain
 \fB\fC<<1>>\fR will not.
@@ -51,7 +51,7 @@ maintain.
 .PP
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
-be to write a "check-the-code" tool that syntax checks all code in code blocks. Eventually these
+be to write a "check\-the\-code" tool that syntax checks all code in code blocks. Eventually these
 could be build into the \fB\fCmmark\fR binary itself. See some fun
 ideas
 \[la]https://github.com/mmarkdown/filter\[ra] here.
@@ -102,7 +102,7 @@ extensions
 .IP \(bu 4
 \fISmartypants\fP, expand \fB\fC--\fR and \fB\fC---\fR into ndash and mdashes.
 .IP \(bu 4
-\fISuperSubscript\fP, parse super- and subscript: H\d2\uO is water and 2\u10\d is 1024.
+\fISuperSubscript\fP, parse super\- and subscript: H\d2\uO is water and 2\u10\d is 1024.
 .IP \(bu 4
 \fITables\fP, parse tables.
 .IP \(bu 4
@@ -148,7 +148,7 @@ Asides
 \[la]#asides\[ra].
 .IP \(bu 4
 Figures and Subfigures
-\[la]#figures-and-subfigures\[ra] - allows grouping images into subfigures as
+\[la]#figures-and-subfigures\[ra] \- allows grouping images into subfigures as
 well as giving a single image metadata (a link, attributes, etc.). See Images in
 Mmark
 \[la]/syntax/images\[ra] for more details.
@@ -168,7 +168,7 @@ In document cross references
 \[la]#cross-references\[ra], short form of referencing a section in the
 document.
 .IP \(bu 4
-Super- and Subscript
+Super\- and Subscript
 \[la]#super-and-subscript\[ra]
 .IP \(bu 4
 Callouts
@@ -195,13 +195,13 @@ will only assume inline elements and not parse the includes (which are block lev
 A bibliography is \fIonly added\fP if a \fB\fC{backmatter}\fR has been specified, because we need to add just
 before that point.
 .IP \(bu 4
-Intra-work emphasis is enabled so a string like \fB\fCSSH_MSG_KEXECDH_REPLY\fR is interpreted as
+Intra\-work emphasis is enabled so a string like \fB\fCSSH_MSG_KEXECDH_REPLY\fR is interpreted as
 \fB\fCSSH<em>MSG</em>...\fR. You need to escape the underscores: \fB\fCSSH\_MSG...\fR.
 
 
 .SS "RFC 7991 XML OUTPUT"
 .PP
-This is the output format used for generating Internet-Drafts and RFCs. The generated XML needs to
+This is the output format used for generating Internet\-Drafts and RFCs. The generated XML needs to
 be processed by another tool (xml2rfc) to generate to official (final) output. The XML from \fImmark\fP
 can be used directly to upload to the IETF tools website.
 
@@ -310,7 +310,7 @@ found.
 .TP
 Images:
 See Images in Mmark
-\[la]/syntax/images\[ra] for details, \fB\fCascii-art\fR images from a sub-figure are
+\[la]/syntax/images\[ra] for details, \fB\fCascii-art\fR images from a sub\-figure are
 included.
 .TP
 References and citations:
@@ -350,51 +350,51 @@ title = "Foo Bar"
 
 .SS "ELEMENTS OF THE TITLE BLOCK"
 .PP
-An I-D needs to have a Title Block with the following items filled out:
+An I\-D needs to have a Title Block with the following items filled out:
 
 .IP \(bu 4
-\fB\fCtitle\fR - the main title of the document.
+\fB\fCtitle\fR \- the main title of the document.
 .IP \(bu 4
-\fB\fCabbrev\fR - abbreviation of the title.
+\fB\fCabbrev\fR \- abbreviation of the title.
 .IP \(bu 4
-\fB\fCupdates/obsoletes\fR - array of integers.
+\fB\fCupdates/obsoletes\fR \- array of integers.
 .IP \(bu 4
 \fB\fCseriesInfo\fR, containing:
 
 .RS
 .IP \(en 4
-\fB\fCname\fR - \fB\fCRFC\fR, \fB\fCInternet-Draft\fR, \fB\fCDOI\fR, or \fB\fCFYI\fR.
+\fB\fCname\fR \- \fB\fCRFC\fR, \fB\fCInternet-Draft\fR, \fB\fCDOI\fR, or \fB\fCFYI\fR.
 .IP \(en 4
-\fB\fCvalue\fR - draft name or RFC number
+\fB\fCvalue\fR \- draft name or RFC number
 .IP \(en 4
-\fB\fCstream\fR - \fB\fCIETF\fR (default), \fB\fCIAB\fR, \fB\fCIRTF\fR or \fB\fCindependent\fR.
+\fB\fCstream\fR \- \fB\fCIETF\fR (default), \fB\fCIAB\fR, \fB\fCIRTF\fR or \fB\fCindependent\fR.
 .IP \(en 4
-\fB\fCstatus\fR - \fB\fCstandard\fR, \fB\fCinformational\fR, \fB\fCexperimental\fR, \fB\fCbcp\fR, \fB\fChistoric\fR, or \fB\fCfull-standard\fR.
+\fB\fCstatus\fR \- \fB\fCstandard\fR, \fB\fCinformational\fR, \fB\fCexperimental\fR, \fB\fCbcp\fR, \fB\fChistoric\fR, or \fB\fCfull-standard\fR.
 
 .RE
 .IP \(bu 4
-\fB\fCipr\fR - usually just set \fB\fCtrust200902\fR.
+\fB\fCipr\fR \- usually just set \fB\fCtrust200902\fR.
 .IP \(bu 4
-\fB\fCarea\fR - usually just \fB\fCInternet\fR.
+\fB\fCarea\fR \- usually just \fB\fCInternet\fR.
 .IP \(bu 4
-\fB\fCworkgroup\fR - the workgroup the document is created for.
+\fB\fCworkgroup\fR \- the workgroup the document is created for.
 .IP \(bu 4
-\fB\fCkeyword\fR - array with keywords (optional).
+\fB\fCkeyword\fR \- array with keywords (optional).
 .IP \(bu 4
-\fB\fCauthor(s)\fR - define all the authors.
+\fB\fCauthor(s)\fR \- define all the authors.
 .IP \(bu 4
-\fB\fCcontact(s)\fR - define all the contacts.
+\fB\fCcontact(s)\fR \- define all the contacts.
 .IP \(bu 4
-\fB\fCdate\fR - the date for this I-D/RFC.
+\fB\fCdate\fR \- the date for this I\-D/RFC.
 .IP \(bu 4
-\fB\fClanguage\fR - the language for this document, this uses localized names for \fB\fCIndex\fR, \fB\fCFootnotes\fR
+\fB\fClanguage\fR \- the language for this document, this uses localized names for \fB\fCIndex\fR, \fB\fCFootnotes\fR
 and \fB\fCReferences\fR, etc. Valid values are from BCP47
 \[la]https://tools.ietf.org/html/bcp47\[ra]. This
 defaults to \fB\fCen\fR (English). See the current
 list
 \[la]https://github.com/mmarkdown/mmark/blob/master/lang/lang.go\[ra].
 .IP \(bu 4
-\fB\fCindexInclude\fR - set to true when you want to include an index (defaults to true).
+\fB\fCindexInclude\fR \- set to true when you want to include an index (defaults to true).
 
 
 .PP
@@ -461,7 +461,7 @@ fullname="R. (Miek) Gieben"
 
 .PP
 You can then \fIreference\fP this contact using a \fIcitation\fP via the \fB\fCfullname\fR: \fB\fC[@R. (Miek) Gieben]\fR.
-This also works when referencing an author of the I-D. Note just like authors, defining contacts
+This also works when referencing an author of the I\-D. Note just like authors, defining contacts
 needs to happen in the titleblock.
 
 .PP
@@ -818,7 +818,7 @@ delimiter can be either \fB\fC.\fR or \fB\fC)\fR. When a parenthesis is used the
 any block level attributes take precedence.
 
 .PP
-Newlines between list items will create a non-compact list, i.e. compare:
+Newlines between list items will create a non\-compact list, i.e. compare:
 
 .PP
 .RS
@@ -871,16 +871,16 @@ The first seen modifier determines the type (suppressed, normative or informativ
 citation can separated with a semicolon: \fB\fC[@RFC1034;@RFC1035]\fR.
 
 .PP
-If you reference an RFC, I-D or W3C document the reference will be added automatically (no need to
+If you reference an RFC, I\-D or W3C document the reference will be added automatically (no need to
 muck about with an \fB\fC<reference>\fR block). This is to say:
 
 .PP
-Any reference starting with \fIRFC\fP, \fII-D.\fP or \fIW3C.\fP will be automatically added to the correct
+Any reference starting with \fIRFC\fP, \fII\-D.\fP or \fIW3C.\fP will be automatically added to the correct
 reference section.
 
 .PP
-For I-Ds you may want to add a draft sequence number, which can be done as such: \fB\fC[@?I-D.blah#06]\fR.
-If you reference an I-D \fIwithout\fP a sequence number it will create a reference to the \fIlast\fP I-D in
+For I\-Ds you may want to add a draft sequence number, which can be done as such: \fB\fC[@?I-D.blah#06]\fR.
+If you reference an I\-D \fIwithout\fP a sequence number it will create a reference to the \fIlast\fP I\-D in
 citation index.
 
 .PP
@@ -888,25 +888,25 @@ A bibliography section is created by default if a \fB\fC{backmatter}\fR is given
 by using the command line flag \fB\fC-bibliography=false\fR.
 
 .PP
-A non-suppressed reference to the \fIfull name\fP of an author or contact will insert the referenced
-person as a \fB\fCcontact\fR. See https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-5.4
+A non\-suppressed reference to the \fIfull name\fP of an author or contact will insert the referenced
+person as a \fB\fCcontact\fR. See https://www.rfc\-editor.org/materials/FAQ\-xml2rfcv3.html#section\-5.4
 \[la]https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-5.4\[ra].
 
 .SS "REFERENCE TEXT SUFFICES"
 .PP
 You can specify extra text after the citation using a comma: \fB\fC[@RFC2535, section 5]\fR, see
-https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#name-how-do-i-link-to-multiple-se
+https://www.rfc\-editor.org/materials/FAQ\-xml2rfcv3.html#name\-how\-do\-i\-link\-to\-multiple\-se
 \[la]https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#name-how-do-i-link-to-multiple-se\[ra].
 This is used in the following manner:
 
 .IP \(bu 4
-\fB\fC[@RFC2535, section 5]\fR -> sectionFormat="of"
+\fB\fC[@RFC2535, section 5]\fR \-> sectionFormat="of"
 .IP \(bu 4
-\fB\fC[@RFC2525, see, section 5]\fR -> sectionFormat="comma"
+\fB\fC[@RFC2525, see, section 5]\fR \-> sectionFormat="comma"
 .IP \(bu 4
-\fB\fC[@RFC2525, (see) section 5]\fR -> sectionFormat="parens"
+\fB\fC[@RFC2525, (see) section 5]\fR \-> sectionFormat="parens"
 .IP \(bu 4
-\fB\fC[@RFC2525, 5]\fR -> sectionFormat="bare"
+\fB\fC[@RFC2525, 5]\fR \-> sectionFormat="bare"
 
 
 .PP
@@ -949,7 +949,7 @@ citation
 .RE
 
 .PP
-Note that for citing I-Ds and RFCs you \fIdon't\fP need to include any XML, as Mmark will pull these
+Note that for citing I\-Ds and RFCs you \fIdon't\fP need to include any XML, as Mmark will pull these
 automatically from their online location: or technically more correct: the xml2rfc post processor
 will do this.
 
@@ -1014,7 +1014,7 @@ And then reference the same \fB\fC(#myid)\fR, the formatter (\fB\fCxml2rfc\fR) w
 .PP
 Just like 
 \[la]#reference-text-suffices\[ra], you can add a suffix text to a reference, to influence how
-xml2rfc will render it, see https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-3.11
+xml2rfc will render it, see https://www.rfc\-editor.org/materials/FAQ\-xml2rfcv3.html#section\-3.11
 \[la]https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-3.11\[ra]
 it will allow you to set the format attribute. The following is supported:
 
@@ -1025,9 +1025,9 @@ title
 .IP \(bu 4
 default
 .IP \(bu 4
-\fB\fC(#myid, use counter)\fR -> format="counter"
+\fB\fC(#myid, use counter)\fR \-> format="counter"
 .IP \(bu 4
-\fB\fC(#myid, use title)\fR -> format="title"
+\fB\fC(#myid, use title)\fR \-> format="title"
 
 
 .PP
@@ -1038,7 +1038,7 @@ supported for instance.
 Also note these strings need to be literary typed as shown here (we may become more lenient in the
 future).
 
-.SS "SUPER- AND SUBSCRIPT"
+.SS "SUPER\- AND SUBSCRIPT"
 .PP
 For superscript use \fB\fC^\fR and for subscripts use \fB\fC~\fR. For example:
 
@@ -1052,7 +1052,7 @@ H~2~O is a liquid. 2^10^ is 1024.
 .RE
 
 .PP
-Inside a super- or subscript you must escape spaces. Thus, if you want the letter P with 'a cat' in
+Inside a super\- or subscript you must escape spaces. Thus, if you want the letter P with 'a cat' in
 subscripts, use \fB\fCP~a\ cat~\fR, not \fB\fCP~a cat~\fR.
 
 .SS "CALLOUTS"
