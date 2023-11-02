@@ -3,7 +3,7 @@
 
 .SH "NAME"
 .PP
-mmark \- generate XML, HTML or manual pages from mmark markdown documents.
+mmark \\- generate XML, HTML or manual pages from mmark markdown documents.
 
 .SH "SYNOPSIS"
 .PP
@@ -15,7 +15,7 @@ mmark \- generate XML, HTML or manual pages from mmark markdown documents.
 is, however, \fIalso\fP suited for writing complete books and other technical documentation.
 
 .PP
-Mmark provides an advanced markdown dialect that processes file(s) to produce internet-drafts in XML
+Mmark provides an advanced markdown dialect that processes file(s) to produce internet\-drafts in XML
 RFC 7991
 \[la]https://tools.ietf.org/html/rfc7991\[ra] format. Mmark can produce xml2rfc (aforementioned
 RFC 7991), HTML5 and manual pages.
@@ -52,7 +52,7 @@ Citations and adding XML References (those used by the IETF).
 .IP \(bu 4
 Cross references: short form of referencing a section in the document.
 .IP \(bu 4
-Super- and subscript.
+Super\- and subscript.
 .IP \(bu 4
 Callouts in code and text.
 .IP \(bu 4
@@ -61,7 +61,7 @@ BCP14 (RFC 2119) keyword detection.
 
 .SH "RFC 7991"
 .PP
-This is the XML format used by the RFC editor for accepting Internet-Drafts.
+This is the XML format used by the RFC editor for accepting Internet\-Drafts.
 
 .SH "HTML5"
 .PP
@@ -73,36 +73,36 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 .SH "OPTIONS"
 .TP
-\fB-ast\fP
+\fB\-ast\fP
 print abstract syntax tree and exit.
 .TP
-\fB-css string\fP
-link to a CSS stylesheet (only used with -html).
+\fB\-css string\fP
+link to a CSS stylesheet (only used with \-html).
 .TP
-\fB-fragment\fP
+\fB\-fragment\fP
 don't create a full document.
 .TP
-\fB-head string\fP
-link to HTML to be included in head (only used with -html).
+\fB\-head string\fP
+link to HTML to be included in head (only used with \-html).
 .TP
-\fB-html\fP
+\fB\-html\fP
 create HTML output.
 .TP
-\fB-man\fP
+\fB\-man\fP
 output nroff (manual pages).
 .TP
-\fB-unsafe\fP
+\fB\-unsafe\fP
 allow includes from anywhere in the filesystem, otherwise they are only allowed \fIbelow\fP the
 current document.
 .TP
-\fB-index\fP
+\fB\-index\fP
 generate an index at the end of the document (default true).
 .TP
-\fB-bibliography\fP
+\fB\-bibliography\fP
 generate a bibliography section after the back matter (default true), this \fIneeds\fP a
 \fB\fC{{backmatter}}\fR in the document.
 .TP
-\fB-version\fP
+\fB\-version\fP
 show mmark's version.
 
 

@@ -7,7 +7,7 @@ date: October 2019
 
 # NAME
 
-mmark \\- generate XML, HTML or manual pages from mmark markdown documents.
+mmark - generate XML, HTML or manual pages from mmark markdown documents.
 
 # SYNOPSIS
 
