@@ -73,37 +73,118 @@ The man renderer outputs nroff that can be viewed via man(1).
 
 .SH "OPTIONS"
 .TP
+<<<<<<< HEAD
 \fB\-ast\fP
 print abstract syntax tree and exit.
+||||||| 6f05251
+\fB-ast\fP
+print abstract syntax tree and exit.
+=======
+\fB\fC-ast\fR
+print abstract syntax tree and exit
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-css string\fP
 link to a CSS stylesheet (only used with \-html).
+||||||| 6f05251
+\fB-css string\fP
+link to a CSS stylesheet (only used with -html).
+=======
+\fB\fC-fragment\fR
+don't create a full document
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-fragment\fP
 don't create a full document.
+||||||| 6f05251
+\fB-fragment\fP
+don't create a full document.
+=======
+\fB\fC-css\fR \fIURL\fP
+\fIURL\fP to a CSS stylesheet (only used with -html)
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-head string\fP
 link to HTML to be included in head (only used with \-html).
+||||||| 6f05251
+\fB-head string\fP
+link to HTML to be included in head (only used with -html).
+=======
+\fB\fC-head\fR \fIURL\fP
+\fIURL\fP to HTML to be included in head (only used with -html)
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-html\fP
 create HTML output.
+||||||| 6f05251
+\fB-html\fP
+create HTML output.
+=======
+\fB\fC-html\fR
+create HTML output
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-man\fP
 output nroff (manual pages).
+||||||| 6f05251
+\fB-man\fP
+output nroff (manual pages).
+=======
+\fB\fC-man\fR
+output nroff (manual pages)
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-unsafe\fP
+||||||| 6f05251
+\fB-unsafe\fP
+=======
+\fB\fC-unsafe\fR
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 allow includes from anywhere in the filesystem, otherwise they are only allowed \fIbelow\fP the
-current document.
+current document
 .TP
+<<<<<<< HEAD
 \fB\-index\fP
 generate an index at the end of the document (default true).
+||||||| 6f05251
+\fB-index\fP
+generate an index at the end of the document (default true).
+=======
+\fB\fC-unicode\fR
+allow unicode characters in <t>, from xml2rfc 3.16.0 this is allowed. It's true by default, set
+to false if you have an older xml2rfc version. Note the <u> text/html output produced by
+xml2rfc is (extremely) verbose.
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 .TP
+<<<<<<< HEAD
 \fB\-bibliography\fP
-generate a bibliography section after the back matter (default true), this \fIneeds\fP a
-\fB\fC{{backmatter}}\fR in the document.
+||||||| 6f05251
+\fB-bibliography\fP
+=======
+\fB\fC-index\fR
+generate an index at the end of the document (default true)
 .TP
+\fB\fC-bibliography\fR
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
+generate a bibliography section after the back matter (default true), this \fIneeds\fP a
+\fB\fC{{backmatter}}\fR in the document
+.TP
+<<<<<<< HEAD
 \fB\-version\fP
 show mmark's version.
+||||||| 6f05251
+\fB-version\fP
+show mmark's version.
+=======
+\fB\fC-version\fR
+show mmark's version
+>>>>>>> 2e0a90593fa18087115e738fa121b08df2022524
 
 
 .SH "ALSO SEE"
@@ -113,4 +194,3 @@ https://mmark.miek.nl
 \[la]https://mmark.miek.nl\[ra]. The syntax used by mmark is explained in the syntax
 page
 \[la]https://mmark.miek.nl/post/syntax/\[ra].
-

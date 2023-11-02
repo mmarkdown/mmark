@@ -43,11 +43,19 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		[]string{"updates", "obsoletes", "indexInclude"},
 		[]string{IntSliceToString(d.Updates), IntSliceToString(d.Obsoletes), fmt.Sprintf("%t", d.IndexInclude)},
 	)...)
-	// Only for IETF stream add the consensus attribute.
-	if d.SubmissionType == "IETF" {
+	// RFC 7841 Appendix A.2.2: IETF and IRTF streams pay attention to the consensus attribute.
+	// RFC 7991 Section 2.45.2: Default is false.
+	if ((d.SubmissionType == "IETF") || (d.SubmissionType == "IRTF")) && d.Consensus {
 		attrs = append(attrs, Attributes(
 			[]string{"consensus"},
 			[]string{fmt.Sprintf("%t", d.Consensus)},
+		)...)
+	}
+	// RFC 7991 Section 2.45.11: Default is false.
+	if d.SortRefs {
+		attrs = append(attrs, Attributes(
+			[]string{"sortRefs"},
+			[]string{fmt.Sprintf("%t", d.SortRefs)},
 		)...)
 	}
 	if t.TocDepth > 0 {
@@ -199,8 +207,17 @@ func (r *Renderer) TitleKeyword(w io.Writer, keyword []string) {
 
 // titleSeriesInfo outputs the seriesInfo from the TOML title block.
 func (r *Renderer) titleSeriesInfo(w io.Writer, s reference.SeriesInfo) {
-	if s.Value == "" || s.Stream == "" || s.Status == "" || s.Name == "" {
-		log.Printf("Incomplete or empty [seriesInfo] in title block, resulting XML will fail to parse.")
+	if s.Value == "" {
+		log.Printf("Empty 'value' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Stream == "" {
+		log.Printf("Empty 'stream' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Status == "" {
+		log.Printf("Empty 'status' in [seriesInfo], resulting XML may fail to parse.")
+	}
+	if s.Name == "" {
+		log.Printf("Empty 'name' in [seriesInfo], resulting XML may fail to parse.")
 	}
 	attr := Attributes(
 		[]string{"value", "stream", "status", "name"},

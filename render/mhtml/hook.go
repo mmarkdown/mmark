@@ -29,7 +29,7 @@ func (r RendererOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (
 		}
 		io.WriteString(w, `<h1 id="footnote-section">`)
 		io.WriteString(w, r.Language.Footnotes())
-	case *mast.Bibliography:
+	case *mast.Bibliography, *mast.BibliographyWrapper:
 		if !entering {
 			io.WriteString(w, "</dl>\n")
 			return ast.GoToNext, true

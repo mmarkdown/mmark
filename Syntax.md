@@ -583,10 +583,12 @@ reference section.
 
 For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
-citation index.
+citation index. I.e. a draft named "draft-gieben-pandoc2rfc", the I-D reference becomes:
+`I-D.gieben-pandoc2rfc`. Referencing multiple versions of the same I-D in a document will lead to
+validation errors when running xml2rfc.
 
 A bibliography section is created by default if a `{backmatter}` is given, but you can suppress it
-by using the command line flag `-bibliography=false`.
+by using the command line flag `-bibliography=false`. No `{backmatter}`, no bibliography.
 
 A non-suppressed reference to the *full name* of an author or contact will insert the referenced
 person as a `contact`. See <https://www.rfc-editor.org/materials/FAQ-xml2rfcv3.html#section-5.4>.

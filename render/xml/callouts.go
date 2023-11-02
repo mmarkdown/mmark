@@ -39,3 +39,25 @@ Parse:
 		}
 	}
 }
+
+// Check for callouts in the buffer.
+func callouts(d []byte, comments [][]byte) bool {
+	ld := len(d)
+
+	for i := 0; i < ld; i++ {
+		for _, comment := range comments {
+			if !bytes.HasPrefix(d[i:], comment) {
+				break
+			}
+
+			lc := len(comment)
+			if i+lc < ld {
+				if _, consumed := parser.IsCallout(d[i+lc:]); consumed > 0 {
+					// We have seen a callout
+					return true
+				}
+			}
+		}
+	}
+	return false
+}

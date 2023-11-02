@@ -10,6 +10,21 @@ import (
 	"github.com/mmarkdown/mmark/v2/mast"
 )
 
+func (r *Renderer) bibliographyWrapper(w io.Writer, node *mast.BibliographyWrapper, entering bool) {
+	if len(node.GetChildren()) == 0 {
+		return
+	}
+	if !entering {
+		r.outs(w, "</references>\n")
+		return
+	}
+
+	r.sectionClose(w, nil)
+
+	r.outs(w, `<references><name>References</name>`)
+	r.cr(w)
+}
+
 func (r *Renderer) bibliography(w io.Writer, node *mast.Bibliography, entering bool) {
 	if len(node.GetChildren()) == 0 {
 		return
@@ -48,19 +63,29 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
-		tag = makeXiInclude(ToolsRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
+		tag = makeXiInclude(BibRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
-		tag = makeXiInclude(ToolsW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
+		tag = makeXiInclude(BibW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
+		draft := ""
 		if hash > 0 {
-			// rewrite # to - and we have our link
+			// no version: https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.brzozowski-dhc-dhcvp6-leasequery.xml
+			//
+			// with version: https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.draft-brzozowski-dhc-dhcvp6-leasequery-00.xml
+			//
+			// rewrite # to - and we have our link, and also include "draft-" before for it xi:include
+			// the anchor text from the reference is: anchor="I-D.brzozowski-dhc-dhcvp6-leasequery"
+			// problem here is that the original xref includes #00, which isn't the case in the reference
+			// any more.
+
+			draft = "draft-"
 			node.Anchor[hash] = '-'
 			defer func() { node.Anchor[hash] = '#' }() // never know if this will be used again
 		}
-		tag = makeXiInclude(ToolsID, fmt.Sprintf("reference.I-D.%s.xml", node.Anchor[4:]))
+		tag = makeXiInclude(BibID, fmt.Sprintf("reference.I-D.%s%s.xml", draft, node.Anchor[4:]))
 	}
 	r.outs(w, tag)
 	r.cr(w)
@@ -72,7 +97,7 @@ func makeXiInclude(url, reference string) string {
 }
 
 var (
-	ToolsRFC = "https://xml2rfc.ietf.org/public/rfc/bibxml"
-	ToolsID  = "https://xml2rfc.ietf.org/public/rfc/bibxml-ids"
-	ToolsW3C = "https://xml2rfc.ietf.org/public/rfc/bibxml-w3c"
+	BibRFC = "https://bib.ietf.org/public/rfc/bibxml"
+	BibID  = "https://bib.ietf.org/public/rfc/bibxml3"
+	BibW3C = "https://bib.ietf.org/public/rfc/bibxml4"
 )

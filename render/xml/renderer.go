@@ -20,12 +20,13 @@ import (
 // Flags control optional behavior of XML3 renderer.
 type Flags int
 
-// HTML renderer configuration options.
+// XML3 renderer configuration options.
 const (
-	FlagsNone   Flags = 0
-	XMLFragment Flags = 1 << iota // Don't generate a complete XML document
-	SkipHTML                      // Skip preformatted HTML blocks - skips comments
-	SkipImages                    // Skip embedded images
+	FlagsNone    Flags = 0
+	XMLFragment  Flags = 1 << iota // Don't generate a complete XML document
+	SkipHTML                       // Skip preformatted HTML blocks - skips comments
+	SkipImages                     // Skip embedded images
+	AllowUnicode                   // Allow bare unicode, otherwise wrap in <u>
 
 	CommonFlags Flags = FlagsNone
 )
@@ -111,6 +112,11 @@ func (r *Renderer) text(w io.Writer, text *ast.Text) {
 			return
 		}
 	}
+	if r.opts.Flags&AllowUnicode != 0 {
+		html.EscapeHTML(w, text.Literal)
+		return
+	}
+
 	// each string of unicode chars is outputted between <u> tags.
 	uni := 0
 	for i, c := range string(text.Literal) {
@@ -250,6 +256,14 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 			continue
 		}
 
+		// draft-referencing, if there is a #00 (#version) we remove it from the target as this isn't allowed.
+		if bytes.HasPrefix(c, []byte("I-D.")) {
+			hash := bytes.Index(c, []byte("#"))
+			if hash > 0 {
+				c = c[:hash]
+			}
+		}
+
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
 
 		// Attempt to parse the suffix.
@@ -262,21 +276,21 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 				switch {
 				case bytes.HasPrefix(suf, []byte(section)):
 					num := suf[len(section):]
-					attr = append(attr, `sectionFormat="of" relative="#"`)
+					attr = append(attr, `sectionFormat="of"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				case bytes.HasPrefix(suf, []byte(seesection)):
 					num := suf[len(seesection):]
-					attr = append(attr, `sectionFormat="comma" relative="#"`)
+					attr = append(attr, `sectionFormat="comma"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				case bytes.HasPrefix(suf, []byte(seepsection)):
 					num := suf[len(seepsection):]
-					attr = append(attr, `sectionFormat="parens" relative="#"`)
+					attr = append(attr, `sectionFormat="parens"`)
 					attr = append(attr, `section="`+string(num)+`"`)
 
 				default:
-					attr = append(attr, `sectionFormat="bare" relative="#"`)
+					attr = append(attr, `sectionFormat="bare"`)
 					attr = append(attr, `section="`+string(suf)+`"`)
 				}
 			}
@@ -495,10 +509,16 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 
 	r.cr(w)
 	r.outTag(w, "<"+name, html.BlockAttrs(codeBlock))
+	callout := false
 	if r.opts.Comments != nil {
+		callout = callouts(codeBlock.Literal, r.opts.Comments)
+	}
+	if callout {
 		EscapeHTMLCallouts(w, codeBlock.Literal, r.opts.Comments)
 	} else {
-		html.EscapeHTML(w, codeBlock.Literal)
+		r.outs(w, "<![CDATA[")
+		r.out(w, codeBlock.Literal)
+		r.outs(w, "]]>\n")
 	}
 	r.outs(w, "</"+name+">")
 	r.cr(w)
@@ -841,6 +861,8 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.title = node
 	case *mast.Authors:
 		// ignore
+	case *mast.BibliographyWrapper:
+		r.bibliographyWrapper(w, node, entering)
 	case *mast.Bibliography:
 		r.bibliography(w, node, entering)
 	case *mast.BibliographyItem:
@@ -1016,7 +1038,9 @@ func (r *Renderer) paragraphWithOnlyContacts(node *ast.Paragraph) bool {
 			return false
 		}
 		if ok1 {
-			// TODO check if the text is empty
+			if trimmed := bytes.TrimSpace(n.(*ast.Text).Literal); len(trimmed) != 0 {
+				return false
+			}
 		}
 		if ok2 {
 			for _, c := range citation.Destination {
@@ -1049,7 +1073,9 @@ func (r *Renderer) paragraphWithOnlyIndices(node *ast.Paragraph) bool {
 			return false
 		}
 		if ok1 {
-			// TODO check if the text is empty
+			if trimmed := bytes.TrimSpace(n.(*ast.Text).Literal); len(trimmed) != 0 {
+				return false
+			}
 		}
 		if ok2 {
 			index++

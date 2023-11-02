@@ -5,6 +5,11 @@ import (
 	"github.com/mmarkdown/mmark/v2/mast/reference"
 )
 
+// BibliographyWrapper represents markdown bibliography section wrapper.
+type BibliographyWrapper struct {
+	ast.Container
+}
+
 // Bibliography represents markdown bibliography node.
 type Bibliography struct {
 	ast.Container

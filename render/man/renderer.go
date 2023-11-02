@@ -441,7 +441,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.Title = node // save for later.
 	case *mast.Authors:
 		r.authors(w, node, entering)
-	case *mast.Bibliography:
+	case *mast.Bibliography, *mast.BibliographyWrapper:
 		if entering {
 			r.outs(w, "\n.SH \"")
 			r.outs(w, strings.ToUpper(r.opts.Language.Bibliography()))

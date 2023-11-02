@@ -36,15 +36,21 @@ func TestMmarkXML(t *testing.T) {
 		}
 		// if the file name has a prefix ending in a underscore that prefix is taken is the language
 		// for this particular file and used.
+		// except for `u_` then this is a cue to enable xml.AllowUnicode.
 		us := strings.Index(f.Name(), "_")
 		l := "en"
 		if us >= 0 {
-			l = f.Name()[:us]
+			lang := f.Name()[:us]
+			switch lang {
+			case "u":
+				opts.Flags |= xml.AllowUnicode
+			default:
+				l = f.Name()[:us]
+			}
 		}
 		opts.Language = lang.New(l)
 
 		renderer := xml.NewRenderer(opts)
-
 		doTest(t, dir, base, renderer)
 	}
 }
