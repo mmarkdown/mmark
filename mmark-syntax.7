@@ -881,11 +881,13 @@ reference section.
 .PP
 For I\-Ds you may want to add a draft sequence number, which can be done as such: \fB\fC[@?I-D.blah#06]\fR.
 If you reference an I\-D \fIwithout\fP a sequence number it will create a reference to the \fIlast\fP I\-D in
-citation index.
+citation index. I.e. a draft named "draft\-gieben\-pandoc2rfc", the I\-D reference becomes:
+\fB\fCI-D.gieben-pandoc2rfc\fR. Referencing multiple versions of the same I\-D in a document will lead to
+validation errors when running xml2rfc.
 
 .PP
 A bibliography section is created by default if a \fB\fC{backmatter}\fR is given, but you can suppress it
-by using the command line flag \fB\fC-bibliography=false\fR.
+by using the command line flag \fB\fC-bibliography=false\fR. No \fB\fC{backmatter}\fR, no bibliography.
 
 .PP
 A non\-suppressed reference to the \fIfull name\fP of an author or contact will insert the referenced
