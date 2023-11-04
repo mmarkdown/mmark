@@ -68,6 +68,12 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
 		tag = makeXiInclude(BibW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
+	case bytes.HasPrefix(node.Anchor, []byte("BCP")):
+		tag = makeXiInclude(BibBCP, fmt.Sprintf("reference.BCP.%s.xml", node.Anchor[3:]))
+
+	case bytes.HasPrefix(node.Anchor, []byte("STD")):
+		tag = makeXiInclude(BibSTD, fmt.Sprintf("reference.STD.%s.xml", node.Anchor[3:]))
+
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
 		draft := ""
@@ -100,4 +106,6 @@ var (
 	BibRFC = "https://bib.ietf.org/public/rfc/bibxml"
 	BibID  = "https://bib.ietf.org/public/rfc/bibxml3"
 	BibW3C = "https://bib.ietf.org/public/rfc/bibxml4"
+	BibBCP = "https://bib.ietf.org/public/rfc/bibxml9"
+	BibSTD = "https://bib.ietf.org/public/rfc/bibxml9"
 )

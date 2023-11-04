@@ -39,11 +39,22 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 						// author/contact ref -> exclude
 						continue Destination
 					}
-
 				}
 				if _, ok := seen[string(bytes.ToLower(d))]; ok {
 					continue Destination
 				}
+				// if the anchor contains another '@' this is a reference to a specific RFC in a STD
+				// or BCP. If so we need to a 2 bib items.
+				if n := bytes.Index(d, []byte("@")); n > 0 && len(d[n+1:]) > 2 {
+					second := d[n+1:]
+					ref2 := &mast.BibliographyItem{}
+					ref2.Anchor = second
+					ref2.Type = c.Type[i]
+					seen[string(second)] = ref2
+
+					d = d[:n]
+				}
+
 				ref := &mast.BibliographyItem{}
 				ref.Anchor = d
 				ref.Type = c.Type[i]
