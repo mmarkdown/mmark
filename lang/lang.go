@@ -7,7 +7,7 @@ import (
 // New returns a new and initialized Lang.
 func New(language string) Lang {
 	l := Lang{language: strings.ToLower(language)} // case insensitivity
-	// Add all lanaguages here, the keys should be named according to BCP47.
+	// Add all languages here, the keys should be named according to BCP47.
 	// The keys must be in all lower case for normalized lookup.
 	l.m = map[string]Term{
 		"en": {
@@ -41,11 +41,11 @@ func New(language string) Lang {
 			Bibliography: "Literaturverzeichnis",
 			Footnotes:    "Fußnoten",
 			Index:        "Index",
-			WrittenBy:    "(no translation!)",
+			WrittenBy:    "Geschrieben von",
 			See:          "siehe",
-			Section:      "abschnit",
-			UseCounter:   "(no translation!)",
-			UseTitle:     "(no translation!)",
+			Section:      "Abschnitt",
+			UseCounter:   "Zähler benutzen",
+			UseTitle:     "Titel benutzen",
 		},
 		"ja": {
 			And:          "(no translation!)",
