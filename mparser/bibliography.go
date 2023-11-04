@@ -56,7 +56,6 @@ func CitationToBibliography(doc ast.Node) (normative ast.Node, informative ast.N
 				}
 
 				ref := &mast.BibliographyItem{}
-				println("ANCHOR", string(d))
 				ref.Anchor = d
 				ref.Type = c.Type[i]
 

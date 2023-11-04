@@ -4,6 +4,8 @@ import (
 	"strings"
 )
 
+// TODO(miek): functions below getting a bit long in the tooth.
+
 // New returns a new and initialized Lang.
 func New(language string) Lang {
 	l := Lang{language: strings.ToLower(language)} // case insensitivity
@@ -13,6 +15,7 @@ func New(language string) Lang {
 	l.m = map[string]Term{
 		"en": {
 			And:          "and",
+			Of:           "of",
 			Authors:      "Authors",
 			Bibliography: "Bibliography",
 			Footnotes:    "Footnotes",
@@ -25,6 +28,7 @@ func New(language string) Lang {
 		},
 		"nl": {
 			And:          "en",
+			Of:           "of",
 			Bibliography: "Bibliografie",
 			Footnotes:    "Voetnoten",
 			Index:        "Index",
@@ -35,6 +39,7 @@ func New(language string) Lang {
 		},
 		"de": {
 			And:          "und",
+			Of:           "von",
 			Bibliography: "Literaturverzeichnis",
 			Footnotes:    "Fußnoten",
 			Index:        "Index",
@@ -71,6 +76,7 @@ type Lang struct {
 // Term contains the specific terms for translation.
 type Term struct {
 	And          string
+	Of           string
 	Authors      string
 	Bibliography string
 	Footnotes    string
@@ -122,6 +128,14 @@ func (l Lang) And() string {
 		return l.m["en"].And
 	}
 	return t.And
+}
+
+func (l Lang) Of() string {
+	t, ok := l.m[l.language]
+	if !ok {
+		return l.m["en"].Of
+	}
+	return t.Of
 }
 
 func (l Lang) WrittenBy() string {

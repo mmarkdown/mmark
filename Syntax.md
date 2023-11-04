@@ -581,6 +581,12 @@ If you reference an RFC, I-D, BCP or STD or W3C document the reference will be a
 Any reference starting with *RFC*, *BCP*, *STD*, *I-D.* or *W3C.* will be automatically added to the
 correct reference section.
 
+Referring to a specific RFC of an STD/BCP can be done using the following syntax:
+`[@RFCxxx@STDyy]`, this expands `<xref target="RFCxxx"></xref> of <xref target="STDxx"></xref>`
+where both will be added to the automatically generated references.  The word "of" will be
+translated according to the document language. Note: no attempt is made to validate if the RFC is
+actually part of the STD or BCP, i.e. `[@RFCxxx@RFCyyy]` will be happily accepted.
+
 For I-Ds you may want to add a draft sequence number, which can be done as such: `[@?I-D.blah#06]`.
 If you reference an I-D *without* a sequence number it will create a reference to the *last* I-D in
 citation index. I.e. a draft named "draft-gieben-pandoc2rfc", the I-D reference becomes:

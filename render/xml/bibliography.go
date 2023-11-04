@@ -63,16 +63,16 @@ func (r *Renderer) bibliographyItem(w io.Writer, node *mast.BibliographyItem) {
 	tag := ""
 	switch {
 	case bytes.HasPrefix(node.Anchor, []byte("RFC")):
-		tag = makeXiInclude(BibRFC, fmt.Sprintf("reference.RFC.%s.xml", prefixWithZero(node.Anchor[3:])))
+		tag = makeXiInclude(BibRFC, fmt.Sprintf("reference.RFC.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("W3C.")):
 		tag = makeXiInclude(BibW3C, fmt.Sprintf("reference.W3C.%s.xml", node.Anchor[4:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("BCP")):
-		tag = makeXiInclude(BibBCP, fmt.Sprintf("reference.BCP.%s.xml", prefixWithZero(node.Anchor[3:])))
+		tag = makeXiInclude(BibBCP, fmt.Sprintf("reference.BCP.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("STD")):
-		tag = makeXiInclude(BibSTD, fmt.Sprintf("reference.STD.%s.xml", prefixWithZero(node.Anchor[3:])))
+		tag = makeXiInclude(BibSTD, fmt.Sprintf("reference.STD.%s.xml", node.Anchor[3:]))
 
 	case bytes.HasPrefix(node.Anchor, []byte("I-D.")):
 		hash := bytes.Index(node.Anchor, []byte("#"))
@@ -102,25 +102,10 @@ func makeXiInclude(url, reference string) string {
 	return fmt.Sprintf("<xi:include href=\"%s/%s\"/>", url, reference)
 }
 
-func prefixWithZero(num []byte) []byte {
-	switch len(num) {
-	case 0:
-		return num
-	case 1:
-		return append([]byte("000"), num...)
-	case 2:
-		return append([]byte("00"), num...)
-	case 3:
-		return append([]byte("00"), num...)
-	default:
-		return num
-	}
-}
-
 var (
 	BibRFC = "https://bib.ietf.org/public/rfc/bibxml"
 	BibID  = "https://bib.ietf.org/public/rfc/bibxml3"
 	BibW3C = "https://bib.ietf.org/public/rfc/bibxml4"
-	BibBCP = "https://bib.ietf.org/public/rfc/bibxml9" // reference.BCP.0014.xml
-	BibSTD = "https://bib.ietf.org/public/rfc/bibxml9" // reference.STD.0094.xml
+	BibBCP = "https://bib.ietf.org/public/rfc/bibxml9"
+	BibSTD = "https://bib.ietf.org/public/rfc/bibxml9"
 )

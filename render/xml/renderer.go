@@ -263,6 +263,13 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 				c = c[:hash]
 			}
 		}
+		var stdattr []string
+		// Detect and parse RFC@STD14, make 'c' contain the first dest and then add a second xref that we
+		// prepare with the (translated) word of 'of' 'RFC xxxx' <xref ...>
+		if n := bytes.Index(c, []byte("@")); n > 0 && len(c[n+1:]) > 2 {
+			stdattr = []string{fmt.Sprintf(`target="%s"`, c[n+1:])}
+			c = c[:n]
+		}
 
 		attr := []string{fmt.Sprintf(`target="%s"`, c)}
 
@@ -298,6 +305,14 @@ func (r *Renderer) citation(w io.Writer, node *ast.Citation, entering bool) {
 
 		r.outTag(w, "<xref", attr)
 		r.outs(w, "</xref>")
+
+		if stdattr != nil {
+			r.outs(w, " ")
+			r.outs(w, r.opts.Language.Of())
+			r.outs(w, " ")
+			r.outTag(w, "<xref", stdattr)
+			r.outs(w, "</xref>")
+		}
 	}
 }
 
