@@ -4,12 +4,9 @@ import (
 	"strings"
 )
 
-// TODO(miek): functions below getting a bit long in the tooth.
-
 // New returns a new and initialized Lang.
 func New(language string) Lang {
 	l := Lang{language: strings.ToLower(language)} // case insensitivity
-
 	// Add all lanaguages here, the keys should be named according to BCP47.
 	// The keys must be in all lower case for normalized lookup.
 	l.m = map[string]Term{
@@ -90,90 +87,46 @@ type Term struct {
 	UseTitle   string
 }
 
-func (l Lang) Footnotes() string {
-	t, ok := l.m[l.language]
+func (l Lang) Field(f string) string {
+	m, ok := l.m[l.language]
 	if !ok {
-		return l.m["en"].Footnotes
+		m = l.m["en"]
 	}
-	return t.Footnotes
+	switch strings.ToLower(f) {
+	case "and":
+		return m.And
+	case "of":
+		return m.Of
+	case "Authors":
+		return m.Authors
+	case "bibliography":
+		return m.Bibliography
+	case "footnotes":
+		return m.Footnotes
+	case "index":
+		return m.Index
+	case "writtenby":
+		return m.WrittenBy
+	case "see":
+		return m.See
+	case "section":
+		return m.Section
+	case "usecounter":
+		return m.UseCounter
+	case "usetitle":
+		return m.UseTitle
+	}
+	return ""
 }
 
-func (l Lang) Bibliography() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].Bibliography
-	}
-	return t.Bibliography
-}
-
-func (l Lang) Index() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].Index
-	}
-	return t.Index
-}
-
-func (l Lang) Authors() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].Authors
-	}
-	return t.Authors
-}
-
-func (l Lang) And() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].And
-	}
-	return t.And
-}
-
-func (l Lang) Of() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].Of
-	}
-	return t.Of
-}
-
-func (l Lang) WrittenBy() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].WrittenBy
-	}
-	return t.WrittenBy
-}
-
-func (l Lang) See() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].See
-	}
-	return t.See
-}
-
-func (l Lang) Section() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].Section
-	}
-	return t.Section
-}
-
-func (l Lang) UseCounter() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].UseCounter
-	}
-	return t.UseCounter
-}
-
-func (l Lang) UseTitle() string {
-	t, ok := l.m[l.language]
-	if !ok {
-		return l.m["en"].UseTitle
-	}
-	return t.UseTitle
-}
+func (l Lang) Footnotes() string    { return l.Field("footnotes") }
+func (l Lang) Bibliography() string { return l.Field("bibliography") }
+func (l Lang) Index() string        { return l.Field("index") }
+func (l Lang) Authors() string      { return l.Field("authors") }
+func (l Lang) And() string          { return l.Field("and") }
+func (l Lang) Of() string           { return l.Field("of") }
+func (l Lang) WrittenBy() string    { return l.Field("writtenby") }
+func (l Lang) See() string          { return l.Field("see") }
+func (l Lang) Section() string      { return l.Field("section") }
+func (l Lang) UseCounter() string   { return l.Field("usecounter") }
+func (l Lang) UseTitle() string     { return l.Field("usetitle") }
