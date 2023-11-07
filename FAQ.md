@@ -33,6 +33,11 @@ status = "informational"
 Set `submissiontype` and `stream` in `seriesInfo` to *IRTF*. Items like `workgroup` function as they
 do for normal Internet-Draft documents.
 
+See [this email from the RFC
+editor](https://mailarchive.ietf.org/arch/msg/auth48archive/CFOrmu5KOhZ5MG_XqPZ0TtUTvH4/). The
+`area` should be set to empty `area = ""` and `workgroup` "...set to the RG name without the words
+'Research Group'.".
+
 # How Do I Create an IAB Document?
 
 Set `submissiontype` and `stream` in `seriesInfo` to *IAB*. Items like `workgroup` are (I believe)
@@ -159,12 +164,19 @@ Foo validator
 
 ## How do I insert non-ASCII characters?
 
-This is handled for you, mmark will wrap non-ASCII characters in `<u>`. The `asciiFullname` and
-friends used in authors and contacts is currently not implemented.
+Since [xml2rfc
+3.16](https://github.com/ietf-tools/xml2rfc/commit/ad2e0359fde4687e07491a1ada0ec0d4f6ee5fcc) unicode
+encoded with utf8 is allowed. As a consequence the `<u>` construct is not outputted anymore, nor
+supported/detected in source documents.
+
+I'm however not sure what the current (Nov 2023) stance of the RFC editor on this is.
+
+The `asciiFullname` and friends used in authors and contacts is currently not implemented.
 
 ## How do I insert a table?
 
-Use the markdown table syntax.
+Use the markdown table syntax, this is a limited table, that only allows inline elements.
+Col/row-span is not supported.
 
 ## How do I get bold, italics, or a fixed-width font?
 
