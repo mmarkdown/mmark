@@ -89,7 +89,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 		r.TitleAuthor(w, author, "author")
 	}
 
-	r.TitleDate(w, d.Date)
+	r.TitleDate(w, d.Date, d.SeriesInfo)
 
 	r.outTagContent(w, "<area", d.Area)
 
@@ -175,7 +175,7 @@ func (r *Renderer) TitleAuthor(w io.Writer, a mast.Author, tag string) {
 }
 
 // TitleDate outputs the date from the TOML title block.
-func (r *Renderer) TitleDate(w io.Writer, d time.Time) {
+func (r *Renderer) TitleDate(w io.Writer, d time.Time, s reference.SeriesInfo) {
 	if d.IsZero() { // not specified
 		r.outs(w, "<date/>\n")
 		return
@@ -188,9 +188,16 @@ func (r *Renderer) TitleDate(w io.Writer, d time.Time) {
 	if d.Month() > 0 {
 		attr = append(attr, d.Format("month=\"January\""))
 	}
-	if x := d.Day(); x > 0 {
-		attr = append(attr, fmt.Sprintf(`day="%d"`, x))
+	if s.Name != "RFC" { // or just check for Internet-Draft ??
+		if x := d.Day(); x > 0 {
+			attr = append(attr, fmt.Sprintf(`day="%d"`, x))
+		}
 	}
+	// April 1st RFCs, do have a 'day'
+	if s.Name == "RFC" && d.Month() == time.April && d.Day() == 1 {
+		attr = append(attr, fmt.Sprintf(`day="%d"`, d.Day()))
+	}
+
 	r.outTag(w, "<date", attr)
 	r.outs(w, "</date>\n")
 }
