@@ -60,7 +60,8 @@ For the rest we build up on <https://github.com/gomarkdown/markdown> and support
 * *MathJax*, parse MathJax
 * *OrderedListStart*, notice start element of ordered list.
 * *Attributes*, allow block level attributes.
-* *Smartypants*, expand `--` and `---` into ndash and mdashes.
+* *Smartypants*, expand `--` and `---` into ndash and mdashes (for HTML output, not for XML, nor
+   man).
 * *SuperSubscript*, parse super- and subscript: H~2~O is water and 2^10^ is 1024.
 * *Tables*, parse tables.
 * *NonBlockingSpace*, convert "backslash space" into a non blocking space.
