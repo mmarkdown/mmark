@@ -16,6 +16,7 @@ import (
 	"github.com/mmarkdown/mmark/v2/mparser"
 	"github.com/mmarkdown/mmark/v2/render/man"
 	"github.com/mmarkdown/mmark/v2/render/mhtml"
+	"github.com/mmarkdown/mmark/v2/render/pod"
 	"github.com/mmarkdown/mmark/v2/render/xml"
 )
 
@@ -28,6 +29,7 @@ var (
 	flagHTML      = flag.Bool("html", false, "create HTML output")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
+	flagPod       = flag.Bool("pod", false, "generate Perl POD")
 	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagIntraEmph = flag.Bool("intra-emphasis", false, "interpret camel_case_value as emphasizing \"case\" (legacy behavior)")
 	flagVersion   = flag.Bool("version", false, "show mmark version")
@@ -178,6 +180,15 @@ func main() {
 				opts.Flags |= man.ManFragment
 			}
 			renderer = man.NewRenderer(opts)
+		case *flagPod:
+			opts := pod.RendererOptions{
+				Comments: [][]byte{[]byte("//"), []byte("#")},
+				Language: lang.New(documentLanguage),
+			}
+			if *flagFragment {
+				opts.Flags |= pod.PodFragment
+			}
+			renderer = pod.NewRenderer(opts)
 		default:
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,
