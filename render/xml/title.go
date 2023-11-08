@@ -45,7 +45,7 @@ func (r *Renderer) titleBlock(w io.Writer, t *mast.Title) {
 	)...)
 	// RFC 7841 Appendix A.2.2: IETF and IRTF streams pay attention to the consensus attribute.
 	// RFC 7991 Section 2.45.2: Default is false.
-	if ((d.SubmissionType == "IETF") || (d.SubmissionType == "IRTF")) && d.Consensus {
+	if (d.SubmissionType == "IETF" || d.SubmissionType == "IRTF" || d.SubmissionType == "IAB") && d.Consensus {
 		attrs = append(attrs, Attributes(
 			[]string{"consensus"},
 			[]string{fmt.Sprintf("%t", d.Consensus)},
