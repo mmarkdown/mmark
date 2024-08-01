@@ -533,7 +533,7 @@ func (r *Renderer) codeBlock(w io.Writer, codeBlock *ast.CodeBlock) {
 	} else {
 		r.outs(w, "<![CDATA[")
 		r.out(w, codeBlock.Literal)
-		r.outs(w, "]]>\n")
+		r.outs(w, "]]>")
 	}
 	r.outs(w, "</"+name+">")
 	r.cr(w)
