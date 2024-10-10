@@ -112,8 +112,12 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 		switch node.Level {
 		case 1, 2:
 			r.outs(w, "\n.SH ")
-		default:
+		case 3:
+			// normal subsection
 			r.outs(w, "\n.SS ")
+		default:
+			// fake a heading.
+			r.outs(w, "\n.PP\n.B ")
 		}
 	}
 }
