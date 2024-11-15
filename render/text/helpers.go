@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/gomarkdown/markdown/ast"
-	mtext "github.com/mmarkdown/mmark/internal/text"
+	mtext "github.com/mmarkdown/mmark/v2/internal/text"
 )
 
 func noopHeadingTransferFunc(data []byte) []byte { return data }

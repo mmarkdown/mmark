@@ -10,7 +10,7 @@ import (
 
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
-	"github.com/mmarkdown/mmark/mast"
+	"github.com/mmarkdown/mmark/v2/mast"
 )
 
 // Flags control optional behavior of Markdown renderer.
@@ -157,11 +157,7 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			indented = append(indented, p1...)
 			continue
 		}
-		var tab = []byte("")
-		if i == 0 {
-			tab = []byte("	")
-		}
-		indented = r.wrapText(p[i], r.prefix.flatten(), tab)
+		indented = r.wrapText(p[i], r.prefix.flatten(), []byte(""))
 	}
 	if len(indented) == 0 {
 		indented = make([]byte, r.prefix.peek()+3)
@@ -544,9 +540,7 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 	case *ast.Document:
 		// do nothing
 	case *mast.Title:
-		r.outs(w, node.Trigger)
 		r.out(w, node.Content)
-		r.outs(w, node.Trigger)
 		r.outs(w, "\n")
 		r.newline(w)
 	case *mast.Bibliography:
@@ -595,10 +589,10 @@ func (r *Renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		r.newline(w)
 	case *ast.List:
 		r.list(w, node, entering)
-	case *ast.ListItem:
 		if !entering {
 			r.newline(w)
 		}
+	case *ast.ListItem:
 	case *ast.CodeBlock:
 		r.codeBlock(w, node, entering)
 	case *ast.Caption:

@@ -3,7 +3,7 @@ package text
 import (
 	"bytes"
 
-	mtext "github.com/mmarkdown/mmark/internal/text"
+	mtext "github.com/mmarkdown/mmark/v2/internal/text"
 )
 
 func (r *Renderer) centerText(data []byte) []byte {
