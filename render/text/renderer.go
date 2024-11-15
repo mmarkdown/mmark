@@ -77,7 +77,7 @@ func NewRenderer(opts RendererOptions) *Renderer {
 		deferredLinkID:       make(map[string]struct{}),
 		headingTransformFunc: noopHeadingTransferFunc,
 	}
-	r.push(Space(2)) // default indent for all text, except heading.
+	r.push(Space(0)) // default indent for all text, except heading.
 	return r
 }
 
@@ -106,7 +106,6 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	}
 
 	r.headingTransformFunc = noopHeadingTransferFunc
-	r.endline(w)
 	r.newline(w)
 	if node.Level == 1 {
 		r.newline(w)
