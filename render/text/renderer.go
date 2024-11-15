@@ -107,6 +107,7 @@ func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 
 	r.headingTransformFunc = noopHeadingTransferFunc
 	r.newline(w)
+	r.newline(w)
 	if node.Level == 1 {
 		r.newline(w)
 	}
