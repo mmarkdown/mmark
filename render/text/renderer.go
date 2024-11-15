@@ -44,8 +44,7 @@ type Renderer struct {
 	paraStart    int
 	headingStart int
 
-	prefix     *prefixStack // track current prefix, quote, aside, etc.
-	listMarker string
+	prefix *prefixStack // track current prefix, quote, aside, etc.
 
 	// tables
 	cellStart int
@@ -184,12 +183,24 @@ func (r *Renderer) paragraph(w io.Writer, para *ast.Paragraph, entering bool) {
 			list.Start++
 		case x&ast.ListTypeTerm != 0:
 			indented = indented[plen+r.prefix.peek()-3:] // remove prefix.
+			indented[plen+0] = '*'
 		case x&ast.ListTypeDefinition != 0:
 			indented[plen+0] = ' '
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		default:
-			indented[plen+0] = 'o'
+			if plen == 0 {
+				indented[plen+0] = 'o'
+			}
+			if plen == 3 {
+				indented[plen+0] = '+'
+			}
+			if plen == 6 {
+				indented[plen+0] = 'o'
+			}
+			if plen > 6 {
+				indented[plen+0] = '-'
+			}
 			indented[plen+1] = ' '
 			indented[plen+2] = ' '
 		}
@@ -384,11 +395,21 @@ func (r *Renderer) link(w io.Writer, link *ast.Link, entering bool) {
 
 	for _, child := range link.GetChildren() {
 		ast.WalkFunc(child, func(node ast.Node, entering bool) ast.WalkStatus {
+			if text, ok := node.(*ast.Text); ok {
+				if bytes.Compare(text.Literal, link.Destination) == 0 {
+					return ast.GoToNext
+				}
+			}
 			return r.RenderNode(w, node, entering)
 		})
 	}
 
 	if len(link.DeferredID) == 0 {
+		r.outs(w, " <")
+		r.out(w, link.Destination)
+		r.outs(w, ">")
+		link.Destination = []byte{}
+
 		if len(link.Title) > 0 {
 			r.outs(w, ` "`)
 			r.out(w, link.Title)
