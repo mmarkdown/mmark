@@ -31,14 +31,14 @@ func TestWrap(t *testing.T) {
 
 func TestWrapNarrow(t *testing.T) {
 	exp := "The\nquick\nbrown\nfox\njumps\nover\nthe\nlazy\ndog."
-	if Wrap(text, 5) != exp {
+	if Wrap(text, "", 5) != exp {
 		t.Fail()
 	}
 }
 
 func TestWrapOneLine(t *testing.T) {
 	exp := "The quick brown fox jumps over the lazy dog."
-	if Wrap(text, 500) != exp {
+	if Wrap(text, "", 500) != exp {
 		t.Fail()
 	}
 }
@@ -54,7 +54,7 @@ func TestWrapBug1(t *testing.T) {
 	}
 
 	for _, test := range cases {
-		got := Wrap(test.text, test.limit)
+		got := Wrap(test.text, "", test.limit)
 		if got != test.want {
 			t.Errorf("Wrap(%q, %d) = %q want %q", test.text, test.limit, got, test.want)
 		}
