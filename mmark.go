@@ -16,6 +16,7 @@ import (
 	"github.com/mmarkdown/mmark/v2/mparser"
 	"github.com/mmarkdown/mmark/v2/render/man"
 	"github.com/mmarkdown/mmark/v2/render/mhtml"
+	"github.com/mmarkdown/mmark/v2/render/text"
 	"github.com/mmarkdown/mmark/v2/render/xml"
 )
 
