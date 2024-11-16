@@ -9,23 +9,11 @@ import (
 	mtext "github.com/mmarkdown/mmark/v2/internal/text"
 )
 
-func noopHeadingTransferFunc(data []byte) []byte { return data }
-
-func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {
-}
-
-func (r *Renderer) outPrefix(w io.Writer) { r.out(w, r.prefix.flatten()); r.suppress = false }
-func (r *Renderer) endline(w io.Writer)   { r.outs(w, "\n"); r.suppress = false }
-
-func (r *Renderer) outs(w io.Writer, s string) {
-	w.Write(r.headingTransformFunc([]byte(s)))
-	r.suppress = false
-}
-
-func (r *Renderer) out(w io.Writer, d []byte) {
-	w.Write(r.headingTransformFunc(d))
-	r.suppress = false
-}
+func (r *Renderer) outOneOf(w io.Writer, outFirst bool, first, second string) {}
+func (r *Renderer) outPrefix(w io.Writer)                                     { r.out(w, r.prefix.flatten()); r.suppress = false }
+func (r *Renderer) endline(w io.Writer)                                       { r.outs(w, "\n"); r.suppress = false }
+func (r *Renderer) outs(w io.Writer, s string)                                { w.Write([]byte(s)); r.suppress = false }
+func (r *Renderer) out(w io.Writer, d []byte)                                 { w.Write(d); r.suppress = false }
 
 func (r *Renderer) newline(w io.Writer) {
 	if r.suppress {

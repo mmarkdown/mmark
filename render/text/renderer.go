@@ -38,8 +38,6 @@ type RendererOptions struct {
 type Renderer struct {
 	opts RendererOptions
 
-	headingTransformFunc func([]byte) []byte // How do display heading, noop if nothing needs doing
-
 	// TODO(miek): paraStart should probably be a stack, aside in para in aside, etc.
 	paraStart    int
 	headingStart int
@@ -68,13 +66,12 @@ func NewRenderer(opts RendererOptions) *Renderer {
 		opts.TextWidth = 80
 	}
 	r := &Renderer{
-		opts:                 opts,
-		prefix:               &prefixStack{p: [][]byte{}},
-		deferredFootBuf:      &bytes.Buffer{},
-		deferredFootID:       make(map[string]struct{}),
-		deferredLinkBuf:      &bytes.Buffer{},
-		deferredLinkID:       make(map[string]struct{}),
-		headingTransformFunc: noopHeadingTransferFunc,
+		opts:            opts,
+		prefix:          &prefixStack{p: [][]byte{}},
+		deferredFootBuf: &bytes.Buffer{},
+		deferredFootID:  make(map[string]struct{}),
+		deferredLinkBuf: &bytes.Buffer{},
+		deferredLinkID:  make(map[string]struct{}),
 	}
 	r.push(Space(0)) // default indent for all text, except heading.
 	return r
@@ -87,30 +84,11 @@ func (r *Renderer) hardBreak(w io.Writer, node *ast.Hardbreak) {
 
 func (r *Renderer) heading(w io.Writer, node *ast.Heading, entering bool) {
 	if entering {
-		switch node.Level {
-		case 1:
-			r.headingTransformFunc = func(data []byte) []byte {
-				x := r.centerText(bytes.ToUpper(data))
-				return x
-			}
-		case 2:
-			r.headingTransformFunc = func(data []byte) []byte {
-				x := r.centerText(data)
-				return x
-			}
-		default:
-			r.headingTransformFunc = noopHeadingTransferFunc
-		}
 		return
 	}
 
-	r.headingTransformFunc = noopHeadingTransferFunc
 	r.newline(w)
-	r.newline(w)
-	if node.Level == 1 {
-		r.newline(w)
-	}
-	return
+	r.outs(w, "\n")
 }
 
 func (r *Renderer) horizontalRule(w io.Writer, node *ast.HorizontalRule) {
