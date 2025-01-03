@@ -105,7 +105,7 @@ func (r RendererOptions) RenderHook(w io.Writer, node ast.Node, entering bool) (
 	return ast.GoToNext, false
 }
 
-func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
+func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, _ bool) {
 	io.WriteString(w, `<dt class="bibliography-cite" id="`+string(bib.Anchor)+`">`+fmt.Sprintf("[%s]", bib.Anchor)+"</dt>\n")
 	io.WriteString(w, `<dd>`)
 	defer io.WriteString(w, "</dd>\n")
@@ -119,7 +119,7 @@ func bibliographyItem(w io.Writer, bib *mast.BibliographyItem, entering bool) {
 	if bib.Reference.Target != "" {
 		io.WriteString(w, `<a class="bliography-target" href="`+bib.Reference.Target+"\">"+bib.Reference.Target+"</a>\n")
 	}
-	if bib.Reference.Front.Date.Year != "" {
+	if bib.Reference.Front.Date != nil && bib.Reference.Front.Date.Year != "" {
 		io.WriteString(w, `<date class="bibliography-date">`+bib.Reference.Front.Date.Year+"</date>\n")
 	}
 }
