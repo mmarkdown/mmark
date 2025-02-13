@@ -35,8 +35,7 @@ maintain.
 Because of the abstract syntax tree it will also be easier to write helper tools, like, for instance
 a tool that checks if all referenced labels in the document are actually defined. Another idea could
 be to write a "check-the-code" tool that syntax checks all code in code blocks. Eventually these
-could be build into the `mmark` binary itself. See some [fun
-ideas](https://github.com/mmarkdown/filter) here.
+could be build into the `mmark` binary itself.
 
 # Mmark V2 Syntax
 
