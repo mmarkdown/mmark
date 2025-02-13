@@ -139,8 +139,6 @@ Note:
 :   Any special header that is not "abstract" or "preface" will be a
     [note](https://tools.ietf.org/html/rfc7749#section-2.24): a numberless section.
     These notes are only allowed in the `<front>` section of the document.
-    Note [sic] that notes can only contain `<t>` and not other block level elements,
-    Mmark will filter these out for: `blockquote` currently (2020 September).
 
 BCP 14/RFC 2119 Keywords:
 :   If an RFC 2119 word is found enclosed in `**` it will be rendered
