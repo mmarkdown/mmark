@@ -16,6 +16,7 @@ import (
 	"github.com/mmarkdown/mmark/v2/mparser"
 	"github.com/mmarkdown/mmark/v2/render/man"
 	"github.com/mmarkdown/mmark/v2/render/mhtml"
+	"github.com/mmarkdown/mmark/v2/render/text"
 	"github.com/mmarkdown/mmark/v2/render/xml"
 )
 
@@ -28,10 +29,12 @@ var (
 	flagHTML      = flag.Bool("html", false, "create HTML output")
 	flagIndex     = flag.Bool("index", true, "generate an index at the end of the document")
 	flagMan       = flag.Bool("man", false, "generate manual pages (nroff)")
+	flagText      = flag.Bool("text", false, "generate text for ANSI escapes")
 	flagUnsafe    = flag.Bool("unsafe", false, "allow unsafe includes")
 	flagIntraEmph = flag.Bool("intra-emphasis", false, "interpret camel_case_value as emphasizing \"case\" (legacy behavior)")
 	flagVersion   = flag.Bool("version", false, "show mmark version")
 	flagUnicode   = flag.Bool("unicode", true, "from xml2rfc 3.16 onwards unicode is allowed in <t>")
+	flagWidth     = flag.Int("width", 100, "text width when generating markdown")
 )
 
 func main() {
@@ -178,6 +181,9 @@ func main() {
 				opts.Flags |= man.ManFragment
 			}
 			renderer = man.NewRenderer(opts)
+		case *flagText:
+			opts := text.RendererOptions{TextWidth: *flagWidth}
+			renderer = text.NewRenderer(opts)
 		default:
 			opts := xml.RendererOptions{
 				Flags:    xml.CommonFlags,
