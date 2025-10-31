@@ -35,4 +35,6 @@ jobs:
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/daniel-dewa/mmark:latest
+        tags: |
+          ghcr.io/daniel-dewa/mmark:latest
+          ghcr.io/daniel-dewa/mmark:${{ github.ref_name }}
