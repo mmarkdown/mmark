@@ -90,11 +90,11 @@ The image can be used as in the following example:
 ```sh
 docker run --rm `# automatically remove container upon termination` \
   -v "$(pwd):/data" `# bind current working directory to /data` \
-  ghcr.io/daniel-dewa/mmark:latest `# container name` \
+  ghcr.io/mmarkdown/mmark:latest `# container name` \
   example.md > example.xml # example.md input filename, pipe output to example.xml
 
 # single-line
-docker run --rm -v $(pwd):/data ghcr.io/daniel-dewa/mmark:latest example.md > example.xml
+docker run --rm -v $(pwd):/data ghcr.io/mmarkdown/mmark:latest example.md > example.xml
 ```
 
 ## Example RFC

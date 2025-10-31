@@ -36,5 +36,5 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          ghcr.io/daniel-dewa/mmark:latest
-          ghcr.io/daniel-dewa/mmark:${{ github.ref_name }}
+          ghcr.io/mmarkdown/mmark:latest
+          ghcr.io/mmarkdown/mmark:${{ github.ref_name }}
