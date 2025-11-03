@@ -82,6 +82,21 @@ right. This may result in invalid XML. Any warning from `mmark` are send to stan
 and check for those you can discard standard output to just leave standard error: `./mmark
 rfc/3515.md > /dev/null`.
 
+### Docker
+
+A container image is automatically built on every release and is available from the GitHub Container Registry.
+The image can be used as in the following example:
+
+```sh
+docker run --rm `# automatically remove container upon termination` \
+  -v "$(pwd):/data" `# bind current working directory to /data` \
+  ghcr.io/mmarkdown/mmark:latest `# container name` \
+  example.md > example.xml # example.md input filename, pipe output to example.xml
+
+# single-line
+docker run --rm -v $(pwd):/data ghcr.io/mmarkdown/mmark:latest example.md > example.xml
+```
+
 ## Example RFC
 
 The rfc/ directory contains a couple of example RFCs that can be build via v3 tool chain.
